@@ -1,0 +1,24 @@
+{
+    "compilerOptions": {
+        "outDir": "build",
+        "target": "ESNext",
+        "module": "ESNext",
+        "sourceMap": false,
+        "inlineSourceMap": true,
+        "esModuleInterop": true,
+        "moduleResolution": "node",
+        "forceConsistentCasingInFileNames": true,
+        "strict": true,
+        "skipLibCheck": true,
+        "baseUrl": "./",
+        "paths": {
+            "@/*": ["src/*"]
+        }
+    },
+    "include": ["src/**/*.ts", "server.ts"],
+    "exclude": ["node_modules"],
+    "ts-node": {
+        "esm": true,
+        "experimentalSpecifierResolution": "node"
+    }
+}
