@@ -41,13 +41,13 @@ function MessageManager() {
         messageList: IMessageProps[];
         className: string;
     }[] = [
-            { position: 'topStart', messageList: messageList.topStart, className: 'toast toast-start toast-top' },
-            { position: 'topEnd', messageList: messageList.topEnd, className: 'toast toast-end toast-top' },
-            { position: 'topCenter', messageList: messageList.topCenter, className: 'toast toast-center toast-top' },
-            { position: 'bottomStart', messageList: messageList.bottomStart, className: 'toast toast-start toast-bottom' },
-            { position: 'bottomEnd', messageList: messageList.bottomEnd, className: 'toast toast-end toast-bottom' },
-            { position: 'middleCenter', messageList: messageList.middleCenter, className: 'toast toast-center toast-middle' }
-        ];
+        { position: 'topStart', messageList: messageList.topStart, className: 'toast toast-start toast-top' },
+        { position: 'topEnd', messageList: messageList.topEnd, className: 'toast toast-end toast-top' },
+        { position: 'topCenter', messageList: messageList.topCenter, className: 'toast toast-center toast-top' },
+        { position: 'bottomStart', messageList: messageList.bottomStart, className: 'toast toast-start toast-bottom' },
+        { position: 'bottomEnd', messageList: messageList.bottomEnd, className: 'toast toast-end toast-bottom' },
+        { position: 'middleCenter', messageList: messageList.middleCenter, className: 'toast toast-center toast-middle' }
+    ];
     return createPortal(
         <>
             {messageConfig.map(({ position, messageList, className }) => (

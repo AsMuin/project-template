@@ -5,9 +5,7 @@
             "type": "msedge",
             "name": "Launch Microsoft Edge",
             "request": "launch",
-            "runtimeArgs": [
-                "--remote-debugging-port=9222"
-            ],
+            "runtimeArgs": ["--remote-debugging-port=9222"],
             "url": "http://localhost:5173",
             "userDataDir": "C:\\Users\\AsMuin\\Documents\\EdgeDebugData",
             "presentation": {

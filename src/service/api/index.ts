@@ -87,22 +87,22 @@ interface IRequestDataProcessing<T, R> {
 
 const RequestConstructor =
     <T = any, RD = any>(config: IRequestConfig, requestDataProcessing?: IRequestDataProcessing<T, RD>) =>
-        <R>(requestParams: T, extraConfig?: IRequestConfig) => {
-            let requestParamsCopy = structuredClone(requestParams);
-            if (requestDataProcessing?.beforeRequest) {
-                const beforeRequestResult = requestDataProcessing.beforeRequest(requestParamsCopy, extraConfig);
-                if (beforeRequestResult) {
-                    requestParamsCopy = beforeRequestResult;
-                }
+    <R>(requestParams: T, extraConfig?: IRequestConfig) => {
+        let requestParamsCopy = structuredClone(requestParams);
+        if (requestDataProcessing?.beforeRequest) {
+            const beforeRequestResult = requestDataProcessing.beforeRequest(requestParamsCopy, extraConfig);
+            if (beforeRequestResult) {
+                requestParamsCopy = beforeRequestResult;
             }
-            if (requestDataProcessing?.afterResponse) {
-                config.transformResponse = [requestDataProcessing.afterResponse];
-            }
-            if (config.method === 'get' || config.method === 'GET' || !config.method) {
-                return Request<R>({ ...config, params: requestParamsCopy || requestParams }, extraConfig);
-            } else {
-                return Request<R>({ ...config, data: requestParamsCopy || requestParams }, extraConfig);
-            }
-        };
+        }
+        if (requestDataProcessing?.afterResponse) {
+            config.transformResponse = [requestDataProcessing.afterResponse];
+        }
+        if (config.method === 'get' || config.method === 'GET' || !config.method) {
+            return Request<R>({ ...config, params: requestParamsCopy || requestParams }, extraConfig);
+        } else {
+            return Request<R>({ ...config, data: requestParamsCopy || requestParams }, extraConfig);
+        }
+    };
 
 export default RequestConstructor;

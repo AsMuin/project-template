@@ -88,7 +88,11 @@ function Message({
             }, duration);
         }
     });
-    return <div className={`transition-all duration-500 ${isHideMessage ? 'translate-y-[-2.5rem] scale-0 opacity-0' : ''}`}>{getMessage(type)}</div>;
+    return (
+        <div className={`transition-all duration-500 ${isHideMessage ? 'translate-x-4 translate-y-[-1rem] scale-0 opacity-0' : ''}`}>
+            {getMessage(type)}
+        </div>
+    );
 }
 
 export default Message;
