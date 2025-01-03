@@ -9,7 +9,14 @@ import reactPlugin from 'eslint-plugin-react';
 export default [
     js.configs.recommended,
     ...tsEslint.configs.recommended,
-    reactPlugin.configs.flat.recommended,
+    {
+        ...reactPlugin.configs.flat.recommended,
+        rules: {
+            ...reactPlugin.configs.flat.recommended.rules,
+            'react/react-in-jsx-scope': 'off',
+            'react/jsx-uses-react': 'off'
+        }
+    },
     {
         files: ['**/*.{ts,tsx,js,jsx}'],
         languageOptions: {

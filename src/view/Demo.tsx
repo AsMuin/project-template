@@ -1,5 +1,5 @@
-import { showMessage } from "@/components/MessageManager";
-import useOnMounted from "@/hooks/lifecycle/useOnMounted";
+import { showMessage } from '@/components/MessageManager';
+import useOnMounted from '@/hooks/lifecycle/useOnMounted';
 
 export default function Demo() {
     useOnMounted(() => {
@@ -18,5 +18,5 @@ export default function Demo() {
                 <p className="duration-500 hover:scale-125 hover:text-purple-400">There is React Project Template</p>
             </div>
         </div>
-    )
+    );
 }

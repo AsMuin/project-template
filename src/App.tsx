@@ -3,7 +3,6 @@ import { Outlet } from 'react-router';
 import MessageManager from './components/MessageManager';
 
 function App() {
-
     return (
         <>
             <Suspense fallback={<div>Loading...</div>}>

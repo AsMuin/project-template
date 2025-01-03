@@ -11,7 +11,7 @@ const router = createBrowserRouter([
                     const Component = await import('@/view/Demo');
                     return {
                         Component: Component.default
-                    }
+                    };
                 }
             }
         ]
