@@ -9,6 +9,7 @@ import reactPlugin from 'eslint-plugin-react';
 export default [
     js.configs.recommended,
     ...tsEslint.configs.recommended,
+    reactPlugin.configs.flat.recommended,
     {
         files: ['**/*.{ts,tsx,js,jsx}'],
         languageOptions: {
@@ -18,7 +19,6 @@ export default [
         plugins: {
             'react-hooks': reactHooks,
             'react-refresh': reactRefresh,
-            react: reactPlugin,
             prettier: prettierPlugin
         },
         rules: {
