@@ -6,27 +6,23 @@ import tsEslint from 'typescript-eslint';
 import prettierPlugin from 'eslint-plugin-prettier';
 import reactPlugin from 'eslint-plugin-react';
 
-export default tsEslint.config(
+export default [
+    js.configs.recommended,
+    ...tsEslint.configs.recommended,
     {
-        ignores: ['node_modules', 'dist', 'public']
-    },
-    {
-        extends: [js.configs.recommended, ...tsEslint.configs.recommended],
-        files: ['**/*.{ts,tsx}'],
+        files: ['**/*.{ts,tsx,js,jsx}'],
         languageOptions: {
-            ecmaVersion: 'latest',
+            ecmaVersion: 2020,
             globals: globals.browser
         },
         plugins: {
             'react-hooks': reactHooks,
             'react-refresh': reactRefresh,
-            prettier: prettierPlugin,
-            react: reactPlugin
+            react: reactPlugin,
+            prettier: prettierPlugin
         },
         rules: {
             ...reactHooks.configs.recommended.rules,
-            ...reactPlugin.configs.recommended.rules,
-            ...reactPlugin.configs.flat['jsx-runtime'].rules,
             'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
             '@typescript-eslint/no-explicit-any': 'off',
             'prettier/prettier': 'warn'
@@ -37,4 +33,4 @@ export default tsEslint.config(
             }
         }
     }
-);
+];
