@@ -1,11 +1,20 @@
 import App from '@/App';
-import { lazy } from 'react';
-import { createBrowserRouter } from 'react-router-dom';
+import { createBrowserRouter } from 'react-router';
 const router = createBrowserRouter([
     {
         path: '*',
         Component: App,
-        children: []
+        children: [
+            {
+                path: '/*',
+                async lazy() {
+                    const Component = await import('@/view/Demo');
+                    return {
+                        Component: Component.default
+                    }
+                }
+            }
+        ]
     }
 ]);
 
