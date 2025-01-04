@@ -34,7 +34,7 @@ async function uploadFile(buffer: Buffer, fileName: string) {
         const ContentType = fetContentType(fileName);
         const params = {
             Bucket: process.env.CF_R2_BUCKET,
-            Key: 'musicFiles/' + fileName,
+            Key: `${process.env.CF_R2_BUCKET_FOLDER}/${fileName}`,
             Body: buffer,
             ContentType
         };
@@ -42,10 +42,11 @@ async function uploadFile(buffer: Buffer, fileName: string) {
         if (response.$metadata.httpStatusCode !== 200) {
             console.error(response.$metadata.httpStatusCode);
         } else {
-            return `${process.env.CF_R2_RETURN_HOST}/musicFiles/${fileName}`;
+            return `${process.env.CF_R2_RETURN_HOST}/${process.env.CF_R2_BUCKET_FOLDER}/${fileName}`;
         }
     } catch (e: any) {
         console.error(e);
+        return Promise.reject(e);
     }
 }
 export default uploadFile;
