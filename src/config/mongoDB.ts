@@ -5,7 +5,7 @@ async function connectToMongoDB() {
         mongoose.connection.on('connected', () => {
             console.log('Mongoose connected to MongoDB🙌');
         });
-        await mongoose.connect(`${process.env.MONGODB_URI}/wood-music`);
+        await mongoose.connect(`${process.env.MONGODB_URI}/${process.env.MONGODB_NAME}`);
     } catch (err) {
         console.error(err);
     }
