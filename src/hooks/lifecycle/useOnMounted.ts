@@ -5,4 +5,5 @@ function useOnMounted(effect: () => void) {
         effect();
     }, []);
 }
+
 export default useOnMounted;

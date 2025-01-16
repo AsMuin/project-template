@@ -11,6 +11,7 @@ export default function Demo() {
             });
         }, 2000);
     });
+
     return (
         <div className="grid min-h-screen place-content-center bg-slate-200 text-center text-3xl text-sky-400">
             <div className="flex flex-col gap-8">

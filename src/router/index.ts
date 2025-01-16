@@ -9,6 +9,7 @@ const router = createBrowserRouter([
                 path: '/*',
                 async lazy() {
                     const Component = await import('@/view/Demo');
+
                     return {
                         Component: Component.default
                     };

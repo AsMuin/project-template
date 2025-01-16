@@ -6,12 +6,15 @@ function useHorizontalScroll(sensitivity: number = 2, throttleInterval: number =
 
     useEffect(() => {
         const element = elementRef.current;
+
         if (!element) {
             return;
         }
+
         function handleWheel(event: WheelEvent) {
             event.preventDefault();
             const currentTime = Date.now();
+
             if (currentTime - eventTempRef.current >= throttleInterval) {
                 element?.scrollTo({
                     left: element.scrollLeft + event.deltaY * sensitivity,
@@ -20,11 +23,15 @@ function useHorizontalScroll(sensitivity: number = 2, throttleInterval: number =
                 eventTempRef.current = currentTime;
             }
         }
+
         element.addEventListener('wheel', handleWheel, { passive: false });
+
         return () => {
             element?.removeEventListener('wheel', handleWheel);
         };
     }, [sensitivity, throttleInterval]);
+
     return elementRef;
 }
+
 export default useHorizontalScroll;

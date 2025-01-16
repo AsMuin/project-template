@@ -11,6 +11,7 @@ export default defineConfig(({ command, mode }) => {
             }
         }
     };
+
     if (command === 'serve') {
         return {
             ...common,

@@ -14,6 +14,7 @@ export interface IMessageProps {
 }
 
 let addMessage: (message: Omit<IMessageProps, 'id'>) => void;
+
 function MessageManager() {
     const [messageList, setMessageList] = useState<Record<Position, IMessageProps[]>>({
         topStart: [],
@@ -23,8 +24,10 @@ function MessageManager() {
         bottomEnd: [],
         middleCenter: []
     });
+
     addMessage = useCallback((message: Omit<IMessageProps, 'id'>) => {
         const { position = 'topCenter' } = message;
+
         setMessageList(prev => ({
             ...prev,
             [position]: [...prev[position], { id: (Math.random() + Date.now()).toString(36).slice(2, 9), ...message }]
@@ -48,6 +51,7 @@ function MessageManager() {
         { position: 'bottomEnd', messageList: messageList.bottomEnd, className: 'toast toast-end toast-bottom' },
         { position: 'middleCenter', messageList: messageList.middleCenter, className: 'toast toast-center toast-middle' }
     ];
+
     return createPortal(
         <>
             {messageConfig.map(({ position, messageList, className }) => (

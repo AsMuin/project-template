@@ -1,6 +1,7 @@
 import useOnMounted from '@/hooks/lifecycle/useOnMounted';
 import { MessageType, IMessageProps } from '../MessageManager';
 import { useState } from 'react';
+
 function Message({
     id,
     type = 'info',
@@ -9,6 +10,7 @@ function Message({
     removeMessage
 }: { removeMessage?: (id: string) => void } & Omit<IMessageProps, 'position'>) {
     const [isHideMessage, setIsHideMessage] = useState(false);
+
     function getMessage(type: MessageType) {
         switch (type) {
             case 'info': {
@@ -74,12 +76,14 @@ function Message({
             }
         }
     }
+
     function hideMessage() {
         setIsHideMessage(true);
         setTimeout(() => {
             removeMessage?.(id);
         }, 500);
     }
+
     useOnMounted(() => {
         if (removeMessage && duration) {
             setTimeout(() => {
@@ -87,6 +91,7 @@ function Message({
             }, duration);
         }
     });
+
     return (
         <div className={`transition-all duration-500 ${isHideMessage ? 'translate-x-4 translate-y-[-1rem] scale-0 opacity-0' : ''}`}>
             {getMessage(type)}
