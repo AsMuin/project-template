@@ -39,7 +39,9 @@ export default [
                 { blankLine: 'always', prev: ['const', 'let', 'var'], next: '*' }, // 变量声明和其他语句之间强制空行
                 { blankLine: 'any', prev: ['const', 'let', 'var'], next: ['const', 'let', 'var'] }, // 连续的变量声明之间允许没有空行
                 { blankLine: 'always', prev: ['block-like'], next: '*' }, // 块语句之后添加空行
-                { blankLine: 'always', prev: '*', next: ['block-like'] } // 块语句前添加空行
+                { blankLine: 'always', prev: '*', next: ['block-like'] }, // 块语句前添加空行
+                { blankLine: 'always', prev: 'import', next: '*' }, // import语句后添加空行
+                { blankLine: 'any', prev: 'import', next: 'import' } // import和import之间不需要空行
             ]
         },
         settings: {
