@@ -1,10 +1,10 @@
 import axios, { AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
-import { showMessage } from '@/components/MessageManager';
+import { toast } from 'sonner';
+
 interface IResponse<T = any> {
     success: boolean;
     message: string;
     data?: T;
-    token?: string;
 }
 
 export interface IQueryList<T> {
@@ -20,31 +20,19 @@ const axiosInstance = axios.create({
     baseURL: '/api'
 });
 
-//无需登录验证的接口
-const noAuthRequestList: string[] = [];
+//无需任何处理的接口
+const noCheckRequestList: string[] = [];
 
 axiosInstance.interceptors.request.use(async (config: InternalAxiosRequestConfig & IRequestConfig) => {
     try {
-        if (noAuthRequestList.includes(config.url || '')) {
+        if (noCheckRequestList.includes(config.url || '')) {
             return config;
         } else {
-            const token = localStorage.getItem('token');
-
-            if (!token) {
-                console.error('请先登录');
-                // 权限认证失败的情况下
-                showMessage({ type: 'warning', message: '请先登录' });
-
-                return Promise.reject('请先登录');
-            } else {
-                config.headers.Authorization = token;
-
-                return config;
-            }
+            /* something */
+            return config;
         }
     } catch (e: any) {
         console.error(e);
-        showMessage({ type: 'error', message: e.message || e });
 
         return Promise.reject(e);
     }
@@ -55,17 +43,13 @@ axiosInstance.interceptors.response.use(async (response: IResponseParams<IRespon
         const { data } = response;
 
         if (data.success) {
-            if (data.token) {
-                localStorage.setItem('token', data.token);
-            }
-
             return response;
         } else {
             const toastError = response.config.toastError ?? true;
 
             // 服务端响应了数据,但是处理结果是失败的
             if (toastError) {
-                showMessage({ type: 'error', message: data.message });
+                toast.error(data.message);
             }
 
             return Promise.reject(data.message);
@@ -83,10 +67,8 @@ export async function Request<T = any>(requestConfig: IRequestConfig, extraConfi
 
         return Response.data;
     } catch (e: any) {
-        // 某种原因请求发送失败 比如网络断开
         console.error(e);
 
-        // showMessage({ type: 'error', message: e.message || e });
         return Promise.reject(e);
     }
 }

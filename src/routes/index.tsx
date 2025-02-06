@@ -1,14 +1,15 @@
-import { showMessage } from '@/components/MessageManager';
 import useOnMounted from '@/hooks/lifecycle/useOnMounted';
+import { createFileRoute } from '@tanstack/react-router';
+import { toast } from 'sonner';
 
-export default function Demo() {
+export const Route = createFileRoute('/')({
+    component: Demo
+});
+
+function Demo() {
     useOnMounted(() => {
         setTimeout(() => {
-            showMessage({
-                type: 'success',
-                message: 'Hello AsMuin',
-                duration: 3000
-            });
+            toast('Hello AsMuin');
         }, 2000);
     });
 
