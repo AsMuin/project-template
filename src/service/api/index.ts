@@ -73,14 +73,14 @@ export async function Request<T = any>(requestConfig: IRequestConfig, extraConfi
     }
 }
 
-interface IRequestDataProcessing<T, R> {
-    beforeRequest?: (params: T, extraConfig?: IRequestConfig) => T | void;
-    afterResponse?: (response: IResponse<R>) => IResponse<any> | void;
+interface IRequestDataProcessing<P, RD> {
+    beforeRequest?: (params: P, extraConfig?: IRequestConfig) => P | void;
+    afterResponse?: (response: IResponse<RD>) => IResponse<any> | void;
 }
 
 const RequestConstructor =
-    <T = any, RD = any>(config: IRequestConfig, requestDataProcessing?: IRequestDataProcessing<T, RD>) =>
-    <R>(requestParams: T, extraConfig?: IRequestConfig) => {
+    <P = any, R = any>(config: IRequestConfig, requestDataProcessing?: IRequestDataProcessing<P, R>) =>
+    <RD = R>(requestParams: P, extraConfig?: IRequestConfig) => {
         let requestParamsCopy = structuredClone(requestParams);
 
         if (requestDataProcessing?.beforeRequest) {
@@ -95,10 +95,12 @@ const RequestConstructor =
             config.transformResponse = [requestDataProcessing.afterResponse];
         }
 
-        if (config.method === 'get' || config.method === 'GET' || !config.method) {
-            return Request<R>({ ...config, params: requestParamsCopy || requestParams }, extraConfig);
+        const method = config.method?.toUpperCase() || 'GET';
+
+        if (method === 'GET') {
+            return Request<RD>({ ...config, params: requestParamsCopy || requestParams }, extraConfig);
         } else {
-            return Request<R>({ ...config, data: requestParamsCopy || requestParams }, extraConfig);
+            return Request<RD>({ ...config, data: requestParamsCopy || requestParams }, extraConfig);
         }
     };
 

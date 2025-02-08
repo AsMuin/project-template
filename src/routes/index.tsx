@@ -1,12 +1,15 @@
 import useOnMounted from '@/hooks/lifecycle/useOnMounted';
+import { getAlbumList } from '@/service/api/demo';
 import { createFileRoute } from '@tanstack/react-router';
 import { toast } from 'sonner';
+import useSWR from 'swr';
 
 export const Route = createFileRoute('/')({
     component: Demo
 });
 
 function Demo() {
+    const { data } = useSWR([{ pageIndex: 1, pageSize: 10 }, 'demo'], ([{ pageIndex, pageSize }]) => getAlbumList({ pageIndex, pageSize }));
     useOnMounted(() => {
         setTimeout(() => {
             toast('Hello AsMuin');
