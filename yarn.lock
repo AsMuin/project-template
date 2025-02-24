@@ -1280,6 +1280,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tanstack/eslint-plugin-router@npm:^1.105.0":
+  version: 1.105.0
+  resolution: "@tanstack/eslint-plugin-router@npm:1.105.0"
+  dependencies:
+    "@typescript-eslint/utils": "npm:^8.23.0"
+  peerDependencies:
+    eslint: ^8.57.0 || ^9.0.0
+  checksum: 10c0/06fce8149098578cf1cd3930ee10b6c5b16cb8c3160c367c7037f92a84419752b9be5922165218947a3c82a0ce2b57d3ed3286ef3ae99af6be85f2fb4783ceca
+  languageName: node
+  linkType: hard
+
 "@tanstack/history@npm:1.99.13":
   version: 1.99.13
   resolution: "@tanstack/history@npm:1.99.13"
@@ -1607,7 +1618,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/utils@npm:8.24.1":
+"@typescript-eslint/utils@npm:8.24.1, @typescript-eslint/utils@npm:^8.23.0":
   version: 8.24.1
   resolution: "@typescript-eslint/utils@npm:8.24.1"
   dependencies:
@@ -4595,6 +4606,7 @@ __metadata:
   dependencies:
     "@eslint/js": "npm:^9.17.0"
     "@tailwindcss/vite": "npm:^4.0.4"
+    "@tanstack/eslint-plugin-router": "npm:^1.105.0"
     "@tanstack/react-router": "npm:^1.99.8"
     "@tanstack/router-devtools": "npm:^1.99.8"
     "@tanstack/router-plugin": "npm:^1.99.8"

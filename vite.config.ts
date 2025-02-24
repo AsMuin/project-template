@@ -6,26 +6,15 @@ import { TanStackRouterVite } from '@tanstack/router-plugin/vite';
 
 export default defineConfig(({ command, mode }) => {
     const env = loadEnv(mode, process.cwd(), '');
-    const common = {
-        plugins: [react(), tailwindcss(), TanStackRouterVite()],
-        resolve: {
-            alias: {
-                '@': resolve(__dirname, './src')
-            }
-        }
-    };
+    const common = { plugins: [react(), tailwindcss(), TanStackRouterVite()], resolve: { alias: { '@': resolve(__dirname, './src') } } };
 
     if (command === 'serve') {
         return {
             ...common,
             // dev 独有配置
             server: {
-                proxy: {
-                    '/api': {
-                        target: env.VITE_BACKEND_URL,
-                        changeOrigin: true
-                    }
-                }
+                proxy: { '/api': { target: env.VITE_BACKEND_URL, changeOrigin: true } },
+                allowedHosts: ['cyhkcex8-moh4y61y-ss0b12oswfvv.vcd4.mcprev.cn']
             }
         };
     } else {

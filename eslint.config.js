@@ -5,29 +5,20 @@ import reactRefresh from 'eslint-plugin-react-refresh';
 import tsEslint from 'typescript-eslint';
 import prettierPlugin from 'eslint-plugin-prettier';
 import reactPlugin from 'eslint-plugin-react';
+import pluginRouter from '@tanstack/eslint-plugin-router';
 
 export default [
     js.configs.recommended,
     ...tsEslint.configs.recommended,
+    ...pluginRouter.configs['flat/recommended'],
     {
         ...reactPlugin.configs.flat.recommended,
-        rules: {
-            ...reactPlugin.configs.flat.recommended.rules,
-            'react/react-in-jsx-scope': 'off',
-            'react/jsx-uses-react': 'off'
-        }
+        rules: { ...reactPlugin.configs.flat.recommended.rules, 'react/react-in-jsx-scope': 'off', 'react/jsx-uses-react': 'off' }
     },
     {
         files: ['**/*.{ts,tsx,js,jsx}'],
-        languageOptions: {
-            ecmaVersion: 2020,
-            globals: globals.browser
-        },
-        plugins: {
-            'react-hooks': reactHooks,
-            'react-refresh': reactRefresh,
-            prettier: prettierPlugin
-        },
+        languageOptions: { ecmaVersion: 2020, globals: globals.browser },
+        plugins: { 'react-hooks': reactHooks, 'react-refresh': reactRefresh, prettier: prettierPlugin },
         rules: {
             ...reactHooks.configs.recommended.rules,
             'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
@@ -44,10 +35,6 @@ export default [
                 { blankLine: 'any', prev: 'import', next: 'import' } // import和import之间不需要空行
             ]
         },
-        settings: {
-            react: {
-                version: 'detect'
-            }
-        }
+        settings: { react: { version: 'detect' } }
     }
 ];

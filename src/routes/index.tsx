@@ -10,6 +10,7 @@ export const Route = createFileRoute('/')({
 
 function Demo() {
     const { data } = useSWR([{ pageIndex: 1, pageSize: 10 }, 'demo'], ([{ pageIndex, pageSize }]) => getAlbumList({ pageIndex, pageSize }));
+
     useOnMounted(() => {
         setTimeout(() => {
             toast('Hello AsMuin');
