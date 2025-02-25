@@ -1,3 +1,4 @@
+import DefaultPending from '@/components/DefaultPending';
 import useOnMounted from '@/hooks/lifecycle/useOnMounted';
 import { getAlbumList } from '@/service/api/demo';
 import { createFileRoute } from '@tanstack/react-router';
@@ -22,6 +23,7 @@ function Demo() {
             <div className="flex flex-col gap-8">
                 <p className="drop-shadow-md duration-300 hover:scale-125 hover:text-purple-400">🎉🎉Hello AsMuin🎉🎉</p>
                 <p className="drop-shadow-md duration-300 hover:scale-125 hover:text-purple-400">There is React Project Template</p>
+                <DefaultPending />
             </div>
         </div>
     );

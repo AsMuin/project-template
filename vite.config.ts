@@ -14,7 +14,7 @@ export default defineConfig(({ command, mode }) => {
             // dev 独有配置
             server: {
                 proxy: { '/api': { target: env.VITE_BACKEND_URL, changeOrigin: true } },
-                allowedHosts: ['cyhkcex8-moh4y61y-ss0b12oswfvv.vcd4.mcprev.cn']
+                allowedHosts: ['3txwhfom-c2rj0iv3-6wcz4o8b6wah.vcd4.mcprev.cn']
             }
         };
     } else {
