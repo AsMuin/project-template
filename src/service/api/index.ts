@@ -23,43 +23,97 @@ const axiosInstance = axios.create({
 //无需任何处理的接口
 const noCheckRequestList: string[] = [];
 
+//请求处理
 axiosInstance.interceptors.request.use(async (config: InternalAxiosRequestConfig & IRequestConfig) => {
     try {
+        // 不进行任何处理的接口
         if (noCheckRequestList.includes(config.url || '')) {
             return config;
         } else {
+            // 处理验证token
+            let accessToken = getAccessToken();
+
+            if (!accessToken) {
+                accessToken = await refreshAccessToken();
+            }
+
+            config.headers['Authorization'] = `Bearer ${accessToken}`;
+
             /* something */
             return config;
         }
     } catch (e: any) {
-        console.error(e);
-
         return Promise.reject(e);
     }
 });
 
-axiosInstance.interceptors.response.use(async (response: IResponseParams<IResponse, any>) => {
-    try {
-        const { data } = response;
+//响应处理
+axiosInstance.interceptors.response.use(
+    // 响应成功回调
+    async (response: IResponseParams<IResponse, any>) => {
+        try {
+            const { data } = response;
 
-        if (data.success) {
-            return response;
-        } else {
-            const toastError = response.config.toastError ?? true;
-
-            // 服务端响应了数据,但是处理结果是失败的
-            if (toastError) {
-                toast.error(data.message);
+            // 服务端成功响应了数据,但是业务结果是失败的
+            if (!data.success) {
+                throw new Error(data.message);
             }
 
-            return Promise.reject(data.message);
-        }
-    } catch (e: any) {
-        console.error(e);
+            return response;
+        } catch (e: any) {
+            const toastError = response.config.toastError ?? true;
 
-        return Promise.reject(e);
+            if (toastError) {
+                toast.error(e instanceof Error ? e.message : e);
+            }
+
+            return Promise.reject(e);
+        }
+    },
+    //响应失败回调
+    async error => {
+        const originalRequest = error.config;
+
+        // 判断是否因为token过期导致失败（还要判断是否为重试请求）
+        if (error.response.status === 401 && !originalRequest._retry) {
+            //标记为重试请求（再失败直接判断非法错误）
+            originalRequest._retry = true;
+            const newAccessToken = await refreshAccessToken();
+
+            originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
+
+            return axiosInstance(originalRequest);
+        }
+
+        return Promise.reject(error);
     }
-});
+);
+
+// 登出注销
+export function logout() {
+    removeAccessToken();
+    axiosInstance.post('/auth/logout');
+    window.location.href = '/login';
+}
+
+// 刷新accessToken
+async function refreshAccessToken() {
+    try {
+        const response = await axiosInstance.post('/auth/refresh-accessToken');
+        const {
+            data: { accessToken }
+        } = response;
+
+        saveAccessToken(accessToken);
+
+        return accessToken;
+    } catch (error) {
+        // refreshToken cookie 过期了，直接注销重新登录
+        logout();
+
+        return Promise.reject(error);
+    }
+}
 
 export async function Request<T = any>(requestConfig: IRequestConfig, extraConfig?: IRequestConfig): Promise<IResponse<T>> {
     try {
@@ -78,7 +132,7 @@ interface IRequestDataProcessing<P, RD> {
     afterResponse?: (response: IResponse<RD>) => IResponse<any> | void;
 }
 
-const RequestConstructor =
+export const RequestConstructor =
     <P = any, R = any>(config: IRequestConfig, requestDataProcessing?: IRequestDataProcessing<P, R>) =>
     <RD = R>(requestParams: P, extraConfig?: IRequestConfig) => {
         let requestParamsCopy = structuredClone(requestParams);
@@ -104,4 +158,14 @@ const RequestConstructor =
         }
     };
 
-export default RequestConstructor;
+function saveAccessToken(token: string) {
+    sessionStorage.setItem('accessToken', token);
+}
+
+export function getAccessToken() {
+    return sessionStorage.getItem('accessToken');
+}
+
+function removeAccessToken() {
+    sessionStorage.removeItem('accessToken');
+}

@@ -1,4 +1,4 @@
-import RequestConstructor from '.';
+import { RequestConstructor } from '.';
 
 const BASEURL = '/demo';
 
