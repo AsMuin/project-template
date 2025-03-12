@@ -1,19 +1,25 @@
-import type { Request, Response, NextFunction } from 'express';
-import { verifyToken } from '@/utils/userToken';
-import apiResponse from '@/utils/response';
-function userAuth(req: Request, res: Response, next: NextFunction) {
-    const { authorization } = req.headers;
-    if (!authorization) {
-        apiResponse(res)(false, '缺少用户凭证');
-        return;
+import { ControllerAction } from '@type';
+import { verifyToken } from '@/utils/auth';
+import { validatorNoEmpty } from '@/utils/validator';
+
+// 中间件：检查身份验证
+const authenticateToken: ControllerAction = (req, res, next) => {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+
+    if (!token) {
+        return res.sendStatus(401);
     }
-    try {
-        const token_decode: any = verifyToken(authorization);
-        req.body.userId = token_decode.id;
-        next();
-    } catch (e: any) {
-        console.error(e);
-        apiResponse(res)(false, e.message);
+
+    const user = verifyToken(token);
+
+    if (!validatorNoEmpty(user)) {
+        return res.sendStatus(403);
     }
-}
-export default userAuth;
+
+    req.body.user = user;
+
+    next();
+};
+
+export default authenticateToken;

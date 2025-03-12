@@ -12,7 +12,9 @@
         "skipLibCheck": true,
         "baseUrl": "./",
         "paths": {
-            "@/*": ["src/*"]
+            "@/*": ["src/*"],
+            "@type": ["types.d.ts"],
+            "@env": ["envConfig.ts"]
         }
     },
     "include": ["src/**/*.ts", "server.ts"],

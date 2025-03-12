@@ -1,14 +1,20 @@
-import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+import { Upload } from '@aws-sdk/lib-storage';
+import { cloudConfig } from '../../envConfig';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+
 const S3 = new S3Client({
     region: 'auto',
-    endpoint: process.env.CF_R2_ENDPOINT_URL,
+    endpoint: cloudConfig.endpoint,
     credentials: {
-        accessKeyId: process.env.CF_R2_ACCESS_KEY_ID!,
-        secretAccessKey: process.env.CF_R2_SECRET_ACCESS_KEY!
+        accessKeyId: cloudConfig.accessKeyId!,
+        secretAccessKey: cloudConfig.secretAccessKey!
     }
 });
+
 function fetContentType(fileName: string) {
     const extension = fileName.split('.').pop()?.toLowerCase();
+
     switch (extension) {
         case 'jpg':
         case 'jpeg':
@@ -29,24 +35,53 @@ function fetContentType(fileName: string) {
             return 'application/octet-stream';
     }
 }
+
 async function uploadFile(buffer: Buffer, fileName: string) {
     try {
         const ContentType = fetContentType(fileName);
         const params = {
-            Bucket: process.env.CF_R2_BUCKET,
-            Key: `${process.env.CF_R2_BUCKET_FOLDER}/${fileName}`,
+            Bucket: cloudConfig.Bucket!,
+            Key: `${cloudConfig.BucketFolder}/${fileName}`,
             Body: buffer,
             ContentType
         };
-        const response = await S3.send(new PutObjectCommand(params));
-        if (response.$metadata.httpStatusCode !== 200) {
-            console.error(response.$metadata.httpStatusCode);
-        } else {
-            return `${process.env.CF_R2_RETURN_HOST}/${process.env.CF_R2_BUCKET_FOLDER}/${fileName}`;
-        }
+
+        // 使用 lib-storage 进行分片上传
+        const upload = new Upload({
+            client: S3,
+            params,
+            queueSize: 4, // 并发分片数
+            partSize: 5 * 1024 * 1024 // 每片的大小（这里设置为 5MB）
+        });
+
+        upload.on('httpUploadProgress', progress => {
+            console.log(`Uploaded ${progress.loaded}/${progress.total} bytes`);
+        });
+
+        await upload.done();
+
+        return `${cloudConfig.ReturnHost}/${cloudConfig.BucketFolder}/${fileName}`;
     } catch (e: any) {
         console.error(e);
+
         return Promise.reject(e);
     }
 }
-export default uploadFile;
+
+async function generatePresignedUrl(fileName: string, fileType: string) {
+    const params = {
+        Bucket: cloudConfig.Bucket,
+        Key: `${cloudConfig.BucketFolder}/${fileName}`,
+        ContentType: fileType // 必须指定文件类型
+    };
+
+    // 生成一个有效期为 1 小时的预签名 URL
+    const presignedUrl = await getSignedUrl(S3, new PutObjectCommand(params), { expiresIn: 3600 });
+
+    return {
+        presignedUrl,
+        publicUrl: `${cloudConfig.ReturnHost}/${cloudConfig.BucketFolder}/${fileName}`
+    };
+}
+
+export { uploadFile, generatePresignedUrl };

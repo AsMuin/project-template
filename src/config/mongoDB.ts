@@ -10,4 +10,5 @@ async function connectToMongoDB() {
         console.error(err);
     }
 }
+
 export default connectToMongoDB;

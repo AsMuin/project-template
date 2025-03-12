@@ -5,6 +5,7 @@ interface IPageQueryResult<T> {
     total: number;
     isEnd: boolean;
 }
+
 const pageQuery =
     <T = any>(Model: mongoose.Model<T>) =>
     async (pageIndex: number | string, pageSize: number | string) => {
@@ -23,9 +24,11 @@ const pageQuery =
                 total,
                 isEnd
             };
+
             return result;
         } catch (err: any) {
             console.error(err);
+
             return Promise.reject(err);
         }
     };
