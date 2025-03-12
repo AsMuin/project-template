@@ -13,6 +13,11 @@ export interface IQueryList<T> {
 export interface IRequestConfig extends AxiosRequestConfig {
     toastError?: boolean;
 }
+
+/* 
+T 接口返回数据类型
+D 接口请求参数类型
+*/
 export interface IResponseParams<T = any, D = any> extends AxiosResponse<T, D> {
     config: InternalAxiosRequestConfig & IRequestConfig;
 }
@@ -101,12 +106,16 @@ async function refreshAccessToken() {
     try {
         const response = await axiosInstance.post('/auth/refresh-accessToken');
         const {
-            data: { accessToken }
+            data: { accessToken = '' }
         } = response;
+
+        if (!accessToken) {
+            logout();
+        }
 
         saveAccessToken(accessToken);
 
-        return accessToken;
+        return accessToken as string;
     } catch (error) {
         // refreshToken cookie 过期了，直接注销重新登录
         logout();
@@ -134,29 +143,29 @@ interface IRequestDataProcessing<P, RD> {
 
 export const RequestConstructor =
     <P = any, R = any>(config: IRequestConfig, requestDataProcessing?: IRequestDataProcessing<P, R>) =>
-    <RD = R>(requestParams: P, extraConfig?: IRequestConfig) => {
-        let requestParamsCopy = structuredClone(requestParams);
+        <RD = R>(requestParams: P, extraConfig?: IRequestConfig) => {
+            let requestParamsCopy = structuredClone(requestParams);
 
-        if (requestDataProcessing?.beforeRequest) {
-            const beforeRequestResult = requestDataProcessing.beforeRequest(requestParamsCopy, extraConfig);
+            if (requestDataProcessing?.beforeRequest) {
+                const beforeRequestResult = requestDataProcessing.beforeRequest(requestParamsCopy, extraConfig);
 
-            if (beforeRequestResult) {
-                requestParamsCopy = beforeRequestResult;
+                if (beforeRequestResult) {
+                    requestParamsCopy = beforeRequestResult;
+                }
             }
-        }
 
-        if (requestDataProcessing?.afterResponse) {
-            config.transformResponse = [requestDataProcessing.afterResponse];
-        }
+            if (requestDataProcessing?.afterResponse) {
+                config.transformResponse = [requestDataProcessing.afterResponse];
+            }
 
-        const method = config.method?.toUpperCase() || 'GET';
+            const method = config.method?.toUpperCase() || 'GET';
 
-        if (method === 'GET') {
-            return Request<RD>({ ...config, params: requestParamsCopy || requestParams }, extraConfig);
-        } else {
-            return Request<RD>({ ...config, data: requestParamsCopy || requestParams }, extraConfig);
-        }
-    };
+            if (method === 'GET') {
+                return Request<RD>({ ...config, params: requestParamsCopy || requestParams }, extraConfig);
+            } else {
+                return Request<RD>({ ...config, data: requestParamsCopy || requestParams }, extraConfig);
+            }
+        };
 
 function saveAccessToken(token: string) {
     sessionStorage.setItem('accessToken', token);
