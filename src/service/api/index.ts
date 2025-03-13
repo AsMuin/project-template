@@ -27,7 +27,7 @@ const axiosInstance = axios.create({
 });
 
 //无需任何处理的接口
-const noCheckRequestList: string[] = ['/auth/registry', '/auth/login', '/auth/refresh-accessToken'];
+const noCheckRequestList: string[] = ['/auth/registry', '/auth/login', '/auth/refresh-accessToken', '/auth/logout'];
 
 //请求处理
 axiosInstance.interceptors.request.use(async (config: InternalAxiosRequestConfig & IRequestConfig) => {
@@ -80,8 +80,8 @@ axiosInstance.interceptors.response.use(
     async error => {
         const originalRequest = error.config;
 
-        // 判断是否因为token过期导致失败（还要判断是否为重试请求）
-        if (error.response?.status === 401 && !originalRequest._retry) {
+        // 判断是否因为token过期导致失败（还要判断是否为重试请求以及是否需要进行token检查）
+        if (error.response?.status === 401 && !originalRequest._retry && !noCheckRequestList.includes(originalRequest.url || '')) {
             //标记为重试请求（再失败直接判断非法错误）
             originalRequest._retry = true;
             const newAccessToken = await refreshAccessToken();
@@ -112,7 +112,7 @@ export function logout() {
 // 刷新accessToken
 async function refreshAccessToken() {
     try {
-        const response = await axiosInstance.post('/auth/refresh-accessToken');
+        const response = await axiosInstance.get('/auth/refresh-accessToken');
         const {
             data: { accessToken = '' }
         } = response;
