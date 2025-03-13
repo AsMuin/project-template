@@ -8,7 +8,7 @@ export default defineConfig(({ command, mode }) => {
     const env = loadEnv(mode, process.cwd(), '');
     const common = {
         plugins: [react(), tailwindcss(), TanStackRouterVite()],
-        resolve: { alias: { '@/*': resolve(__dirname, './src/*'), '@types': resolve(__dirname, './types.d.ts') } }
+        resolve: { alias: { '@': resolve(__dirname, './src'), '@types': resolve(__dirname, './types.d.ts') } }
     };
 
     if (command === 'serve') {
@@ -16,7 +16,7 @@ export default defineConfig(({ command, mode }) => {
             ...common,
             // dev 独有配置
             server: {
-                proxy: { '/api': { target: env.VITE_BACKEND_URL, changeOrigin: true } },
+                proxy: { '/api': { target: 'http://192.168.124.67:3222', changeOrigin: true } },
                 allowedHosts: ['3txwhfom-c2rj0iv3-6wcz4o8b6wah.vcd4.mcprev.cn']
             }
         };
