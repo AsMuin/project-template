@@ -3,7 +3,6 @@
     "version": "1.0.0",
     "main": "server.js",
     "license": "MIT",
-    "type": "module",
     "scripts": {
         "build": "tsc",
         "serve": "nodemon --exec tsx server.ts",
