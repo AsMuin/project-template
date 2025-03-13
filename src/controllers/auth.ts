@@ -1,28 +1,18 @@
 import db from '@/db';
-import { eq, lt } from 'drizzle-orm/expressions';
-import users from '@/db/schema/users';
-import blackList from '@/db/schema/blackList';
+import blackList, { blackListInsertValidation } from '@/db/schema/blackList';
 import bcrypt from 'bcryptjs';
 import { generateAccessToken, generateRefreshToken, verifyToken } from '@/utils/auth';
 import { ControllerAction, RefreshPayload, UserPayload } from '@type';
 import responseBody from '@/config/response';
 import { BadRequestError, UnauthorizedError } from '@/config/error';
+import { findUser, isTokenBlacklisted } from '@/services/auth';
 
 // 登录
 const login: ControllerAction = async (req, res, next) => {
     try {
         const { email, password }: { email: string, password: string } = req.body;
 
-        const user = await db.query.users.findFirst({
-            where: eq(users.email, email),
-            columns: {
-                id: true,
-                name: true,
-                email: true,
-                avatarUrl: true,
-                passwordHash: true,
-            }
-        });
+        const user = await findUser({ email });
 
         if (!user || !(await bcrypt.compare(password, user.passwordHash))) {
             throw new UnauthorizedError('用户名或密码错误');
@@ -56,11 +46,11 @@ const logout: ControllerAction = async (req, res, next) => {
         if (!refreshToken) {
             throw new BadRequestError('无刷新令牌')
         }
-
-        await db.insert(blackList).values({
+        const parsedData = blackListInsertValidation.parse({
             token: refreshToken,
-            expiresAt: new Date(),
-        });
+            expiresAt: new Date()
+        })
+        await db.insert(blackList).values(parsedData);
 
         res.clearCookie('refresh_token');
         return res.json(responseBody(true, '退出成功'));
@@ -86,15 +76,10 @@ const refreshToken: ControllerAction = async (req, res, next) => {
         }
 
         // 获取用户
-        const user = await db.query.users.findFirst({
-            where: eq(users.id, decodedToken.id),
-            columns: {
-                id: true,
-                name: true,
-                email: true,
-                avatarUrl: true,
-            }
+        const user = await findUser({
+            id: decodedToken.id,
         })
+
         if (!user) {
             throw new UnauthorizedError('用户不存在');
         }
@@ -106,25 +91,6 @@ const refreshToken: ControllerAction = async (req, res, next) => {
     }
 
 };
-
-// 验证令牌黑名单
-async function isTokenBlacklisted(token: string): Promise<boolean> {
-    try {
-        const now = new Date();
-        await db.delete(blackList)
-            .where(lt(blackList.expiresAt, now))
-
-        const result = await db.query.blackList.findFirst({
-            where: eq(blackList.token, token),
-        })
-
-        return result ? true : false;
-
-    } catch (error) {
-        return false;
-    }
-
-}
 
 export {
     login,
