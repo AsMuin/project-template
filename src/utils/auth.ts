@@ -11,7 +11,7 @@ function generateRefreshToken(user: RefreshPayload): string {
 }
 
 function verifyToken(token: string): UserPayload | RefreshPayload {
-    return jwt.verify(token, SecretKey) as any;
+    return jwt.verify(token, SecretKey) as UserPayload | RefreshPayload;
 }
 
 export { generateAccessToken, generateRefreshToken, verifyToken };

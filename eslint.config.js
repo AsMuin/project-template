@@ -24,7 +24,8 @@ export default [
                 { blankLine: 'always', prev: ['block-like'], next: '*' }, // 块语句之后添加空行
                 { blankLine: 'always', prev: '*', next: ['block-like'] }, // 块语句前添加空行
                 { blankLine: 'always', prev: 'import', next: '*' }, // import语句后添加空行
-                { blankLine: 'any', prev: 'import', next: 'import' } // import和import之间不需要空行
+                { blankLine: 'any', prev: 'import', next: 'import' }, // import和import之间不需要空行,
+                { blankLine: 'always', prev: 'export', next: 'export' } //export之间需要隔行
             ]
         }
     }
