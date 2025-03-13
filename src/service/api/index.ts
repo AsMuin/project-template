@@ -21,12 +21,13 @@ D 接口请求参数类型
 export interface IResponseParams<T = any, D = any> extends AxiosResponse<T, D> {
     config: InternalAxiosRequestConfig & IRequestConfig;
 }
+
 const axiosInstance = axios.create({
     baseURL: '/api'
 });
 
 //无需任何处理的接口
-const noCheckRequestList: string[] = [];
+const noCheckRequestList: string[] = ['/auth/registry', '/auth/login', '/auth/refresh-accessToken'];
 
 //请求处理
 axiosInstance.interceptors.request.use(async (config: InternalAxiosRequestConfig & IRequestConfig) => {
@@ -44,7 +45,6 @@ axiosInstance.interceptors.request.use(async (config: InternalAxiosRequestConfig
 
             config.headers['Authorization'] = `Bearer ${accessToken}`;
 
-            /* something */
             return config;
         }
     } catch (e: any) {
@@ -75,12 +75,13 @@ axiosInstance.interceptors.response.use(
             return Promise.reject(e);
         }
     },
+
     //响应失败回调
     async error => {
         const originalRequest = error.config;
 
         // 判断是否因为token过期导致失败（还要判断是否为重试请求）
-        if (error.response.status === 401 && !originalRequest._retry) {
+        if (error.response?.status === 401 && !originalRequest._retry) {
             //标记为重试请求（再失败直接判断非法错误）
             originalRequest._retry = true;
             const newAccessToken = await refreshAccessToken();
@@ -96,9 +97,15 @@ axiosInstance.interceptors.response.use(
 
 // 登出注销
 export function logout() {
-    removeAccessToken();
-    axiosInstance.post('/auth/logout');
-    window.location.href = '/login';
+    axiosInstance.post('/auth/logout')
+        .then(() => {
+            removeAccessToken();
+            window.location.href = '/login';
+        })
+        .catch(err => {
+            console.error('Logout failed:', err);
+            toast.error('登出失败，请稍后再试');
+        });
 }
 
 // 刷新accessToken
@@ -118,7 +125,9 @@ async function refreshAccessToken() {
         return accessToken as string;
     } catch (error) {
         // refreshToken cookie 过期了，直接注销重新登录
-        logout();
+        toast.error('登录信息已过期，请重新登录');
+        removeAccessToken();
+        window.location.href = '/login';
 
         return Promise.reject(error);
     }
