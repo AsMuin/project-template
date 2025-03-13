@@ -10,10 +10,6 @@ const blackListSelectValidation = createSelectSchema(blackList);
 const blackListInsertValidation = createInsertSchema(blackList);
 const blackListUpdateValidation = createUpdateSchema(blackList);
 
-export {
-    blackListSelectValidation,
-    blackListInsertValidation,
-    blackListUpdateValidation
-}
+export { blackListSelectValidation, blackListInsertValidation, blackListUpdateValidation };
 
 export default blackList;

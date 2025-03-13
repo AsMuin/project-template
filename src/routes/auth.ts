@@ -1,11 +1,10 @@
 import express from 'express';
-import multer from '@/middleware/multer';
-import userAuth from '@/middleware/userAuth';
+import { login, logout, refreshToken } from '@/controllers/auth';
 
 const authRouter = express.Router();
 
-authRouter.get('/demo', userAuth, multer.single('image'), (req, res) => {
-    res.send('Hello World!');
-});
+authRouter.post('/login', login);
+authRouter.post('/logout', logout);
+authRouter.post('/refresh-token', refreshToken);
 
 export default authRouter;
