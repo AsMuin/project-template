@@ -1,26 +1,23 @@
-import { Response } from 'express';
+import { IResponse } from '@type';
+import { validatorNoEmpty } from './validator';
 
-interface IResponse<T = any> {
-    success: boolean;
-    message: string;
-    data?: T;
-}
-
-const apiResponse =
-    (response: Response) =>
-    <T = any>(success: boolean, message: string, returnInfo?: { data: T }) => {
+const responseBody =
+    <T = unknown>(success: boolean, message: string, returnInfo?: { data: T; total?: number; pageIndex?: number; limit?: number }) => {
         const responseBody: IResponse<T> = {
             success,
-            message
+            message,
         };
 
         if (returnInfo?.data) {
             responseBody.data = returnInfo.data;
         }
-
-        response.json(responseBody);
+        if (validatorNoEmpty(returnInfo?.total) && validatorNoEmpty(returnInfo?.pageIndex) && validatorNoEmpty(returnInfo?.limit)) {
+            responseBody.total = returnInfo?.total;
+            responseBody.pageIndex = returnInfo?.pageIndex;
+            responseBody.limit = returnInfo?.limit;
+        }
 
         return responseBody;
     };
 
-export default apiResponse;
+export default responseBody;

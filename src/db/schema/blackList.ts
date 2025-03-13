@@ -1,7 +1,6 @@
-import { pgTable, timestamp, uuid, varchar } from 'drizzle-orm/pg-core';
+import { pgTable, timestamp, varchar } from 'drizzle-orm/pg-core';
 
 export default pgTable('refresh_tokens_blacklist', {
-    id: uuid('id').primaryKey().notNull(),
-    token: varchar('token', { length: 256 }).notNull().unique(),
+    token: varchar('token', { length: 256 }).primaryKey(),
     expiresAt: timestamp('expires_at').notNull()
 });
