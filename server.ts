@@ -2,6 +2,7 @@ import express from 'express';
 import cookieParser from 'cookie-parser';
 import authRouter from '@/routes/auth';
 import errorHandler from '@/middleware/errorHandler';
+import { networkInterfaces } from 'os';
 
 //服务配置
 const app: express.Application = express();
@@ -16,6 +17,26 @@ app.use(cookieParser());
 app.use(`${baseUrl}/auth`, authRouter);
 
 //错误处理
-app.use(errorHandler)
+app.use(errorHandler);
 
-app.listen(port, () => console.log(`Server running on  http://localhost:${port} 🎉🎉🎉🎉`));
+function getLocalIP() {
+    const interfaces = networkInterfaces();
+
+    for (const interfaceName in interfaces) {
+        const iface = interfaces[interfaceName];
+
+        if (!iface) {
+            continue;
+        }
+
+        for (const alias of iface) {
+            if (alias.family === 'IPv4' && !alias.internal) {
+                return alias.address;
+            }
+        }
+    }
+
+    return '127.0.0.1'; // 默认回环地址，若未找到局域网 IP 则返回此值
+}
+
+app.listen(port, () => console.log(`Server running on  http://${getLocalIP()}:${port} 🎉🎉🎉🎉`));
