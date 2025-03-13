@@ -18,8 +18,7 @@ interface UserPayload {
 }
 
 type IUser = InferModel<typeof users>;
-type IBlackList = InferModel<typeof blackList>
-
+type IBlackList = InferModel<typeof blackList>;
 
 type RefreshPayload = Pick<UserPayload, 'id'>;
 
@@ -40,6 +39,6 @@ interface QueryParams<P = unknown> extends P {
     pageIndex: number;
     limit: number;
     signal?: AbortSignal;
-};
+}
 
 export { UserPayload, ControllerAction, IResponse, RefreshPayload, QueryParams, IBlackList, IUser };

@@ -9,16 +9,10 @@ const users = pgTable('users', {
     passwordHash: varchar('password_hash', { length: 256 }).notNull()
 });
 
-
 const usersSelectValidation = createSelectSchema(users);
 const usersInsertValidation = createInsertSchema(users);
 const usersUpdateValidation = createUpdateSchema(users);
 
-export {
-    usersSelectValidation,
-    usersInsertValidation,
-    usersUpdateValidation
-}
-
+export { usersSelectValidation, usersInsertValidation, usersUpdateValidation };
 
 export default users;
