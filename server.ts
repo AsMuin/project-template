@@ -1,6 +1,6 @@
 import express from 'express';
 import cookieParser from 'cookie-parser';
-import authRouter from '@/route/auth';
+import authRouter from '@/routes/auth';
 import errorHandler from '@/middleware/errorHandler';
 
 //服务配置

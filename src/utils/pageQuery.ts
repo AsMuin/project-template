@@ -1,36 +1,41 @@
-import mongoose from 'mongoose';
+import { SQL } from "drizzle-orm";
 
-interface IPageQueryResult<T> {
-    itemList: T[];
-    total: number;
-    isEnd: boolean;
+
+interface transformUrlParams {
+    baseUrl: string;
+    params: Record<string, string | number>;
+}
+//GET请求参数拼接
+function transformGetParams({ baseUrl, params }: transformUrlParams) {
+    const url = new URL(baseUrl, window.location.href);
+
+    Object.keys(params).forEach(key => {
+        if (params[key]) {
+            url.searchParams.append(key, params[key] as string);
+        }
+    });
+
+    return url;
 }
 
-const pageQuery =
-    <T = any>(Model: mongoose.Model<T>) =>
-    async (pageIndex: number | string, pageSize: number | string) => {
-        try {
-            pageIndex = typeof pageIndex === 'string' ? parseInt(pageIndex) : pageIndex;
-            pageSize = typeof pageSize === 'string' ? parseInt(pageSize) : pageSize;
-            const itemListPromise = Model.find()
-                .skip(pageIndex * pageSize)
-                .limit(pageSize)
-                .exec();
-            const totalPromise = Model.countDocuments().exec();
-            const [itemList, total] = await Promise.all([itemListPromise, totalPromise]);
-            const isEnd = (pageIndex + 1) * pageSize >= total;
-            const result: IPageQueryResult<T> = {
-                itemList,
-                total,
-                isEnd
-            };
+function queryFilter<T extends Record<string, any>>(filterConfig: Record<keyof T, (value: any) => SQL>, filterParams: T): SQL[] {
+    const filters: SQL[] = [];
 
-            return result;
-        } catch (err: any) {
-            console.error(err);
+    Object.entries(filterParams).forEach(([key, value]) => {
+        if (value || value === false || value === 0) {
+            const filter = filterConfig[key as keyof typeof filterConfig];
 
-            return Promise.reject(err);
+            if (filter) {
+                filters.push(filter(value));
+            }
         }
-    };
+    });
 
-export default pageQuery;
+    return filters;
+}
+
+
+export {
+    queryFilter,
+    transformGetParams
+}

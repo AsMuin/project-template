@@ -5,7 +5,7 @@ import blackList from '@/db/schema/blackList';
 import bcrypt from 'bcryptjs';
 import { generateAccessToken, generateRefreshToken, verifyToken } from '@/utils/auth';
 import { ControllerAction, RefreshPayload, UserPayload } from '@type';
-import responseBody from '@/utils/response';
+import responseBody from '@/config/response';
 import { BadRequestError, UnauthorizedError } from '@/config/error';
 
 // 登录

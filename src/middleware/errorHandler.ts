@@ -1,7 +1,7 @@
 
 import { Request, Response, NextFunction } from 'express';
 import { CustomError } from '@/config/error';
-import responseBody from '@/utils/response';
+import responseBody from '@/config/response';
 
 function errorHandler(err: Error, req: Request, res: Response, next: NextFunction) {
     if (err instanceof CustomError) {
