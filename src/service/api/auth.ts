@@ -10,7 +10,12 @@ const login = RequestConstructor<loginParams>({
 
 const registry = RequestConstructor<registerParams>({
     method: 'post',
-    url: `${baseURL}/registry`
+    url: `${baseURL}/register`
 });
 
-export { login, registry };
+const validateAuth = RequestConstructor({
+    method: 'get',
+    url: `${baseURL}/validate-auth`
+});
+
+export { login, registry, validateAuth };

@@ -1,10 +1,8 @@
 import DefaultPending from '@/components/DefaultPending';
 import useOnMounted from '@/hooks/lifecycle/useOnMounted';
-import { getAlbumList } from '@/service/api/demo';
 import { createFileRoute } from '@tanstack/react-router';
 import { toast } from 'sonner';
-import useSWR from 'swr';
-import { registry, login } from '@/service/api/auth';
+import { registry, login, validateAuth } from '@/service/api/auth';
 import { logout } from '@/service/api';
 
 export const Route = createFileRoute('/')({
@@ -30,7 +28,7 @@ function Demo() {
 
     function handleLogin() {
         login({
-            email: 'test',
+            email: 'test@163.com',
             password: 'test'
         }).then(() => {
             toast.success('登录成功');
@@ -46,6 +44,12 @@ function Demo() {
                 <button onClick={handleRegistry}>注册</button>
                 <button onClick={handleLogin}>登录</button>
                 <button onClick={logout}>注销</button>
+                <button
+                    onClick={() => {
+                        validateAuth();
+                    }}>
+                    验证
+                </button>
             </div>
         </div>
     );

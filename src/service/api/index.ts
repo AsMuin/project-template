@@ -27,7 +27,7 @@ const axiosInstance = axios.create({
 });
 
 //无需任何处理的接口
-const noCheckRequestList: string[] = ['/auth/registry', '/auth/login', '/auth/refresh-accessToken', '/auth/logout'];
+const noCheckRequestList: string[] = ['/auth/register', '/auth/login', '/auth/refresh-accessToken', '/auth/logout'];
 
 //请求处理
 axiosInstance.interceptors.request.use(async (config: InternalAxiosRequestConfig & IRequestConfig) => {
@@ -101,7 +101,7 @@ export function logout() {
         .post('/auth/logout')
         .then(() => {
             removeAccessToken();
-            window.location.href = '/login';
+            // window.location.href = '/login';
         })
         .catch(err => {
             console.error('Logout failed:', err);
@@ -114,7 +114,7 @@ async function refreshAccessToken() {
     try {
         const response = await axiosInstance.get('/auth/refresh-accessToken');
         const {
-            data: { accessToken = '' }
+            data: { data: accessToken = '' }
         } = response;
 
         if (!accessToken || response.status === 401) {
@@ -128,7 +128,7 @@ async function refreshAccessToken() {
         // refreshToken cookie 过期了，直接注销重新登录
         toast.error('登录信息已过期，请重新登录');
         removeAccessToken();
-        window.location.href = '/login';
+        // window.location.href = '/login';
 
         return Promise.reject(error);
     }
@@ -153,10 +153,10 @@ interface IRequestDataProcessing<P, RD> {
 
 export const RequestConstructor =
     <P = any, R = any>(config: IRequestConfig, requestDataProcessing?: IRequestDataProcessing<P, R>) =>
-    <RD = R>(requestParams: P, extraConfig?: IRequestConfig) => {
+    <RD = R>(requestParams?: P, extraConfig?: IRequestConfig) => {
         let requestParamsCopy = structuredClone(requestParams);
 
-        if (requestDataProcessing?.beforeRequest) {
+        if (requestDataProcessing?.beforeRequest && requestParamsCopy) {
             const beforeRequestResult = requestDataProcessing.beforeRequest(requestParamsCopy, extraConfig);
 
             if (beforeRequestResult) {
