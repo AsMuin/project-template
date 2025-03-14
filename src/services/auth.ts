@@ -4,6 +4,7 @@ import users from '@/db/schema/users';
 import { queryFilter } from '@/utils/pageQuery';
 import { and, eq, lt } from 'drizzle-orm';
 
+//检索用户
 function findUser({ id, email }: { id?: string; email?: string }) {
     const filterMap = {
         id: (value: string) => eq(users.id, value),
@@ -23,12 +24,14 @@ function findUser({ id, email }: { id?: string; email?: string }) {
     });
 }
 
+//清空无效黑名单
 function deleteBlackList() {
     const now = new Date();
 
     db.delete(blackList).where(lt(blackList.expiresAt, now));
 }
 
+//检查黑名单
 async function isTokenBlacklisted(token: string) {
     const result = await db.query.blackList.findFirst({
         where: eq(blackList.token, token)
@@ -37,6 +40,8 @@ async function isTokenBlacklisted(token: string) {
     return result ? true : false;
 }
 
+
+//添加到黑名单
 function addBlackRecord(token: string) {
     db.insert(blackList).values({
         token,

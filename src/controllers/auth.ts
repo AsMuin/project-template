@@ -60,9 +60,16 @@ const logout = RequestHandler(async (req, res) => {
 // 验证身份状态
 const validateAuth = RequestHandler(async (req, res) => {
     const user = req.user;
+    if (!user || !user.id || !user.email) {
+        throw new UnauthorizedError('无效的令牌');
+    }
+    const result = await findUser({
+        id: user.id,
+        email: user.email
+    })
 
-    if (!user) {
-        throw new UnauthorizedError('未登录');
+    if (!result) {
+        throw new UnauthorizedError('用户不存在');
     }
 
     return res.json(responseBody(true, '验证成功', { data: user }));
