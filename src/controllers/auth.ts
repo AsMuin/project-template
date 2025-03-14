@@ -5,8 +5,25 @@ import { generateAccessToken, generateRefreshToken, verifyToken } from '@/utils/
 import { RefreshPayload, UserPayload } from '@type';
 import responseBody from '@/config/response';
 import { UnauthorizedError } from '@/config/error';
-import { findUser, isTokenBlacklisted } from '@/services/auth';
+import { addUser, findUser, isTokenBlacklisted } from '@/services/auth';
 import RequestHandler from '@/config/requestHandler';
+
+//注册
+const register = RequestHandler(async (req, res) => {
+    const { name, email, password }: { name: string; email: string; password: string } = req.body;
+
+    const user = await findUser({ email });
+
+    if (user) {
+        throw new UnauthorizedError('邮箱已注册');
+    }
+
+    const passwordHash = await bcrypt.hash(password, 10);
+
+    await addUser({ name, email, passwordHash });
+
+    return res.json(responseBody(true, '注册成功'));
+});
 
 // 登录
 const login = RequestHandler(async (req, res) => {
@@ -60,13 +77,15 @@ const logout = RequestHandler(async (req, res) => {
 // 验证身份状态
 const validateAuth = RequestHandler(async (req, res) => {
     const user = req.user;
+
     if (!user || !user.id || !user.email) {
         throw new UnauthorizedError('无效的令牌');
     }
+
     const result = await findUser({
         id: user.id,
         email: user.email
-    })
+    });
 
     if (!result) {
         throw new UnauthorizedError('用户不存在');
@@ -100,7 +119,7 @@ const refreshToken = RequestHandler(async (req, res) => {
 
     const newAccessToken = generateAccessToken(user);
 
-    return res.json({ accessToken: newAccessToken });
+    return res.json(responseBody(true, '刷新Token', { data: newAccessToken }));
 });
 
-export { login, logout, refreshToken, validateAuth };
+export { register, login, logout, refreshToken, validateAuth };

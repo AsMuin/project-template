@@ -4,6 +4,16 @@ import users from '@/db/schema/users';
 import { queryFilter } from '@/utils/query';
 import { and, eq, lt } from 'drizzle-orm';
 
+//新增用户
+function addUser({ name, email, avatarUrl, passwordHash }: { name: string; email: string; avatarUrl?: string; passwordHash: string }) {
+    return db.insert(users).values({
+        name,
+        email,
+        avatarUrl,
+        passwordHash
+    });
+}
+
 //检索用户
 function findUser({ id, email }: { id?: string; email?: string }) {
     const filterMap = {
@@ -40,7 +50,6 @@ async function isTokenBlacklisted(token: string) {
     return result ? true : false;
 }
 
-
 //添加到黑名单
 function addBlackRecord(token: string) {
     db.insert(blackList).values({
@@ -49,4 +58,4 @@ function addBlackRecord(token: string) {
     });
 }
 
-export { findUser, deleteBlackList, isTokenBlacklisted, addBlackRecord };
+export { findUser, deleteBlackList, isTokenBlacklisted, addBlackRecord, addUser };
