@@ -1,7 +1,7 @@
 import db from '@/db';
 import blackList from '@/db/schema/blackList';
 import users from '@/db/schema/users';
-import { queryFilter } from '@/utils/pageQuery';
+import { queryFilter } from '@/utils/query';
 import { and, eq, lt } from 'drizzle-orm';
 
 //检索用户
