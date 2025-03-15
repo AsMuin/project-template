@@ -35,6 +35,12 @@ function Demo() {
         });
     }
 
+    function handleValidateAuth() {
+        validateAuth().then(() => {
+            toast.success('验证成功');
+        });
+    }
+
     return (
         <div className="grid min-h-screen place-content-center bg-slate-200 text-center text-3xl text-sky-400">
             <div className="flex flex-col gap-8">
@@ -44,12 +50,7 @@ function Demo() {
                 <button onClick={handleRegistry}>注册</button>
                 <button onClick={handleLogin}>登录</button>
                 <button onClick={logout}>注销</button>
-                <button
-                    onClick={() => {
-                        validateAuth();
-                    }}>
-                    验证
-                </button>
+                <button onClick={handleValidateAuth}>验证</button>
             </div>
         </div>
     );
