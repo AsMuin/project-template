@@ -128,7 +128,7 @@ async function refreshAccessToken() {
         // refreshToken cookie 过期了，直接注销重新登录
         toast.error('登录信息已过期，请重新登录');
         removeAccessToken();
-        // window.location.href = '/login';
+        window.location.href = '/login';
 
         return Promise.reject(error);
     }
