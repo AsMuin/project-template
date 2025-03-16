@@ -22,8 +22,9 @@
         "baseUrl": ".",
         "paths": {
             "@/*": ["./src/*"],
-            "@types": ["./types.d.ts"]
+            "@env": ["./envConfig.ts"]
         }
     },
-    "include": ["src"]
+    "include": ["**/*.ts", "**/*.tsx", "types.d.ts"],
+    "exclude": ["node_modules", "dist"]
 }

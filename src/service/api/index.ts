@@ -1,15 +1,6 @@
 import axios, { AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 import { toast } from 'sonner';
 
-interface IResponse<T = any> {
-    success: boolean;
-    message: string;
-    data?: T;
-}
-
-export interface IQueryList<T> {
-    itemList: T;
-}
 export interface IRequestConfig extends AxiosRequestConfig {
     toastError?: boolean;
 }

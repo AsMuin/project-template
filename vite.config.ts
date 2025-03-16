@@ -8,7 +8,7 @@ export default defineConfig(({ command, mode }) => {
     const env = loadEnv(mode, process.cwd(), '');
     const common = {
         plugins: [react(), tailwindcss(), TanStackRouterVite()],
-        resolve: { alias: { '@': resolve(__dirname, './src'), '@types': resolve(__dirname, './types.d.ts') } }
+        resolve: { alias: { '@': resolve(__dirname, './src'), '@env': resolve(__dirname, './envConfig.ts') } }
     };
 
     if (command === 'serve') {
