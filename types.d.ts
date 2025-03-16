@@ -41,3 +41,5 @@ declare global {
         signal?: AbortSignal;
     }
 }
+
+export {};
