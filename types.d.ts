@@ -15,6 +15,7 @@ interface UserPayload {
     name: string;
     email: string;
     avatarUrl?: string | null;
+    roles: string[];
 }
 
 type IUser = InferModel<typeof users>;

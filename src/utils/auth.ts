@@ -3,7 +3,7 @@ import { RefreshPayload, UserPayload } from '@type';
 import jwt from 'jsonwebtoken';
 
 function generateAccessToken(user: UserPayload): string {
-    return jwt.sign({ id: user.id, name: user.name, email: user.email, avatarUrl: user.avatarUrl } as UserPayload, SecretKey, {
+    return jwt.sign({ id: user.id, name: user.name, email: user.email, avatarUrl: user.avatarUrl, roles: user.roles } as UserPayload, SecretKey, {
         expiresIn: '15m'
     });
 }
