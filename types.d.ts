@@ -19,3 +19,5 @@ declare global {
     }
     type AuthCredentials = z.infer<typeof registerSchema>;
 }
+
+export {}
