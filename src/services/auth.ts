@@ -1,6 +1,6 @@
-import db from '@/db';
-import blackList from '@/db/schema/blackList';
-import users from '@/db/schema/users';
+import db from '@/config/database';
+import blackList from '@/models/blackList';
+import users from '@/models/users';
 import { queryFilter } from '@/utils/query';
 import { and, eq, lt } from 'drizzle-orm';
 
@@ -29,7 +29,8 @@ function findUser({ id, email }: { id?: string; email?: string }) {
             name: true,
             email: true,
             avatarUrl: true,
-            passwordHash: true
+            passwordHash: true,
+            roles: true
         }
     });
 }

@@ -3,7 +3,7 @@ import { DatabaseConfig } from './envConfig';
 
 export default defineConfig({
     out: './drizzle',
-    schema: './src/db/schema/*',
+    schema: './src/models/*',
     dialect: 'postgresql',
     dbCredentials: {
         url: DatabaseConfig.connectUrl

@@ -1,5 +1,5 @@
-import db from '@/db';
-import blackList, { blackListInsertValidation } from '@/db/schema/blackList';
+import db from '@/config/database';
+import blackList, { blackListInsertValidation } from '@/models/blackList';
 import bcrypt from 'bcryptjs';
 import { generateAccessToken, generateRefreshToken, verifyToken } from '@/utils/auth';
 import { RefreshPayload, UserPayload } from '@type';
@@ -39,7 +39,8 @@ const login = RequestHandler(async (req, res) => {
         id: user.id,
         name: user.name,
         email: user.email,
-        avatarUrl: user.avatarUrl
+        avatarUrl: user.avatarUrl,
+        roles: user.roles
     };
 
     const accessToken = generateAccessToken(payload);

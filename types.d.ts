@@ -1,7 +1,7 @@
 import type { Request, Response, NextFunction } from 'express';
 import { InferModel } from 'drizzle-orm';
-import users from '@/db/schema/users';
-import blackList from '@/db/schema/blackList';
+import users from '@/models/users';
+import blackList from '@/models/blackList';
 
 declare global {
     namespace Express {
