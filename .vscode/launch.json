@@ -1,0 +1,38 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Next.js: debug server-side",
+            "type": "node-terminal",
+            "request": "launch",
+            "command": "yarn dev"
+        },
+        {
+            "name": "Next.js: debug client-side_windows",
+            "type": "msedge",
+            "request": "launch",
+            "url": "http://localhost:3000",
+            "runtimeArgs": ["--remote-debugging-port=9222"],
+            "userDataDir": "C:\\Users\\AsMuin\\Documents\\EdgeDebugData"
+        },
+        {
+            "name": "Next.js: debug client-side_mac",
+            "type": "msedge",
+            "request": "launch",
+            "url": "http://localhost:3000",
+            "runtimeArgs": ["--remote-debugging-port=9222"],
+            "userDataDir": "/Users/muinas/Library/Application Support/Microsoft Edge"
+        },
+        {
+            "name": "Next.js: debug full stack",
+            "type": "node-terminal",
+            "request": "launch",
+            "command": "yarn dev",
+            "serverReadyAction": {
+                "pattern": "started server on .+, url: (https?://.+)",
+                "uriFormat": "%s",
+                "action": "debugWithEdge"
+            }
+        }
+    ]
+}
