@@ -1,5 +1,4 @@
 import { SecretKey } from '@env';
-import { RefreshPayload, UserPayload } from '@type';
 import jwt from 'jsonwebtoken';
 
 function generateAccessToken(user: UserPayload): string {

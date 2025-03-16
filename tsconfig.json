@@ -1,9 +1,6 @@
 {
     "compilerOptions": {
-        "typeRoots": [
-            "./node_modules/@types",
-            "./types.d.ts"
-        ],
+        "typeRoots": ["./node_modules/@types", "./types.d.ts"],
         "outDir": "build",
         "target": "ESNext",
         "module": "ESNext",
@@ -16,24 +13,12 @@
         "skipLibCheck": true,
         "baseUrl": "./",
         "paths": {
-            "@/*": [
-                "src/*"
-            ],
-            "@type": [
-                "types.d.ts"
-            ],
-            "@env": [
-                "envConfig.ts"
-            ]
+            "@/*": ["src/*"],
+            "@env": ["envConfig.ts"]
         }
     },
-    "include": [
-        "src/**/*.ts",
-        "server.ts"
-    ],
-    "exclude": [
-        "node_modules"
-    ],
+    "include": ["src/**/*.ts", "server.ts", "types.d.ts"],
+    "exclude": ["node_modules"],
     "ts-node": {
         "esm": true,
         "experimentalSpecifierResolution": "node"

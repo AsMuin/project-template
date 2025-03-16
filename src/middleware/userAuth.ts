@@ -1,7 +1,6 @@
 import { verifyToken } from '@/utils/auth';
 import { validatorNoEmpty } from '@/utils/validator';
 import { UnauthorizedError } from '@/config/error'; // 引入自定义错误类
-import { UserPayload } from '@type';
 import RequestHandler from '@/config/requestHandler';
 
 const authenticateToken = RequestHandler((req, res, next) => {

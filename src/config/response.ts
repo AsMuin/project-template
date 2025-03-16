@@ -1,4 +1,3 @@
-import { IResponse } from '@type';
 import { validatorNoEmpty } from '../utils/validator';
 
 const responseBody = <T = unknown>(

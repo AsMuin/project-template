@@ -9,37 +9,35 @@ declare global {
             user?: UserPayload; // 可选的用户信息
         }
     }
+    interface UserPayload {
+        id: string;
+        name: string;
+        email: string;
+        avatarUrl?: string | null;
+        roles: string[];
+    }
+
+    type IUser = InferModel<typeof users>;
+    type IBlackList = InferModel<typeof blackList>;
+
+    type RefreshPayload = Pick<UserPayload, 'id'>;
+
+    interface ControllerAction {
+        (req: Request, res: Response, next: NextFunction): void;
+    }
+
+    interface IResponse<T = unknown> {
+        success: boolean;
+        message: string;
+        data?: T;
+        total?: number;
+        pageIndex?: number;
+        limit?: number;
+    }
+
+    interface QueryParams<P = unknown> extends P {
+        pageIndex: number;
+        limit: number;
+        signal?: AbortSignal;
+    }
 }
-interface UserPayload {
-    id: string;
-    name: string;
-    email: string;
-    avatarUrl?: string | null;
-    roles: string[];
-}
-
-type IUser = InferModel<typeof users>;
-type IBlackList = InferModel<typeof blackList>;
-
-type RefreshPayload = Pick<UserPayload, 'id'>;
-
-interface ControllerAction {
-    (req: Request, res: Response, next: NextFunction): void;
-}
-
-interface IResponse<T = unknown> {
-    success: boolean;
-    message: string;
-    data?: T;
-    total?: number;
-    pageIndex?: number;
-    limit?: number;
-}
-
-interface QueryParams<P = unknown> extends P {
-    pageIndex: number;
-    limit: number;
-    signal?: AbortSignal;
-}
-
-export { UserPayload, ControllerAction, IResponse, RefreshPayload, QueryParams, IBlackList, IUser };
