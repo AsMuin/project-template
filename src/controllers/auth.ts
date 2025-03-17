@@ -1,7 +1,7 @@
 import db from '@/config/database';
 import blackList, { blackListInsertValidation } from '@/models/blackList';
 import bcrypt from 'bcryptjs';
-import { generateAccessToken, generateRefreshToken, verifyToken } from '@/utils/auth';
+import { generateAccessToken, generateRefreshToken, getJwtExpiry, verifyToken } from '@/utils/auth';
 import responseBody from '@/config/response';
 import { UnauthorizedError } from '@/config/error';
 import { addUser, findUser, isTokenBlacklisted } from '@/services/auth';
@@ -57,19 +57,19 @@ const login = RequestHandler(async (req, res) => {
 // 登出
 const logout = RequestHandler(async (req, res) => {
     const refreshToken = req.cookies.refresh_token as string;
+    res.clearCookie('refresh_token');
 
     if (!refreshToken) {
         throw new UnauthorizedError('无刷新令牌');
     }
-
+    const expiresAt = getJwtExpiry(refreshToken)
     const parsedData = blackListInsertValidation.parse({
         token: refreshToken,
-        expiresAt: new Date()
+        expiresAt: new Date(expiresAt)
     });
 
     await db.insert(blackList).values(parsedData);
 
-    res.clearCookie('refresh_token');
 
     return res.json(responseBody(true, '退出成功'));
 });
