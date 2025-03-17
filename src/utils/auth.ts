@@ -16,14 +16,9 @@ function verifyToken(token: string): UserPayload | RefreshPayload {
 }
 
 function getJwtExpiry(token: string) {
-    // 将JWT字符串分割成它的三个组成部分
-    const base64Url = token.split('.')[1]; // 获取payload部分
-    // 将base64url编码的payload转换为base64编码，以供解码
-    const base64 = base64Url.replace('-', '+').replace('_', '/');
-    // 解码payload并将其解析为JSON对象
-    const payload = JSON.parse(atob(base64));
-    // 返回过期时间
-    return payload.exp as number; // exp是以秒为单位的Unix时间戳
+    const decoded = jwt.decode(token) as jwt.JwtPayload;
+
+    return decoded?.exp
 }
 
 export { generateAccessToken, generateRefreshToken, verifyToken, getJwtExpiry };

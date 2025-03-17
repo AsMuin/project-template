@@ -57,19 +57,22 @@ const login = RequestHandler(async (req, res) => {
 // 登出
 const logout = RequestHandler(async (req, res) => {
     const refreshToken = req.cookies.refresh_token as string;
-    res.clearCookie('refresh_token');
 
     if (!refreshToken) {
         throw new UnauthorizedError('无刷新令牌');
     }
-    const expiresAt = getJwtExpiry(refreshToken)
-    const parsedData = blackListInsertValidation.parse({
-        token: refreshToken,
-        expiresAt: new Date(expiresAt)
-    });
 
-    await db.insert(blackList).values(parsedData);
+    res.clearCookie('refresh_token');
+    const expiresAt = getJwtExpiry(refreshToken);
 
+    if (expiresAt && Date.now().valueOf() > expiresAt) {
+        const parsedData = blackListInsertValidation.parse({
+            token: refreshToken,
+            expiresAt: new Date(expiresAt)
+        });
+
+        await db.insert(blackList).values(parsedData);
+    }
 
     return res.json(responseBody(true, '退出成功'));
 });
