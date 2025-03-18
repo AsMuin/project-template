@@ -4,6 +4,7 @@
     "main": "server.js",
     "license": "MIT",
     "type": "module",
+    "packageManager": "yarn@4.7.0",
     "scripts": {
         "build": "tsc",
         "serve": "nodemon --exec tsx server.ts",
@@ -50,8 +51,7 @@
         "globals": "^15.14.0",
         "prettier": "^3.4.2",
         "tsx": "^4.19.3",
-        "typescript": "^5.6.3",
+        "typescript": "^5.8.2",
         "typescript-eslint": "^8.19.0"
-    },
-    "packageManager": "yarn@4.7.0"
+    }
 }
