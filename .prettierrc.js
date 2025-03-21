@@ -1,5 +1,7 @@
+import * as tailwindcssPlugin from 'prettier-plugin-tailwindcss';
+
 export default {
-    plugins: ['prettier-plugin-tailwindcss'],
+    plugins: [tailwindcssPlugin],
     printWidth: 150,
     tabWidth: 4,
     // 强制使用单引号
