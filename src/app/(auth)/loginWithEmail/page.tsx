@@ -1,7 +1,7 @@
 'use client';
 
 import { loginWithEmailSchema } from '@/lib/validations';
-import { LoginWithEmail } from '@/lib/actions/auth';
+import { LoginWithEmail } from '@/db/services/auth';
 import AuthForm, { FormItemConfig } from '@/components/AuthForm';
 
 export default function SignInWithEmail() {

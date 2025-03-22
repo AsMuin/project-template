@@ -7,7 +7,7 @@ import Image from 'next/image';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import type { Session } from 'next-auth';
 import { Button } from './ui/button';
-import { signOut } from '@/lib/actions/auth';
+import { signOut } from '@/db/services/auth';
 
 export default function Header({ session }: { session?: Session }) {
     const pathname = usePathname();

@@ -1,10 +1,10 @@
 'use server';
 import db from '@/db';
-import responseBody from '../response';
+import responseBody from '../../lib/response';
 import { hash } from 'bcryptjs';
 import users from '@/db/schema/users';
 import { signIn, signOut as onSignOut } from '@/lib/auth';
-import { selectUserByEmail } from '@/db/utils/users';
+import { selectUserByEmail } from '@/db/services/users';
 
 //注册
 async function Register(params: AuthCredentials) {

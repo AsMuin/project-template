@@ -2,7 +2,7 @@
 
 import AuthForm, { FormItemConfig } from '@/components/AuthForm';
 import { loginSchema } from '@/lib/validations';
-import { LoginWithCredentials } from '@/lib/actions/auth';
+import { LoginWithCredentials } from '@/db/services/auth';
 
 export default function SignIn() {
     const loginFormConfig: FormItemConfig<Pick<AuthCredentials, 'email' | 'password'>>[] = [

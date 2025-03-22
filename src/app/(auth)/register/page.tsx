@@ -2,7 +2,7 @@
 
 import AuthForm, { FormItemConfig } from '@/components/AuthForm';
 import { registerSchema } from '@/lib/validations';
-import { Register } from '@/lib/actions/auth';
+import { Register } from '@/db/services/auth';
 
 export default function Registry() {
     const registerFormConfig: FormItemConfig<AuthCredentials>[] = [

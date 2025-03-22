@@ -8,7 +8,7 @@ import { DrizzleAdapter } from '@auth/drizzle-adapter';
 import users from '@/db/schema/users';
 import accounts from '@/db/schema/accounts';
 import verificationTokens from '@/db/schema/verificationTokens';
-import { selectUserByEmail } from '@/db/utils/users';
+import { selectUserByEmail } from '@/db/services/users';
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
     session: {
