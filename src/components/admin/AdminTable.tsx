@@ -4,7 +4,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { useCallback, useEffect, useImperativeHandle, useState, type ReactNode, createContext, useContext, useMemo, useRef } from 'react';
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '../ui/pagination';
 import { cn } from '@/lib/utils';
-import { toast } from '@/hooks/useToast';
+import { toast } from '@/lib/hooks/useToast';
 import { Skeleton } from '../ui/skeleton';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
@@ -210,7 +210,7 @@ function AdminTable<T extends Record<string, any>, P extends Record<string, any>
 
     return (
         <TableContextProvider value={contextValue}>
-            <div className="mb-2 flex justify-between pb-2 font-bebas-neue text-3xl">
+            <div className="font-bebas-neue mb-2 flex justify-between pb-2 text-3xl">
                 <h3>{title}</h3>
             </div>
             <div className="flex justify-between border-b-2 pb-4">
@@ -321,7 +321,7 @@ AdminTable.Pagination = function AdminTablePagination({ pageIndex, limit, total,
                 <PaginationPrevious disabled={pageIndex === 0} onClick={prevPageIndex} />
                 {Array.from({ length: pageCount }).map((_, i) => (
                     <PaginationItem key={i}>
-                        <PaginationLink className={cn(pageIndex === i && 'bg-slate-100 text-light-200')} onClick={() => setPageIndex(i)}>
+                        <PaginationLink className={cn(pageIndex === i && 'text-light-200 bg-slate-100')} onClick={() => setPageIndex(i)}>
                             {i + 1}
                         </PaginationLink>
                     </PaginationItem>

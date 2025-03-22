@@ -3,7 +3,7 @@
 import { FieldValues } from 'react-hook-form';
 import { z } from 'zod';
 import Link from 'next/link';
-import { toast } from '@/hooks/useToast';
+import { toast } from '@/lib/hooks/useToast';
 import { useRouter } from 'next/navigation';
 import FlexForm from './FlexForm';
 import { ControllerRenderProps, Path } from 'react-hook-form';
@@ -76,13 +76,13 @@ export default function AuthForm<T extends FieldValues>({ type, schema, formConf
             />
             <p className="text-center text-base font-medium">
                 {isLogin ? '创建新账号?' : '已有账号?'}
-                <Link className="font-bold text-primary" href={isLogin ? '/register' : '/login'}>
+                <Link className="text-primary font-bold" href={isLogin ? '/register' : '/login'}>
                     {isLogin ? '注册' : '登录'}
                 </Link>
             </p>
             {isLogin && (
                 <p className="text-center text-base font-medium">
-                    <Link className="font-bold text-primary" href={type === 'LOGIN' ? '/loginWithEmail' : '/login'}>
+                    <Link className="text-primary font-bold" href={type === 'LOGIN' ? '/loginWithEmail' : '/login'}>
                         {type === 'LOGIN' ? '邮箱验证登录' : '账号密码登录'}
                     </Link>
                 </p>

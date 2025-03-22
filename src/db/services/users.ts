@@ -1,6 +1,6 @@
 import { and, desc, SQL, arrayOverlaps } from 'drizzle-orm';
-import db from '..';
-import users from '../schema/users';
+import db from '@/lib/config/database';
+import users from '@/db/schema/users';
 import { queryFilter } from '@/lib/utils';
 
 type UserState = 'non-active' | 'active';

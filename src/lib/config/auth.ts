@@ -3,7 +3,7 @@ import NextAuth, { User } from 'next-auth';
 import credentials from 'next-auth/providers/credentials';
 import Resend from 'next-auth/providers/resend';
 import { compare } from 'bcryptjs';
-import { loginSchema } from './validations';
+import { loginSchema } from '../validations';
 import { DrizzleAdapter } from '@auth/drizzle-adapter';
 import users from '@/db/schema/users';
 import accounts from '@/db/schema/accounts';

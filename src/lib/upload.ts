@@ -1,16 +1,8 @@
 import { Upload } from '@aws-sdk/lib-storage';
-import { cloudConfig } from '../../envConfig';
+import S3 from '@/lib/config/cloudFlare';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
-
-const S3 = new S3Client({
-    region: 'auto',
-    endpoint: cloudConfig.endpoint,
-    credentials: {
-        accessKeyId: cloudConfig.accessKeyId!,
-        secretAccessKey: cloudConfig.secretAccessKey!
-    }
-});
+import { PutObjectCommand } from '@aws-sdk/client-s3';
+import { cloudConfig } from '@env';
 
 function fetContentType(fileName: string) {
     const extension = fileName.split('.').pop()?.toLowerCase();

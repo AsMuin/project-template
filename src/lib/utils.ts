@@ -1,5 +1,5 @@
 import { twMerge, twJoin, type ClassNameValue } from 'tailwind-merge';
-import { toast } from '@/hooks/useToast';
+import { toast } from '@/lib/hooks/useToast';
 import { SQL } from 'drizzle-orm';
 
 // 动态样式组合以及合并函数

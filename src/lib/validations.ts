@@ -1,4 +1,4 @@
-import { z } from '@/lib/i18n';
+import { z } from '@/lib/config/i18n';
 
 export const loginSchema = z.object({
     email: z.string().email(),

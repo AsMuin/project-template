@@ -1,9 +1,9 @@
 'use server';
-import db from '@/db';
+import db from '@/lib/config/database';
 import responseBody from '../../lib/response';
 import { hash } from 'bcryptjs';
 import users from '@/db/schema/users';
-import { signIn, signOut as onSignOut } from '@/lib/auth';
+import { signIn, signOut as onSignOut } from '@/lib/config/auth';
 import { selectUserByEmail } from '@/db/services/users';
 
 //注册

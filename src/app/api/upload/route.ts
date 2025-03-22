@@ -1,4 +1,4 @@
-import { generatePresignedUrl } from '@/lib/cloudFlare';
+import { generatePresignedUrl } from '@/lib/upload';
 import responseBody from '@/lib/response';
 import { NextResponse } from 'next/server';
 
