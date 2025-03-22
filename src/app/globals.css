@@ -1,6 +1,309 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+
+@plugin 'tailwindcss-animate';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+  --font-ibm-plex-sans: IBM Plex Sans, sans-serif;
+  --font-bebas-neue: var(--bebas-neue);
+
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+
+  --color-chart-1: hsl(var(--chart-1));
+  --color-chart-2: hsl(var(--chart-2));
+  --color-chart-3: hsl(var(--chart-3));
+  --color-chart-4: hsl(var(--chart-4));
+  --color-chart-5: hsl(var(--chart-5));
+
+  --color-primary: #e7c9a5;
+  --color-primary-admin: #25388c;
+
+  --color-green-100: #ecfdf3;
+  --color-green-400: #4c7b62;
+  --color-green-500: #2cc171;
+  --color-green-800: #027a48;
+  --color-green: #027a48;
+
+  --color-red-400: #f46f70;
+  --color-red-500: #e27233;
+  --color-red-800: #ef3a4b;
+  --color-red: #ef3a4b;
+
+  --color-blue-100: #0089f1;
+
+  --color-light-100: #d6e0ff;
+  --color-light-200: #eed1ac;
+  --color-light-300: #f8f8ff;
+  --color-light-400: #edf1f1;
+  --color-light-500: #8d8d8d;
+  --color-light-600: #f9fafb;
+  --color-light-700: #e2e8f0;
+  --color-light-800: #f8fafc;
+
+  --color-dark-100: #16191e;
+  --color-dark-200: #3a354e;
+  --color-dark-300: #232839;
+  --color-dark-400: #1e293b;
+  --color-dark-500: #0f172a;
+  --color-dark-600: #333c5c;
+  --color-dark-700: #464f6f;
+  --color-dark-800: #1e2230;
+
+  --color-gray-100: #cbd5e1;
+
+  --breakpoint-xs: 480px;
+
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+}
+
+/*
+  The default border color has changed to `currentColor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentColor);
+  }
+}
+
+@utility form-btn {
+  @apply inline-flex min-h-14 w-full items-center justify-center rounded-md bg-primary px-6 py-2 text-base font-bold text-dark-100 hover:bg-primary;
+}
+
+@utility form-input {
+  @apply min-h-14! w-full! border-none! bg-dark-300! text-base! font-bold! text-white! placeholder:font-normal! placeholder:text-light-100! focus-visible:shadow-none! focus-visible:ring-0!;
+}
+
+@utility book-title {
+  /* Book Card */
+  @apply mt-2 line-clamp-1 text-base font-semibold text-white xs:text-xl;
+}
+
+@utility book-genre {
+  @apply mt-1 line-clamp-1 text-sm italic text-light-100 xs:text-base;
+}
+
+@utility book-loaned {
+  @apply flex flex-row items-center gap-1 max-xs:justify-center;
+}
+
+@utility book-btn {
+  @apply mt-3 min-h-14 w-full bg-dark-600 font-bebas-neue text-base text-primary;
+}
+
+@utility borrowed-book {
+  /* Borrowed Book */
+  @apply gradient-vertical relative w-full rounded-2xl p-5 xs:w-min;
+}
+
+@utility borrowed-book_cover {
+  @apply flex w-full items-center justify-center rounded-lg px-10 py-4 lg:px-16;
+}
+
+@utility book-cover_extra_small {
+  /* Book Cover */
+  @apply h-10 w-[28.95px];
+}
+
+@utility book-cover_small {
+  @apply h-[76px] w-[55px];
+}
+
+@utility book-cover_medium {
+  @apply h-[199px] w-[144px];
+}
+
+@utility book-cover_regular {
+  @apply h-[169px] w-[114px] xs:h-[239px] xs:w-[174px];
+}
+
+@utility book-cover_wide {
+  @apply h-[354px] w-[256px] xs:h-[404px] xs:w-[296px];
+}
+
+@utility book-list {
+  /* Book List */
+  @apply mt-10 flex flex-wrap justify-center gap-5 max-xs:justify-between xs:gap-10;
+}
+
+@utility book-overview {
+  /* Book Overview */
+  @apply flex flex-col-reverse items-center gap-12 sm:gap-32 xl:flex-row xl:gap-8;
+
+  & h1 {
+    @apply text-5xl font-semibold text-white md:text-7xl;
+  }
+}
+
+@utility book-info {
+  @apply mt-7 flex flex-row flex-wrap gap-4 text-xl text-light-100;
+}
+
+@utility book-copies {
+  @apply mt-1 flex flex-row flex-wrap gap-4;
+
+  & p {
+    @apply text-xl text-light-100;
+  }
+
+  & p span {
+    @apply ml-2 font-semibold text-primary;
+  }
+}
+
+@utility book-description {
+  @apply mt-2 text-justify text-xl text-light-100;
+}
+
+@utility book-overview_btn {
+  @apply mt-4! min-h-14! w-fit! bg-primary! text-dark-100! hover:bg-primary/90! max-md:w-full!;
+}
+
+@utility upload-btn {
+  /* File Upload */
+  @apply flex min-h-6 w-full items-center justify-center gap-1.5 rounded-md;
+}
+
+@utility upload-filename {
+  @apply mt-1 text-center text-xs;
+}
+
+@utility progress {
+  @apply rounded-full bg-green-800 p-0.5 text-center font-bebas-neue text-[8px] font-bold leading-none text-light-100;
+}
+
+@utility search {
+  /* Search */
+  @apply relative mt-10 flex min-h-14 w-full items-center rounded-xl bg-dark-300 px-4;
+}
+
+@utility search-input {
+  @apply w-full! border-none! font-bold! text-white! placeholder:font-normal! placeholder:text-light-100! focus-visible:shadow-none! focus-visible:ring-0!;
+}
+
+@utility book-receipt_admin-btn {
+  /* Book Receipt */
+  @apply rounded-md! bg-light-300! font-semibold! text-primary-admin! hover:bg-light-300/80!;
+}
+
+@utility book-ticket-circles {
+  @apply absolute inset-x-0 -bottom-6 flex flex-row gap-1.5;
+}
+
+@utility not-found-btn {
+  @apply mt-6! min-h-12! min-w-[360px]! bg-primary! font-bebas-neue! text-xl! text-dark-100! hover:bg-primary/90!;
+}
+
+@utility pagination-btn_light {
+  @apply bg-light-300! text-dark-300! hover:bg-light-300/70!;
+}
+
+@utility pagination-btn_dark {
+  @apply bg-dark-300! hover:bg-dark-100!;
+}
+
+@utility select-trigger {
+  /* Sort */
+  @apply h-10! w-40! border-dark-100! bg-dark-300! px-4! text-light-100!;
+}
+
+@utility select-content {
+  @apply border-dark-100! bg-dark-300! text-light-100!;
+}
+
+@utility select-item {
+  @apply focus:bg-dark-600! focus:text-light-100!;
+}
+
+@utility gradient-vertical {
+  background: linear-gradient(180deg, #12141d 0%, #12151f 100%);
+}
+
+@utility gradient-gray {
+  background: linear-gradient(270deg, #37363a 0%, #353637 100%);
+}
+
+@utility gradient-blue {
+  background: linear-gradient(180deg, #232839 0%, #12141d 100%);
+}
+
+@utility auth-container {
+  /* Auth */
+  @apply relative flex flex-col-reverse text-light-100 sm:flex-row;
+}
+
+@utility auth-form {
+  @apply my-auto flex h-full min-h-screen flex-1 items-center bg-dark-100 bg-pattern bg-cover bg-top px-5 py-10;
+}
+
+@utility auth-box {
+  @apply gradient-vertical mx-auto flex max-w-xl flex-col gap-6 rounded-lg p-10;
+}
+
+@utility auth-illustration {
+  @apply sticky h-40 w-full sm:top-0 sm:h-screen sm:flex-1;
+}
+
+@utility root-container {
+  /* Root */
+  @apply flex min-h-screen flex-1 flex-col bg-dark-100 bg-pattern bg-cover bg-top px-5 xs:px-10 md:px-16;
+}
+
+@utility book-details {
+  /* Book Details */
+  @apply mb-20 mt-16 flex flex-col gap-16 lg:mt-36;
+
+  & h3 {
+    @apply text-xl font-semibold text-primary;
+  }
+}
+
+@utility library {
+  /* Library */
+  @apply mx-auto flex w-full max-w-xl flex-col text-center;
+}
+
+@utility library-subtitle {
+  @apply text-lg font-semibold uppercase text-light-100;
+}
+
+@utility library-title {
+  @apply mt-2 text-3xl font-semibold text-white xs:text-5xl;
+}
 
 @layer base {
     :root {
@@ -28,125 +331,6 @@
 }
 
 @layer components {
-    .form-btn {
-        @apply inline-flex min-h-14 w-full items-center justify-center rounded-md bg-primary px-6 py-2 text-base font-bold text-dark-100 hover:bg-primary;
-    }
-
-    .form-input {
-        @apply min-h-14 w-full border-none bg-dark-300 text-base font-bold text-white placeholder:font-normal placeholder:text-light-100 focus-visible:shadow-none focus-visible:ring-0 !important;
-    }
-
-    /* Book Card */
-    .book-title {
-        @apply mt-2 line-clamp-1 text-base font-semibold text-white xs:text-xl;
-    }
-
-    .book-genre {
-        @apply mt-1 line-clamp-1 text-sm italic text-light-100 xs:text-base;
-    }
-
-    .book-loaned {
-        @apply flex flex-row items-center gap-1 max-xs:justify-center;
-    }
-
-    .book-btn {
-        @apply mt-3 min-h-14 w-full bg-dark-600 font-bebas-neue text-base text-primary;
-    }
-
-    /* Borrowed Book */
-    .borrowed-book {
-        @apply gradient-vertical relative w-full rounded-2xl p-5 xs:w-min;
-    }
-
-    .borrowed-book_cover {
-        @apply flex w-full items-center justify-center rounded-lg px-10 py-4 lg:px-16;
-    }
-
-    /* Book Cover */
-    .book-cover_extra_small {
-        @apply h-10 w-[28.95px];
-    }
-
-    .book-cover_small {
-        @apply h-[76px] w-[55px];
-    }
-
-    .book-cover_medium {
-        @apply h-[199px] w-[144px];
-    }
-
-    .book-cover_regular {
-        @apply h-[169px] w-[114px] xs:h-[239px] xs:w-[174px];
-    }
-
-    .book-cover_wide {
-        @apply h-[354px] w-[256px] xs:h-[404px] xs:w-[296px];
-    }
-
-    /* Book List */
-    .book-list {
-        @apply mt-10 flex flex-wrap justify-center gap-5 max-xs:justify-between xs:gap-10;
-    }
-
-    /* Book Overview */
-    .book-overview {
-        @apply flex flex-col-reverse items-center gap-12 sm:gap-32 xl:flex-row xl:gap-8;
-    }
-
-    .book-overview h1 {
-        @apply text-5xl font-semibold text-white md:text-7xl;
-    }
-
-    .book-info {
-        @apply mt-7 flex flex-row flex-wrap gap-4 text-xl text-light-100;
-    }
-
-    .book-copies {
-        @apply mt-1 flex flex-row flex-wrap gap-4;
-    }
-
-    .book-copies p {
-        @apply text-xl text-light-100;
-    }
-
-    .book-copies p span {
-        @apply ml-2 font-semibold text-primary;
-    }
-
-    .book-description {
-        @apply mt-2 text-justify text-xl text-light-100;
-    }
-
-    .book-overview_btn {
-        @apply mt-4 min-h-14 w-fit bg-primary text-dark-100 hover:bg-primary/90 max-md:w-full !important;
-    }
-
-    /* File Upload */
-    .upload-btn {
-        @apply flex min-h-6 w-full items-center justify-center gap-1.5 rounded-md;
-    }
-
-    .upload-filename {
-        @apply mt-1 text-center text-xs;
-    }
-
-    .progress {
-        @apply rounded-full bg-green-800 p-0.5 text-center font-bebas-neue text-[8px] font-bold leading-none text-light-100;
-    }
-
-    /* Search */
-    .search {
-        @apply relative mt-10 flex min-h-14 w-full items-center rounded-xl bg-dark-300 px-4;
-    }
-
-    .search-input {
-        @apply w-full border-none font-bold text-white placeholder:font-normal placeholder:text-light-100 focus-visible:shadow-none focus-visible:ring-0 !important;
-    }
-
-    /* Book Receipt */
-    .book-receipt_admin-btn {
-        @apply rounded-md bg-light-300 font-semibold text-primary-admin hover:bg-light-300/80 !important;
-    }
 
     /* Book Ticket */
     #book-ticket {
@@ -173,10 +357,6 @@
         @apply absolute -right-3.5 top-1/2 size-7 -translate-y-1/2 rounded-full bg-black;
     }
 
-    .book-ticket-circles {
-        @apply absolute inset-x-0 -bottom-6 flex flex-row gap-1.5;
-    }
-
     /* Not Found */
     #not-found {
         @apply flex w-full flex-col items-center justify-center text-center;
@@ -190,96 +370,13 @@
         @apply mt-1 w-[360px] text-light-100;
     }
 
-    .not-found-btn {
-        @apply mt-6 min-h-12 min-w-[360px] bg-primary font-bebas-neue text-xl text-dark-100 hover:bg-primary/90 !important;
-    }
-
     /* Pagination */
     #pagination {
         @apply flex flex-row justify-end gap-3;
     }
 
-    .pagination-btn_light {
-        @apply bg-light-300 text-dark-300 hover:bg-light-300/70 !important;
-    }
-
-    .pagination-btn_dark {
-        @apply bg-dark-300 hover:bg-dark-100 !important;
-    }
-
     #pagination p {
         @apply inline-flex items-center rounded-md px-4 py-1.5 text-center text-sm font-semibold;
-    }
-
-    /* Sort */
-    .select-trigger {
-        @apply h-10 w-40 border-dark-100 bg-dark-300 px-4 text-light-100 !important;
-    }
-
-    .select-content {
-        @apply border-dark-100 bg-dark-300 text-light-100 !important;
-    }
-
-    .select-item {
-        @apply focus:bg-dark-600 focus:text-light-100 !important;
-    }
-}
-
-@layer utilities {
-    .gradient-vertical {
-        background: linear-gradient(180deg, #12141d 0%, #12151f 100%);
-    }
-
-    .gradient-gray {
-        background: linear-gradient(270deg, #37363a 0%, #353637 100%);
-    }
-
-    .gradient-blue {
-        background: linear-gradient(180deg, #232839 0%, #12141d 100%);
-    }
-
-    /* Auth */
-    .auth-container {
-        @apply relative flex flex-col-reverse text-light-100 sm:flex-row;
-    }
-
-    .auth-form {
-        @apply my-auto flex h-full min-h-screen flex-1 items-center bg-dark-100 bg-pattern bg-cover bg-top px-5 py-10;
-    }
-
-    .auth-box {
-        @apply gradient-vertical mx-auto flex max-w-xl flex-col gap-6 rounded-lg p-10;
-    }
-
-    .auth-illustration {
-        @apply sticky h-40 w-full sm:top-0 sm:h-screen sm:flex-1;
-    }
-
-    /* Root */
-    .root-container {
-        @apply flex min-h-screen flex-1 flex-col bg-dark-100 bg-pattern bg-cover bg-top px-5 xs:px-10 md:px-16;
-    }
-
-    /* Book Details */
-    .book-details {
-        @apply mb-20 mt-16 flex flex-col gap-16 lg:mt-36;
-    }
-
-    .book-details h3 {
-        @apply text-xl font-semibold text-primary;
-    }
-
-    /* Library */
-    .library {
-        @apply mx-auto flex w-full max-w-xl flex-col text-center;
-    }
-
-    .library-subtitle {
-        @apply text-lg font-semibold uppercase text-light-100;
-    }
-
-    .library-title {
-        @apply mt-2 text-3xl font-semibold text-white xs:text-5xl;
     }
 }
 

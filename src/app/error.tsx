@@ -7,7 +7,7 @@ interface ErrorPageProps {
 
 export default function ErrorPage({ error, reset }: ErrorPageProps) {
     return (
-        <div className="flex h-full flex-col items-center justify-center bg-gradient-to-br from-purple-500 to-indigo-600 text-white">
+        <div className="flex h-full flex-col items-center justify-center bg-linear-to-br from-purple-500 to-indigo-600 text-white">
             <div className="text-center">
                 <h1 className="mb-4 animate-bounce text-6xl font-bold">😱 哎呀！</h1>
                 <p className="mb-8 text-2xl">出了点问题：</p>
