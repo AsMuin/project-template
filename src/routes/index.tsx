@@ -4,6 +4,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import { toast } from 'sonner';
 import { registry, login, validateAuth } from '@/service/api/auth';
 import { logout } from '@/service/api';
+import useSWR from 'swr';
 
 export const Route = createFileRoute('/')({
     component: Demo
@@ -15,6 +16,10 @@ function Demo() {
             toast('Hello AsMuin');
         }, 2000);
     });
+
+    const { data, error, isLoading } = useSWR('validateAuth', validateAuth);
+
+    console.log(data, error, isLoading);
 
     function handleRegistry() {
         registry({
@@ -35,11 +40,11 @@ function Demo() {
         });
     }
 
-    function handleValidateAuth() {
-        validateAuth().then(() => {
-            toast.success('验证成功');
-        });
-    }
+    // function handleValidateAuth() {
+    //     validateAuth().then(() => {
+    //         toast.success('验证成功');
+    //     });
+    // }
 
     return (
         <div className="grid min-h-screen place-content-center bg-slate-200 text-center text-3xl text-sky-400">
@@ -50,7 +55,7 @@ function Demo() {
                 <button onClick={handleRegistry}>注册</button>
                 <button onClick={handleLogin}>登录</button>
                 <button onClick={logout}>注销</button>
-                <button onClick={handleValidateAuth}>验证</button>
+                <p>{error?.message}</p>
             </div>
         </div>
     );

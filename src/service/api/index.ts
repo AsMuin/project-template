@@ -119,22 +119,16 @@ async function refreshAccessToken() {
         // refreshToken cookie 过期了，直接注销重新登录
         toast.error('登录信息已过期，请重新登录');
         removeAccessToken();
-        window.location.href = '/login';
+        // window.location.href = '/login';
 
         return Promise.reject(error);
     }
 }
 
 export async function Request<T = any>(requestConfig: IRequestConfig, extraConfig?: IRequestConfig): Promise<IResponse<T>> {
-    try {
-        const Response = await axiosInstance.request<IResponse<T>>({ ...extraConfig, ...requestConfig });
+    const Response = await axiosInstance.request<IResponse<T>>({ ...extraConfig, ...requestConfig });
 
-        return Response.data;
-    } catch (e: any) {
-        console.error(e);
-
-        return Promise.reject(e);
-    }
+    return Response.data;
 }
 
 interface IRequestDataProcessing<P, RD> {
