@@ -1,7 +1,7 @@
 import db from '@/config/database';
 import blackList, { blackListInsertValidation } from '@/models/blackList';
 import bcrypt from 'bcryptjs';
-import { generateAccessToken, generateRefreshToken, getJwtExpiry, verifyToken } from '@/utils/auth';
+import { generateAccessToken, generateRefreshToken, getJwtExpiry, verifyToken } from '@/lib/utils/auth';
 import responseBody from '@/config/response';
 import { UnauthorizedError } from '@/config/error';
 import { addUser, findUser, isTokenBlacklisted } from '@/services/auth';

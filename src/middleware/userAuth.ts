@@ -1,5 +1,5 @@
-import { verifyToken } from '@/utils/auth';
-import { validatorNoEmpty } from '@/utils/pattern';
+import { verifyToken } from '@/lib/utils/auth';
+import { validatorNoEmpty } from '@/lib/utils/pattern';
 import { UnauthorizedError } from '@/config/error'; // 引入自定义错误类
 import RequestHandler from '@/config/requestHandler';
 

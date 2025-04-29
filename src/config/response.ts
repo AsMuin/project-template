@@ -1,4 +1,4 @@
-import { validatorNoEmpty } from '../utils/pattern';
+import { validatorNoEmpty } from '../lib/utils/pattern';
 
 const responseBody = <T = unknown>(
     success: boolean,

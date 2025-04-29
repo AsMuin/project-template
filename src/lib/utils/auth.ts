@@ -18,7 +18,7 @@ function verifyToken(token: string): UserPayload | RefreshPayload {
 function getJwtExpiry(token: string) {
     const decoded = jwt.decode(token) as jwt.JwtPayload;
 
-    return decoded?.exp
+    return decoded?.exp;
 }
 
 export { generateAccessToken, generateRefreshToken, verifyToken, getJwtExpiry };

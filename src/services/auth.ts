@@ -1,7 +1,7 @@
 import db from '@/config/database';
 import blackList from '@/models/blackList';
 import users from '@/models/users';
-import { queryFilter } from '@/utils/query';
+import { queryFilter } from '@/db/utils/query';
 import { and, eq, lt } from 'drizzle-orm';
 
 //新增用户
