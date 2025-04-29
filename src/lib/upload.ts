@@ -3,6 +3,7 @@ import S3 from '@/lib/config/cloudFlare';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { PutObjectCommand } from '@aws-sdk/client-s3';
 import { cloudConfig } from '@env';
+import { toast } from './hooks/useToast';
 
 function fetContentType(fileName: string) {
     const extension = fileName.split('.').pop()?.toLowerCase();
@@ -74,6 +75,53 @@ async function generatePresignedUrl(fileName: string, fileType: string) {
         presignedUrl,
         publicUrl: `${cloudConfig.ReturnHost}/${cloudConfig.BucketFolder}/${fileName}`
     };
+}
+
+//签发授权上传Url到R2
+export async function uploadFileByUrl(file: File) {
+    try {
+        const getUrl = await fetch('/api/upload', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                fileName: file.name,
+                fileType: file.type
+            })
+        });
+        const getUrlRes: IResponse<{
+            uploadUrl: string;
+            publicUrl: string;
+        }> = await getUrl.json();
+
+        if (!getUrlRes.success || !getUrlRes.data?.uploadUrl || !getUrlRes.data?.publicUrl) {
+            throw new Error(getUrlRes.message);
+        }
+
+        const { uploadUrl, publicUrl } = getUrlRes.data;
+
+        const upload = await fetch(uploadUrl, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': file.type
+            },
+            body: file
+        });
+
+        if (upload.ok) {
+            return publicUrl;
+        } else {
+            throw new Error('上传失败');
+        }
+    } catch (error) {
+        console.error(error);
+        toast({
+            title: '失败',
+            description: '上传失败',
+            variant: 'destructive'
+        });
+    }
 }
 
 export { uploadFile, generatePresignedUrl };

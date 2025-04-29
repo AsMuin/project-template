@@ -1,61 +1,15 @@
 import { twMerge, twJoin, type ClassNameValue } from 'tailwind-merge';
-import { toast } from '@/lib/hooks/useToast';
 import { SQL } from 'drizzle-orm';
 
 // 动态样式组合以及合并函数
-export function cn(...inputs: ClassNameValue[]) {
+function cn(...inputs: ClassNameValue[]) {
     return twMerge(twJoin(inputs));
 }
 
-//签发授权上传Url到R2
-export async function uploadFileByUrl(file: File) {
-    try {
-        const getUrl = await fetch('/api/upload', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                fileName: file.name,
-                fileType: file.type
-            })
-        });
-        const getUrlRes: IResponse<{
-            uploadUrl: string;
-            publicUrl: string;
-        }> = await getUrl.json();
 
-        if (!getUrlRes.success || !getUrlRes.data?.uploadUrl || !getUrlRes.data?.publicUrl) {
-            throw new Error(getUrlRes.message);
-        }
-
-        const { uploadUrl, publicUrl } = getUrlRes.data;
-
-        const upload = await fetch(uploadUrl, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': file.type
-            },
-            body: file
-        });
-
-        if (upload.ok) {
-            return publicUrl;
-        } else {
-            throw new Error('上传失败');
-        }
-    } catch (error) {
-        console.error(error);
-        toast({
-            title: '失败',
-            description: '上传失败',
-            variant: 'destructive'
-        });
-    }
-}
 
 // 判断是服务端还是客户端组件
-export function isServer() {
+function isServer() {
     if (typeof window == 'undefined') {
         console.log('server component');
     } else {
@@ -69,7 +23,7 @@ interface transformUrlParams {
 }
 
 //GET请求参数拼接
-export function transformGetParams({ baseUrl, params }: transformUrlParams) {
+function transformGetParams({ baseUrl, params }: transformUrlParams) {
     const url = new URL(baseUrl, window.location.href);
 
     Object.keys(params).forEach(key => {
@@ -81,7 +35,7 @@ export function transformGetParams({ baseUrl, params }: transformUrlParams) {
     return url;
 }
 
-export function queryFilter<T extends Record<string, any>>(filterConfig: Record<keyof T, (value: any) => SQL>, filterParams: T): SQL[] {
+function queryFilter<T extends Record<string, any>>(filterConfig: Record<keyof T, (value: any) => SQL>, filterParams: T): SQL[] {
     const filters: SQL[] = [];
 
     Object.entries(filterParams).forEach(([key, value]) => {
@@ -96,3 +50,77 @@ export function queryFilter<T extends Record<string, any>>(filterConfig: Record<
 
     return filters;
 }
+
+// 通配符占位
+const _ = Symbol('wildcard');
+
+type MatchPattern<T> = Partial<T> | ((value: T) => boolean) | typeof _;
+
+class Matcher<T> {
+    private value: T;
+
+    constructor(value: T) {
+        this.value = value;
+    }
+
+    on(pattern: MatchPattern<T>, handler: (value: T) => void): Matcher<T> | void {
+        // 处理通配符
+        if (pattern === _) {
+            handler(this.value);
+
+            return; // 结束链式调用
+        }
+
+        // 处理函数形式的匹配逻辑
+        if (typeof pattern === 'function') {
+            const shouldMatch = pattern(this.value);
+
+            if (shouldMatch) {
+                handler(this.value);
+
+                return; // 结束链式调用
+            }
+
+            return this; // 继续链式调用
+        }
+
+        // 处理对象匹配
+        const matches = Object.entries(pattern).every(([key, val]) => {
+            return Object.prototype.hasOwnProperty.call(this.value, key) && (this.value as any)[key] === val;
+        });
+
+        if (matches) {
+            handler(this.value);
+
+            return; // 匹配成功则结束链式调用
+        }
+
+        return this; // 没有匹配则继续链式调用下一个
+    }
+}
+
+function match<T>(value: T): Matcher<T> {
+    return new Matcher<T>(value);
+}
+
+function validatorNoEmpty<T>(data: T): boolean {
+    if (data === null || data === undefined || data === '') {
+        return false;
+    }
+
+    if (typeof data === 'number' && data === 0) {
+        return true;
+    }
+
+    if (typeof data === 'object') {
+        return Object.keys(data).length > 0;
+    }
+
+    if (data instanceof Array) {
+        return data.length > 0;
+    }
+
+    return true;
+}
+
+export { _, validatorNoEmpty, match, isServer, cn, transformGetParams, queryFilter };
