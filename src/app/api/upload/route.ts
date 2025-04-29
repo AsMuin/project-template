@@ -1,5 +1,5 @@
-import { generatePresignedUrl } from '@/lib/upload';
-import responseBody from '@/lib/response';
+import { generatePresignedUrl } from '@/lib/utils/upload';
+import responseBody from '@/lib/utils/response';
 import { NextResponse } from 'next/server';
 
 export async function POST(request: Request) {

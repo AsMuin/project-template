@@ -3,7 +3,7 @@ import S3 from '@/lib/config/cloudFlare';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { PutObjectCommand } from '@aws-sdk/client-s3';
 import { cloudConfig } from '@env';
-import { toast } from './hooks/useToast';
+import { toast } from '../hooks/useToast';
 
 function fetContentType(fileName: string) {
     const extension = fileName.split('.').pop()?.toLowerCase();

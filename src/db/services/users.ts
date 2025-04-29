@@ -1,7 +1,7 @@
 import { and, desc, SQL, arrayOverlaps } from 'drizzle-orm';
 import db from '@/lib/config/database';
 import users from '@/db/schema/users';
-import { queryFilter } from '@/lib/utils';
+import { queryFilter } from '@/db/utils/query';
 
 type UserState = 'non-active' | 'active';
 const ONE_DAY_IN_MS = 24 * 60 * 60 * 1000;

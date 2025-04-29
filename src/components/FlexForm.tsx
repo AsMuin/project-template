@@ -7,7 +7,7 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Input } from '@/components/ui/input';
 import UploadFile from './UploadFile';
 import { FormItemConfig } from './AuthForm';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils/pattern';
 import { Textarea } from './ui/textarea';
 
 export interface FlexFormProps<T extends FieldValues> {

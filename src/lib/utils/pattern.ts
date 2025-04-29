@@ -1,5 +1,4 @@
 import { twMerge, twJoin, type ClassNameValue } from 'tailwind-merge';
-import { SQL } from 'drizzle-orm';
 
 // 动态样式组合以及合并函数
 function cn(...inputs: ClassNameValue[]) {
@@ -35,21 +34,6 @@ function transformGetParams({ baseUrl, params }: transformUrlParams) {
     return url;
 }
 
-function queryFilter<T extends Record<string, any>>(filterConfig: Record<keyof T, (value: any) => SQL>, filterParams: T): SQL[] {
-    const filters: SQL[] = [];
-
-    Object.entries(filterParams).forEach(([key, value]) => {
-        if (value || value === false || value === 0) {
-            const filter = filterConfig[key as keyof typeof filterConfig];
-
-            if (filter) {
-                filters.push(filter(value));
-            }
-        }
-    });
-
-    return filters;
-}
 
 // 通配符占位
 const _ = Symbol('wildcard');
@@ -123,4 +107,4 @@ function validatorNoEmpty<T>(data: T): boolean {
     return true;
 }
 
-export { _, validatorNoEmpty, match, isServer, cn, transformGetParams, queryFilter };
+export { _, validatorNoEmpty, match, isServer, cn, transformGetParams };

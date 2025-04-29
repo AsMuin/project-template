@@ -1,6 +1,6 @@
 'use server';
 import db from '@/lib/config/database';
-import responseBody from '../../lib/response';
+import responseBody from '../../lib/utils/response';
 import { hash } from 'bcryptjs';
 import users from '@/db/schema/users';
 import { signIn, signOut as onSignOut } from '@/lib/config/auth';

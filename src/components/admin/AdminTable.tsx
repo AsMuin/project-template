@@ -3,7 +3,7 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useCallback, useEffect, useImperativeHandle, useState, type ReactNode, createContext, useContext, useMemo, useRef } from 'react';
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '../ui/pagination';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils/pattern';
 import { toast } from '@/lib/hooks/useToast';
 import { Skeleton } from '../ui/skeleton';
 import { Button } from '../ui/button';

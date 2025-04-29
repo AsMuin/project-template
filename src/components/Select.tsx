@@ -1,5 +1,5 @@
 import { Select as SelectPrimitive, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib/utils/pattern';
 
 interface SelectProps {
     options: { value: string; label: string }[];
