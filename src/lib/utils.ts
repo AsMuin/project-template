@@ -54,6 +54,9 @@ class Matcher<T> {
     }
 
     private matchesPattern(value: any, pattern: Pattern<any>): boolean {
+        const valueType = typeof value;
+        const patternType = typeof pattern;
+
         // 通配符匹配
         if (pattern === _) {
             return true;
@@ -71,13 +74,13 @@ class Matcher<T> {
         }
 
         // 如果是函数，执行谓词
-        if (typeof pattern === 'function') {
+        if (patternType === 'function') {
             return (pattern as (value: any) => boolean)(value);
         }
 
         // 判断是否为基本类型（string / number / boolean）
         const isPrimitive =
-            ['string', 'number', 'boolean'].includes(typeof value) || value instanceof String || value instanceof Number || value instanceof Boolean;
+            ['string', 'number', 'boolean'].includes(valueType) || value instanceof String || value instanceof Number || value instanceof Boolean;
 
         if (isPrimitive) {
             // 原始值直接比较
@@ -95,17 +98,11 @@ class Matcher<T> {
             }
 
             // 尝试匹配数组中的每个元素
-            for (let i = 0; i < pattern.length; i++) {
-                if (!this.matchesPattern(value[i], pattern[i])) {
-                    return false;
-                }
-            }
-
-            return true;
+            return pattern.every((p, i) => this.matchesPattern(value[i], p));
         }
 
         // 对象匹配（部分匹配）
-        if (typeof pattern === 'object' && pattern !== null && typeof value === 'object' && value !== null) {
+        if (patternType === 'object' && pattern !== null && valueType === 'object' && value !== null) {
             return Object.entries(pattern).every(([key, val]) => key in value && this.matchesPattern(value[key], val));
         }
 
@@ -126,7 +123,7 @@ function validatorNoEmpty<T>(data: T): boolean {
         return true;
     }
 
-    if (typeof data === 'object') {
+    if (typeof data === 'object' && data !== null) {
         return Object.keys(data).length > 0;
     }
 
