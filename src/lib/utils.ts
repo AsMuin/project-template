@@ -7,7 +7,7 @@ function cn(...inputs: ClassNameValue[]) {
 // 通配符占位
 const _ = Symbol('wildcard');
 
-type MatchPattern<T> = Partial<T> | ((value: T) => boolean) | typeof _;
+type Pattern<T> = ((value: T) => boolean) | T | typeof _;
 
 class Matcher<T> {
     private value: T;
@@ -16,44 +16,70 @@ class Matcher<T> {
         this.value = value;
     }
 
-    on(pattern: MatchPattern<T>, handler: (value: T) => void): Matcher<T> | void {
-        // 处理通配符
-        if (pattern === _) {
+    on(pattern: Pattern<T>, handler: (value: T) => void): Matcher<T> | void {
+        const matched = this.matchesPattern(this.value, pattern);
+
+        if (matched) {
             handler(this.value);
 
-            return; // 结束链式调用
+            // 匹配成功后终止链式调用
+            return;
         }
 
-        // 处理函数形式的匹配逻辑
+        // 继续链式调用
+        return this;
+    }
+
+    private matchesPattern(value: any, pattern: Pattern<any>): boolean {
+        if (pattern === _) {
+            return true;
+        }
+
+        // 如果是函数，执行谓词
         if (typeof pattern === 'function') {
-            const shouldMatch = pattern(this.value);
+            return (pattern as (value: any) => boolean)(value);
+        }
 
-            if (shouldMatch) {
-                handler(this.value);
+        // 判断是否为基本类型（string / number / boolean）
+        const isPrimitive =
+            ['string', 'number', 'boolean'].includes(typeof value) || value instanceof String || value instanceof Number || value instanceof Boolean;
 
-                return; // 结束链式调用
+        if (isPrimitive) {
+            // 原始值直接比较
+            return Object.is(value, pattern);
+        }
+
+        // 判断是否为数组
+        if (Array.isArray(pattern)) {
+            if (!Array.isArray(value)) {
+                return false;
             }
 
-            return this; // 继续链式调用
+            if (pattern.length > value.length) {
+                return false;
+            }
+
+            // 尝试匹配数组中的每个元素
+            for (let i = 0; i < pattern.length; i++) {
+                if (!this.matchesPattern(value[i], pattern[i])) {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
-        // 处理对象匹配
-        const matches = Object.entries(pattern).every(([key, val]) => {
-            return Object.prototype.hasOwnProperty.call(this.value, key) && (this.value as any)[key] === val;
-        });
-
-        if (matches) {
-            handler(this.value);
-
-            return; // 匹配成功则结束链式调用
+        // 对象匹配（部分匹配）
+        if (typeof pattern === 'object' && pattern !== null && typeof value === 'object' && value !== null) {
+            return Object.entries(pattern).every(([key, val]) => key in value && this.matchesPattern(value[key], val));
         }
 
-        return this; // 没有匹配则继续链式调用下一个
+        return false;
     }
 }
 
 function match<T>(value: T): Matcher<T> {
-    return new Matcher<T>(value);
+    return new Matcher(value);
 }
 
 function validatorNoEmpty<T>(data: T): boolean {
