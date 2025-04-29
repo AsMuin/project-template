@@ -1,14 +1,38 @@
+
+/**
+ * 否定模式
+ */
+class Not<T> {
+    constructor(public value: T) {}
+}
+
+function not<T>(value: T): Not<T> {
+    return new Not(value);
+}
+
+/**
+ * 或模式
+ */
+class Or<T> {
+    constructor(public patterns: Pattern<T>[]) {}
+}
+
+function or<T>(...patterns: Pattern<T>[]): Or<T> {
+    return new Or(patterns);
+}
+
 // 通配符占位
 const _ = Symbol('wildcard');
 
-type Pattern<T> = ((value: T) => boolean) | T | typeof _;
+type Pattern<T> =
+    | ((value: T) => boolean)
+    | T
+    | typeof _
+    | Not<Pattern<T>>
+    | Or<Pattern<T>>;
 
 class Matcher<T> {
-    private value: T;
-
-    constructor(value: T) {
-        this.value = value;
-    }
+    constructor(private value: T) {}
 
     on(pattern: Pattern<T>, handler: (value: T) => void): Matcher<T> | void {
         const matched = this.matchesPattern(this.value, pattern);
@@ -25,8 +49,20 @@ class Matcher<T> {
     }
 
     private matchesPattern(value: any, pattern: Pattern<any>): boolean {
+        // 通配符匹配
         if (pattern === _) {
             return true;
+        }
+        
+        // 处理 Not 包装类型
+        if (pattern instanceof Not) {
+            const negatedValue = pattern.value;
+            return !this.matchesPattern(value, negatedValue);
+        }
+
+        // 处理 Or 包装类型
+        if (pattern instanceof Or) {
+            return pattern.patterns.some(p => this.matchesPattern(value, p));
         }
 
         // 如果是函数，执行谓词
@@ -114,4 +150,4 @@ function transformGetParams({ baseUrl, params }: transformUrlParams) {
     return url;
 }
 
-export { _, validatorNoEmpty, match, transformGetParams };
+export { _, validatorNoEmpty, match, or, not, transformGetParams };
