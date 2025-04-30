@@ -126,7 +126,7 @@ async function refreshAccessToken() {
 }
 
 export async function Request<T = any>(requestConfig: IRequestConfig, extraConfig?: IRequestConfig): Promise<IResponse<T>> {
-    const Response = await axiosInstance.request<IResponse<T>>({ ...extraConfig, ...requestConfig });
+    const Response = await axiosInstance.request<IResponse<T>>({ ...requestConfig, ...extraConfig });
 
     return Response.data;
 }
@@ -136,31 +136,47 @@ interface IRequestDataProcessing<P, RD> {
     afterResponse?: (response: IResponse<RD>) => IResponse<any> | void;
 }
 
-export const RequestConstructor =
-    <P = any, R = any>(config: IRequestConfig, requestDataProcessing?: IRequestDataProcessing<P, R>) =>
-    <RD = R>(requestParams?: P, extraConfig?: IRequestConfig) => {
+export class BaseRequest<P = any, R = any> {
+    private controller: AbortController;
+    constructor(private config: IRequestConfig & IRequestDataProcessing<P, R>) {
+        this.controller = new AbortController();
+    }
+
+    public request<RD = R>(requestParams?: P, extraConfig?: IRequestConfig): Promise<IResponse<RD>> {
         let requestParamsCopy = structuredClone(requestParams);
 
-        if (requestDataProcessing?.beforeRequest && requestParamsCopy) {
-            const beforeRequestResult = requestDataProcessing.beforeRequest(requestParamsCopy, extraConfig);
+        if (this.config?.beforeRequest && requestParamsCopy) {
+            const beforeRequestResult = this.config?.beforeRequest(requestParamsCopy, extraConfig);
 
             if (beforeRequestResult) {
                 requestParamsCopy = beforeRequestResult;
             }
         }
 
-        if (requestDataProcessing?.afterResponse) {
-            config.transformResponse = [requestDataProcessing.afterResponse];
+        if (this.config?.afterResponse) {
+            this.config.transformResponse = [this.config?.afterResponse];
         }
 
-        const method = config.method?.toUpperCase() || 'GET';
+        const method = this.config.method?.toUpperCase() || 'GET';
+
+        this.config.signal = this.controller.signal;
 
         if (method === 'GET') {
-            return Request<RD>({ ...config, params: requestParamsCopy || requestParams }, extraConfig);
+            this.config.params = requestParamsCopy || requestParams;
         } else {
-            return Request<RD>({ ...config, data: requestParamsCopy || requestParams }, extraConfig);
+            this.config.data = requestParamsCopy || requestParams;
         }
-    };
+
+        return Request<RD>(this.config, extraConfig);
+    }
+    public cancel() {
+        this.controller.abort();
+        console.log('成功取消');
+    }
+    public getController() {
+        return this.controller;
+    }
+}
 
 function saveAccessToken(token: string) {
     sessionStorage.setItem('accessToken', token);

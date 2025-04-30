@@ -17,27 +17,31 @@ function Demo() {
         }, 2000);
     });
 
-    const { data, error, isLoading } = useSWR('validateAuth', validateAuth);
+    const { data, error, isLoading } = useSWR('validateAuth', validateAuth.request);
 
     console.log(data, error, isLoading);
 
     function handleRegistry() {
-        registry({
-            email: 'test@163.com',
-            password: 'test',
-            name: 'test'
-        }).then(() => {
-            toast.success('注册成功');
-        });
+        registry
+            .request({
+                email: 'test@163.com',
+                password: 'test',
+                name: 'test'
+            })
+            .then(() => {
+                toast.success('注册成功');
+            });
     }
 
     function handleLogin() {
-        login({
-            email: 'test@163.com',
-            password: 'test'
-        }).then(() => {
-            toast.success('登录成功');
-        });
+        login
+            .request({
+                email: 'test@163.com',
+                password: 'test'
+            })
+            .then(() => {
+                toast.success('登录成功');
+            });
     }
 
     // function handleValidateAuth() {

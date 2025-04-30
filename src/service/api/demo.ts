@@ -1,4 +1,4 @@
-import { RequestConstructor } from '.';
+import { BaseRequest } from '.';
 
 const BASEURL = '/demo';
 
@@ -7,7 +7,7 @@ interface GetAlbumParams {
     pageSize: number;
 }
 
-const getAlbumList = RequestConstructor<GetAlbumParams, { test: 'hello' }>({
+const getAlbumList = new BaseRequest<GetAlbumParams, { test: 'hello' }>({
     method: 'get',
     url: `${BASEURL}/list`
 });

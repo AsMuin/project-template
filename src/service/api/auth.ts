@@ -1,19 +1,19 @@
-import { RequestConstructor } from '.';
+import { BaseRequest } from '.';
 import { loginParams, registerParams } from '../validator';
 
 const baseURL = '/auth';
 
-const login = RequestConstructor<loginParams>({
+const login = new BaseRequest<loginParams>({
     method: 'post',
     url: `${baseURL}/login`
 });
 
-const registry = RequestConstructor<registerParams>({
+const registry = new BaseRequest<registerParams>({
     method: 'post',
     url: `${baseURL}/register`
 });
 
-const validateAuth = RequestConstructor({
+const validateAuth = new BaseRequest({
     method: 'get',
     url: `${baseURL}/validate-auth`
 });
