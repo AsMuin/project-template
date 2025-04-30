@@ -143,7 +143,7 @@ export class BaseRequest<P = any, R = any> {
     }
 
     public request<RD = R>(requestParams?: P, extraConfig?: IRequestConfig): Promise<IResponse<RD>> {
-        let requestParamsCopy = structuredClone(requestParams);
+        let requestParamsCopy = requestParams && structuredClone(requestParams);
 
         if (this.config?.beforeRequest && requestParamsCopy) {
             const beforeRequestResult = this.config?.beforeRequest(requestParamsCopy, extraConfig);
