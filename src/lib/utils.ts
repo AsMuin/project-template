@@ -29,14 +29,10 @@ function or<T>(...patterns: Pattern<T>[]): Or<T> {
 // 通配符占位
 const _ = Symbol('wildcard');
 
-type Pattern<T> =
-    | ((value: T) => boolean)
-    | T
-    | typeof _
-    | Not<Pattern<T>>
-    | Or<Pattern<T>>;
+type Pattern<T> = ((value: T) => boolean) | T | typeof _ | Not<Pattern<T>> | Or<Pattern<T>>;
 
 class Matcher<T> {
+    private isMatched: boolean = false;
     constructor(private value: T) {}
 
     on(pattern: Pattern<T>, handler: (value: T) => void): Matcher<T> | void {
@@ -44,9 +40,7 @@ class Matcher<T> {
 
         if (matched) {
             handler(this.value);
-
-            // 匹配成功后终止链式调用
-            return;
+            this.isMatched = true;
         }
 
         // 继续链式调用
@@ -57,14 +51,19 @@ class Matcher<T> {
         const valueType = typeof value;
         const patternType = typeof pattern;
 
+        if (this.isMatched) {
+            return false;
+        }
+
         // 通配符匹配
         if (pattern === _) {
             return true;
         }
-        
+
         // 处理 Not 包装类型
         if (pattern instanceof Not) {
             const negatedValue = pattern.value;
+
             return !this.matchesPattern(value, negatedValue);
         }
 
