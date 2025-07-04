@@ -17,7 +17,7 @@ function Demo() {
         }, 2000);
     });
 
-    const { data, error, isLoading } = useSWR('validateAuth', validateAuth.request);
+    const { data, error, isLoading } = useSWR('validateAuth', () => validateAuth.request());
 
     console.log(data, error, isLoading);
 

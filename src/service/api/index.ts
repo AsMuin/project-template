@@ -1,85 +1,141 @@
-import axios, { AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
+import axios, { AxiosError, AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 import { toast } from 'sonner';
 
-export interface IRequestConfig extends AxiosRequestConfig {
+interface IRequestConfig extends AxiosRequestConfig {
     toastError?: boolean;
+    _retry?: boolean;
+}
+
+interface IAxiosError extends AxiosError {
+    config: IRequestConfig & InternalAxiosRequestConfig;
 }
 
 /* 
 T 接口返回数据类型
 D 接口请求参数类型
 */
-export interface IResponseParams<T = any, D = any> extends AxiosResponse<T, D> {
+interface IResponseParams<T = any, D = any> extends AxiosResponse<T, D> {
     config: InternalAxiosRequestConfig & IRequestConfig;
 }
 
 const axiosInstance = axios.create({
     baseURL: '/api'
 });
+const refreshAccessTokenUrl = '/auth/refresh-accessToken';
+
+let isRefreshing = false;
+let failedQueue: Array<(token: string | null, error: Error | null) => void> = [];
 
 //无需任何处理的接口
 const noCheckRequestList: string[] = ['/auth/register', '/auth/login', '/auth/refresh-accessToken', '/auth/logout'];
 
+function processQueue(error: Error | null, token: string | null) {
+    failedQueue.forEach(callback => {
+        if (error) {
+            callback(null, error);
+        } else if (token) {
+            callback(token, null);
+        }
+    });
+
+    failedQueue = [];
+}
+
 //请求处理
 axiosInstance.interceptors.request.use(async (config: InternalAxiosRequestConfig & IRequestConfig) => {
-    try {
-        // 不进行任何处理的接口
-        if (noCheckRequestList.includes(config.url || '')) {
-            return config;
-        } else {
-            // 处理验证token
-            let accessToken = getAccessToken();
+    config._retry ??= false;
 
-            if (!accessToken) {
-                accessToken = await refreshAccessToken();
-            }
+    if (!noCheckRequestList.includes(config.url || '')) {
+        // 处理验证token
+        const accessToken = getAccessToken();
 
+        if (accessToken) {
             config.headers['Authorization'] = `Bearer ${accessToken}`;
-
-            return config;
         }
-    } catch (e: any) {
-        return Promise.reject(e);
     }
+
+    return config;
 });
 
 //响应处理
 axiosInstance.interceptors.response.use(
     // 响应成功回调
-    async (response: IResponseParams<IResponse, any>) => {
-        try {
-            const { data } = response;
+    (response: IResponseParams<IResponse, any>) => {
+        const {
+            data: { success, message }
+        } = response;
 
-            // 服务端成功响应了数据,但是业务结果是失败的
-            if (!data.success) {
-                throw new Error(data.message);
-            }
-
-            return response;
-        } catch (e: any) {
+        // 服务端成功响应了数据,但是业务结果是失败的
+        if (!success) {
             const toastError = response.config.toastError ?? true;
 
             if (toastError) {
-                toast.error(e instanceof Error ? e.message : e);
+                toast.error(message);
             }
 
-            return Promise.reject(e);
+            throw new Error(message);
         }
-    },
 
+        return response;
+    },
     //响应失败回调
-    async error => {
+    async (error: IAxiosError) => {
         const originalRequest = error.config;
 
-        // 判断是否因为token过期导致失败（还要判断是否为重试请求以及是否需要进行token检查）
-        if (error.response?.status === 401 && !originalRequest._retry && !noCheckRequestList.includes(originalRequest.url || '')) {
-            //标记为重试请求（再失败直接判断非法错误）
-            originalRequest._retry = true;
-            const newAccessToken = await refreshAccessToken();
+        if (originalRequest) {
+            // 判断是否是更新认证token失败，如果是的话两个 token 全部失效，直接登出
 
-            originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
+            if (originalRequest.url === refreshAccessTokenUrl && error.response?.status === 401) {
+                // 标记为不再更新认证token，防止其他请求继续等待
+                isRefreshing = false;
+                // 清空等待队列
+                processQueue(new Error('Session expired, please login again.'), null);
+                // 提示用户并执行登出
+                toast.error('登录信息已过期，请重新登录');
+                logout();
 
-            return axiosInstance(originalRequest);
+                return Promise.reject(error);
+            }
+
+            // 判断是否因为认证token过期导致失败
+            if (error.response?.status === 401 && !originalRequest._retry) {
+                // 标记为重试请求（再失败直接判断非法错误）
+                originalRequest._retry = true;
+
+                if (isRefreshing) {
+                    // 如果正在更新认证token，返回一个promise，这个promise会在更新完成后执行
+                    return new Promise(function (resolve, reject) {
+                        failedQueue.push((token: string | null, error: Error | null) => {
+                            if (token) {
+                                originalRequest.headers['Authorization'] = 'Bearer ' + token;
+                                resolve(axiosInstance(originalRequest));
+                            } else if (error) {
+                                reject(error);
+                            }
+                        });
+                    });
+                } else {
+                    //设定正在更新认证token
+                    isRefreshing = true;
+
+                    try {
+                        const newAccessToken = await refreshAccessToken();
+
+                        // 更新成功，执行队列中的并发请求
+                        processQueue(null, newAccessToken);
+
+                        originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
+
+                        return axiosInstance(originalRequest);
+                    } catch (e: any) {
+                        processQueue(e as Error, null);
+
+                        return Promise.reject(e);
+                    } finally {
+                        isRefreshing = false;
+                    }
+                }
+            }
         }
 
         return Promise.reject(error);
@@ -92,7 +148,6 @@ export function logout() {
         .post('/auth/logout')
         .then(() => {
             removeAccessToken();
-            // window.location.href = '/login';
         })
         .catch(err => {
             console.error('Logout failed:', err);
@@ -100,29 +155,16 @@ export function logout() {
         });
 }
 
-// 刷新accessToken
+// 刷新认证token
 async function refreshAccessToken() {
-    try {
-        const response = await axiosInstance.get('/auth/refresh-accessToken');
-        const {
-            data: { data: accessToken = '' }
-        } = response;
+    const response = await axiosInstance.get(refreshAccessTokenUrl);
+    const {
+        data: { data: accessToken = '' }
+    } = response;
 
-        if (!accessToken || response.status === 401) {
-            logout();
-        }
+    saveAccessToken(accessToken);
 
-        saveAccessToken(accessToken);
-
-        return accessToken as string;
-    } catch (error) {
-        // refreshToken cookie 过期了，直接注销重新登录
-        toast.error('登录信息已过期，请重新登录');
-        removeAccessToken();
-        // window.location.href = '/login';
-
-        return Promise.reject(error);
-    }
+    return accessToken as string;
 }
 
 export async function Request<T = any>(requestConfig: IRequestConfig, extraConfig?: IRequestConfig): Promise<IResponse<T>> {
@@ -169,6 +211,7 @@ export class BaseRequest<P = any, R = any> {
 
         return Request<RD>(this.config, extraConfig);
     }
+
     public cancel() {
         this.controller.abort();
         console.log('成功取消');
