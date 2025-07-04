@@ -4,4 +4,7 @@
     "**/.pnp.*": true,
     "../node_modules":true
   },
+  "[javascript][javascriptreact][typescript][typescriptreact]": {
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+  },
 }
