@@ -6,11 +6,13 @@ import tsEslint from 'typescript-eslint';
 import prettierPlugin from 'eslint-plugin-prettier';
 import reactPlugin from 'eslint-plugin-react';
 import pluginRouter from '@tanstack/eslint-plugin-router';
+import pluginQuery from '@tanstack/eslint-plugin-query';
 
 export default [
     js.configs.recommended,
     ...tsEslint.configs.recommended,
     ...pluginRouter.configs['flat/recommended'],
+    ...pluginQuery.configs['flat/recommended'],
     {
         ...reactPlugin.configs.flat.recommended,
         rules: { ...reactPlugin.configs.flat.recommended.rules, 'react/react-in-jsx-scope': 'off', 'react/jsx-uses-react': 'off' }

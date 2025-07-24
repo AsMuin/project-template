@@ -4,7 +4,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import { toast } from 'sonner';
 import { registry, login, validateAuth } from '@/service/api/auth';
 import { logout } from '@/service/api';
-import useSWR from 'swr';
+import { useQuery } from '@tanstack/react-query';
 
 export const Route = createFileRoute('/')({
     component: Demo
@@ -17,7 +17,10 @@ function Demo() {
         }, 2000);
     });
 
-    const { data, error, isLoading } = useSWR('validateAuth', () => validateAuth.request());
+    const { data, error, isLoading } = useQuery({
+        queryKey: ['validateAuth'],
+        queryFn: () => validateAuth.request()
+    });
 
     console.log(data, error, isLoading);
 
