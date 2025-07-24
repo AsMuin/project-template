@@ -2,7 +2,7 @@ import DefaultPending from '@/components/DefaultPending';
 import useOnMounted from '@/hooks/lifecycle/useOnMounted';
 import { createFileRoute } from '@tanstack/react-router';
 import { toast } from 'sonner';
-import { registry, login, validateAuth } from '@/service/api/auth';
+import { login, registry, validateAuth } from '@/service/api/auth';
 import { logout } from '@/service/api';
 import { useQuery } from '@tanstack/react-query';
 
@@ -19,7 +19,7 @@ function Demo() {
 
     const { data, error, isLoading } = useQuery({
         queryKey: ['validateAuth'],
-        queryFn: () => validateAuth.request()
+        queryFn: validateAuth.request
     });
 
     console.log(data, error, isLoading);

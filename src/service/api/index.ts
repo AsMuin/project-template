@@ -179,12 +179,9 @@ interface IRequestDataProcessing<P, RD> {
 }
 
 export class BaseRequest<P = any, R = any> {
-    private controller: AbortController;
-    constructor(private config: IRequestConfig & IRequestDataProcessing<P, R>) {
-        this.controller = new AbortController();
-    }
-
-    public request<RD = R>(requestParams?: P, extraConfig?: IRequestConfig): Promise<IResponse<RD>> {
+    private controller: AbortController = new AbortController();
+    constructor(private config: IRequestConfig & IRequestDataProcessing<P, R>) {}
+    public request = <RD = R>(requestParams?: P, extraConfig?: IRequestConfig): Promise<IResponse<RD>> => {
         let requestParamsCopy = requestParams && structuredClone(requestParams);
 
         if (this.config?.beforeRequest && requestParamsCopy) {
@@ -212,11 +209,12 @@ export class BaseRequest<P = any, R = any> {
         return Request<RD>(this.config, extraConfig);
     }
 
-    public cancel() {
+    public cancel = () => {
         this.controller.abort();
         console.log('成功取消');
     }
-    public getController() {
+    
+    public getController = () => {
         return this.controller;
     }
 }
