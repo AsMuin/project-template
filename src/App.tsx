@@ -1,16 +1,21 @@
 import { Outlet } from '@tanstack/react-router';
 import { lazy, Suspense } from 'react';
+import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { Toaster } from 'sonner';
+
+const queryClient = new QueryClient();
+
+window.__TANSTACK_QUERY_CLIENT__ = queryClient;
 
 function App() {
     return (
-        <>
+        <QueryClientProvider client={queryClient}>
             <Outlet />
             <Toaster />
             <Suspense>
                 <TanStackRouterDevtools />
             </Suspense>
-        </>
+        </QueryClientProvider>
     );
 }
 

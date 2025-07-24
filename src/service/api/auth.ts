@@ -13,7 +13,7 @@ const registry = new BaseRequest<registerParams>({
     url: `${baseURL}/register`
 });
 
-const validateAuth = new BaseRequest({
+const validateAuth = new BaseRequest<undefined>({
     method: 'get',
     url: `${baseURL}/validate-auth`
 });

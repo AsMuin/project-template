@@ -19,7 +19,7 @@ function Demo() {
 
     const { data, error, isLoading } = useQuery({
         queryKey: ['validateAuth'],
-        queryFn: validateAuth.request
+        queryFn: validateAuth.getQueryFn
     });
 
     console.log(data, error, isLoading);

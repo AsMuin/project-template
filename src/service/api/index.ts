@@ -179,44 +179,46 @@ interface IRequestDataProcessing<P, RD> {
 }
 
 export class BaseRequest<P = any, R = any> {
-    private controller: AbortController = new AbortController();
     constructor(private config: IRequestConfig & IRequestDataProcessing<P, R>) {}
-    public request = <RD = R>(requestParams?: P, extraConfig?: IRequestConfig): Promise<IResponse<RD>> => {
+
+    public request<RD = R>(requestParams?: P, extraConfig?: IRequestConfig): Promise<IResponse<RD>> {
         let requestParamsCopy = requestParams && structuredClone(requestParams);
 
         if (this.config?.beforeRequest && requestParamsCopy) {
-            const beforeRequestResult = this.config?.beforeRequest(requestParamsCopy, extraConfig);
+            const beforeRequestResult = this.config.beforeRequest(requestParamsCopy, extraConfig);
 
             if (beforeRequestResult) {
                 requestParamsCopy = beforeRequestResult;
             }
         }
 
-        if (this.config?.afterResponse) {
-            this.config.transformResponse = [this.config?.afterResponse];
+        const finalConfig = {
+            ...this.config,
+            ...extraConfig
+        };
+
+        if (extraConfig?.signal) {
+            finalConfig.signal = extraConfig.signal;
         }
 
-        const method = this.config.method?.toUpperCase() || 'GET';
-
-        this.config.signal = this.controller.signal;
+        const method = finalConfig.method?.toUpperCase() || 'GET';
 
         if (method === 'GET') {
-            this.config.params = requestParamsCopy || requestParams;
+            finalConfig.params = requestParamsCopy || requestParams;
         } else {
-            this.config.data = requestParamsCopy || requestParams;
+            finalConfig.data = requestParamsCopy || requestParams;
         }
 
-        return Request<RD>(this.config, extraConfig);
+        if (finalConfig.afterResponse) {
+            finalConfig.transformResponse = [finalConfig.afterResponse];
+        }
+
+        return Request<RD>(finalConfig);
     }
 
-    public cancel = () => {
-        this.controller.abort();
-        console.log('成功取消');
-    }
-    
-    public getController = () => {
-        return this.controller;
-    }
+    public getQueryFn = ({ queryKey, signal }: { queryKey: [string, P] | [string]; signal: AbortSignal }) => {
+        return this.request(queryKey[1], { signal });
+    };
 }
 
 function saveAccessToken(token: string) {
