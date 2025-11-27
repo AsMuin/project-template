@@ -6,6 +6,8 @@ import { TanStackRouterVite } from '@tanstack/router-plugin/vite';
 
 export default defineConfig(({ command, mode }) => {
     const env = loadEnv(mode, process.cwd(), '');
+
+    console.log('env', env);
     const common = {
         plugins: [react(), tailwindcss(), TanStackRouterVite()],
         resolve: { alias: { '@': resolve(__dirname, './src'), '@env': resolve(__dirname, './envConfig.ts') } }
