@@ -4784,6 +4784,7 @@ __metadata:
     tailwind-merge: "npm:^3.0.1"
     tailwindcss: "npm:^4.0.4"
     tailwindcss-animate: "npm:^1.0.7"
+    ts-pattern: "npm:^5.9.0"
     typescript: "npm:^5.8.2"
     typescript-eslint: "npm:^8.19.0"
     vite: "npm:^6.0.7"
@@ -5457,6 +5458,13 @@ __metadata:
   peerDependencies:
     typescript: ">=4.8.4"
   checksum: 10c0/9806a38adea2db0f6aa217ccc6bc9c391ddba338a9fe3080676d0d50ed806d305bb90e8cef0276e793d28c8a929f400abb184ddd7ff83a416959c0f4d2ce754f
+  languageName: node
+  linkType: hard
+
+"ts-pattern@npm:^5.9.0":
+  version: 5.9.0
+  resolution: "ts-pattern@npm:5.9.0"
+  checksum: 10c0/7640db25c39d29b287471b2b82d4f7b4674a02098c6ba4d10fed180adfb07d0e0c71930d9e59dc0d90654145e02fd320af63cf0df3c41e100d4154658a612a0a
   languageName: node
   linkType: hard
 

@@ -167,21 +167,21 @@ async function refreshAccessToken() {
     return accessToken as string;
 }
 
-export async function Request<T = any>(requestConfig: IRequestConfig, extraConfig?: IRequestConfig): Promise<IResponse<T>> {
-    const Response = await axiosInstance.request<IResponse<T>>({ ...requestConfig, ...extraConfig });
+export async function Request<Data = any, IsQueryData extends boolean = false>(requestConfig: IRequestConfig, extraConfig?: IRequestConfig) {
+    const Response = await axiosInstance.request<IResponse<Data, IsQueryData>>({ ...requestConfig, ...extraConfig });
 
     return Response.data;
 }
 
-interface IRequestDataProcessing<P, RD> {
-    beforeRequest?: (params: P, extraConfig?: IRequestConfig) => P | void;
-    afterResponse?: (response: IResponse<RD>) => IResponse<any> | void;
+interface IRequestDataProcessing<Params, ResponseData> {
+    beforeRequest?: (params: Params, extraConfig?: IRequestConfig) => Params | void;
+    afterResponse?: (response: IResponse<ResponseData>) => IResponse<any> | void;
 }
 
-export class BaseRequest<P = any, R = any> {
-    constructor(private config: IRequestConfig & IRequestDataProcessing<P, R>) {}
+export class BaseRequest<Params = any, ResponseData = any, IsQueryData extends boolean = false> {
+    constructor(private config: IRequestConfig & IRequestDataProcessing<Params, ResponseData>) {}
 
-    public request<RD = R>(requestParams?: P, extraConfig?: IRequestConfig): Promise<IResponse<RD>> {
+    public request<RD = ResponseData>(requestParams?: Params, extraConfig?: IRequestConfig) {
         let requestParamsCopy = requestParams && structuredClone(requestParams);
 
         if (this.config?.beforeRequest && requestParamsCopy) {
@@ -213,12 +213,12 @@ export class BaseRequest<P = any, R = any> {
             finalConfig.transformResponse = [finalConfig.afterResponse];
         }
 
-        return Request<RD>(finalConfig);
+        return Request<RD, IsQueryData>(finalConfig);
     }
 
-    public getQueryFn = ({ queryKey, signal }: { queryKey: [string, P] | [string]; signal: AbortSignal }) => {
+    public getQueryFn({ queryKey, signal }: { queryKey: [string, Params] | [string]; signal: AbortSignal }) {
         return this.request(queryKey[1], { signal });
-    };
+    }
 }
 
 function saveAccessToken(token: string) {
