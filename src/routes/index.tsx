@@ -5,6 +5,7 @@ import { toast } from 'sonner';
 import { login, registry, validateAuth } from '@/service/api/auth';
 import { logout } from '@/service/api';
 import { useQuery } from '@tanstack/react-query';
+import { Button } from '@/components/ui/button';
 
 export const Route = createFileRoute('/')({
     component: Demo
@@ -59,9 +60,13 @@ function Demo() {
                 <p className="drop-shadow-md duration-300 hover:scale-125 hover:text-purple-400">🎉🎉Hello AsMuin🎉🎉</p>
                 <p className="drop-shadow-md duration-300 hover:scale-125 hover:text-purple-400">There is React Project Template</p>
                 <DefaultPending />
-                <button onClick={handleRegistry}>注册</button>
-                <button onClick={handleLogin}>登录</button>
-                <button onClick={logout}>注销</button>
+                <Button onClick={handleRegistry}>注册</Button>
+                <Button type="outline" onClick={handleLogin}>
+                    登录
+                </Button>
+                <Button type="secondary" onClick={logout}>
+                    注销
+                </Button>
                 <p>{error?.message}</p>
             </div>
         </div>
