@@ -34,6 +34,15 @@ const buttonVariants = cva(
     }
 );
 
+function useButton(props: React.ComponentProps<'button'>) {
+    const getButtonProps = () => ({
+        'data-slot': 'button',
+        ...props
+    });
+
+    return { getButtonProps };
+}
+
 function Button({
     className,
     type,
@@ -46,7 +55,9 @@ function Button({
     }) {
     const Comp = asChild ? Slot : 'button';
 
-    return <Comp data-slot="button" className={cn(buttonVariants({ type, size, className }))} {...props} />;
+    const { getButtonProps } = useButton(props);
+
+    return <Comp {...getButtonProps()} className={cn(buttonVariants({ type, size, className }))} />;
 }
 
 export { Button };
