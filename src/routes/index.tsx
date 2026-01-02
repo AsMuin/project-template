@@ -26,7 +26,7 @@ function Demo() {
     console.log(data, error, isLoading);
 
     function handleRegistry() {
-        registry
+        return registry
             .request({
                 email: 'test@163.com',
                 password: 'test',
@@ -38,7 +38,7 @@ function Demo() {
     }
 
     function handleLogin() {
-        login
+        return login
             .request({
                 email: 'test@163.com',
                 password: 'test'

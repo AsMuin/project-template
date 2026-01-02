@@ -22,6 +22,19 @@ export default defineConfig([
         ignores: ['**/node_modules/**', '**/dist/**', '**/.git/**', '**/.vscode/**', '**/.yarn/**', '**/build/**', '**/public/**']
     },
     {
+        files: ['**/*.ts', '**/*.tsx'],
+        languageOptions: {
+            parserOptions: {
+                projectService: true,
+                tsconfigRootDir: __dirname
+            }
+        },
+        rules: {
+            '@typescript-eslint/no-floating-promises': 'warn',
+            '@typescript-eslint/await-thenable': 'warn'
+        }
+    },
+    {
         files: ['**/*.{ts,tsx,js,jsx}'],
         languageOptions: { globals: globals.browser },
         plugins: { prettier: prettierPlugin },

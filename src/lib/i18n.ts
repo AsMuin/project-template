@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { zodI18nMap } from 'zod-i18n-map';
 import translation from 'zod-i18n-map/locales/zh-CN/zod.json';
 
-i18next.init({
+await i18next.init({
     lng: 'zh-CN',
     resources: {
         'zh-CN': { zod: translation }
