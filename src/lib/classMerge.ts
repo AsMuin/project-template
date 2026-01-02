@@ -4,4 +4,4 @@ function cn(...inputs: ClassNameValue[]) {
     return twMerge(twJoin(inputs));
 }
 
-export { cn };
+export default cn;

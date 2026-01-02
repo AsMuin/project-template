@@ -25,6 +25,6 @@
             "@env": ["./envConfig.ts"]
         }
     },
-    "include": ["**/*.ts", "**/*.tsx", "types.d.ts"],
+    "include": ["**/*.ts", "**/*.tsx", "types.d.ts", "eslint.config.ts"],
     "exclude": ["node_modules", "dist"]
 }

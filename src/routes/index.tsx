@@ -1,11 +1,11 @@
-import DefaultPending from '@/components/DefaultPending';
+import DefaultPending from '@/features/demo/components/DefaultPending';
 import useOnMounted from '@/hooks/lifecycle/useOnMounted';
 import { createFileRoute } from '@tanstack/react-router';
 import { toast } from 'sonner';
-import { login, registry, validateAuth } from '@/service/api/auth';
-import { logout } from '@/service/api';
+import { login, registry, validateAuth } from '@/features/auth/api';
+import { logout } from '@/lib/request';
 import { useQuery } from '@tanstack/react-query';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
 
 export const Route = createFileRoute('/')({
     component: Demo

@@ -7,23 +7,25 @@ import prettierPlugin from 'eslint-plugin-prettier';
 import reactPlugin from 'eslint-plugin-react';
 import pluginRouter from '@tanstack/eslint-plugin-router';
 import pluginQuery from '@tanstack/eslint-plugin-query';
+import { defineConfig } from 'eslint/config';
 
-export default [
+export default defineConfig([
     js.configs.recommended,
-    ...tsEslint.configs.recommended,
-    ...pluginRouter.configs['flat/recommended'],
-    ...pluginQuery.configs['flat/recommended'],
+    reactHooks.configs.flat['recommended-latest'],
+    reactRefresh.configs.recommended,
+    pluginRouter.configs['flat/recommended'],
+    pluginQuery.configs['flat/recommended'],
+    reactPlugin.configs.flat.recommended,
+    reactPlugin.configs.flat['jsx-runtime'],
+    tsEslint.configs.recommended,
     {
-        ...reactPlugin.configs.flat.recommended,
-        rules: { ...reactPlugin.configs.flat.recommended.rules, 'react/react-in-jsx-scope': 'off', 'react/jsx-uses-react': 'off' }
+        ignores: ['**/node_modules/**', '**/dist/**', '**/.git/**', '**/.vscode/**', '**/.yarn/**', '**/build/**', '**/public/**']
     },
     {
         files: ['**/*.{ts,tsx,js,jsx}'],
-        languageOptions: { ecmaVersion: 2020, globals: globals.browser },
-        plugins: { 'react-hooks': reactHooks, 'react-refresh': reactRefresh, prettier: prettierPlugin },
+        languageOptions: { globals: globals.browser },
+        plugins: { prettier: prettierPlugin },
         rules: {
-            ...reactHooks.configs.recommended.rules,
-            'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
             '@typescript-eslint/no-explicit-any': 'off',
             'prettier/prettier': 'warn',
             'padding-line-between-statements': [
@@ -39,4 +41,4 @@ export default [
         },
         settings: { react: { version: 'detect' } }
     }
-];
+]);

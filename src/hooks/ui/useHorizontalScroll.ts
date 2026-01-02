@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 
 function useHorizontalScroll(sensitivity: number = 2, throttleInterval: number = 200) {
     const elementRef = useRef<HTMLDivElement | null>(null);
-    const eventTempRef = useRef(Date.now());
+    const eventTempRef = useRef(0);
 
     useEffect(() => {
         const element = elementRef.current;

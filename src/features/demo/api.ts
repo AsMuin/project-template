@@ -1,4 +1,4 @@
-import { BaseRequest } from '.';
+import { BaseRequest } from '../../lib/request';
 
 const BASEURL = '/demo';
 
