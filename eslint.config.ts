@@ -22,7 +22,7 @@ export default defineConfig([
         ignores: ['**/node_modules/**', '**/dist/**', '**/.git/**', '**/.vscode/**', '**/.yarn/**', '**/build/**', '**/public/**']
     },
     {
-        files: ['**/*.ts', '**/*.tsx'],
+        files: ['src/**/*.{ts,tsx,js,jsx}'],
         languageOptions: {
             parserOptions: {
                 projectService: true,
@@ -35,7 +35,7 @@ export default defineConfig([
         }
     },
     {
-        files: ['**/*.{ts,tsx,js,jsx}'],
+        files: ['src/**/*.{ts,tsx,js,jsx}'],
         languageOptions: { globals: globals.browser },
         plugins: { prettier: prettierPlugin },
         rules: {

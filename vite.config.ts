@@ -2,14 +2,14 @@ import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react-swc';
 import tailwindcss from '@tailwindcss/vite';
 import { resolve } from 'path';
-import { TanStackRouterVite } from '@tanstack/router-plugin/vite';
+import { tanstackRouter } from '@tanstack/router-plugin/vite';
 
 export default defineConfig(({ command, mode }) => {
     const env = loadEnv(mode, process.cwd(), '');
 
     console.log('env', env);
     const common = {
-        plugins: [react(), tailwindcss(), TanStackRouterVite()],
+        plugins: [react(), tailwindcss(), tanstackRouter()],
         resolve: { alias: { '@': resolve(__dirname, './src'), '@env': resolve(__dirname, './envConfig.ts') } }
     };
 
