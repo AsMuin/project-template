@@ -1,0 +1,25 @@
+{
+    "manifest_version": 3,
+    "name": "Anywhere Debugger",
+    "version": "1.0.1",
+    "description": "Dev tool for mocking location and config",
+    "permissions": ["activeTab", "scripting", "storage"],
+    "host_permissions": [
+        "*://localhost/*",
+        "*://127.0.0.1/*",
+        "*://192.168.*/*",
+        "*://10.*/*",
+        "*://172.*/*"
+    ],
+    "action": {
+        "default_popup": "index.html"
+    },
+    "content_scripts": [
+        {
+            "matches": ["*://localhost/*", "*://127.0.0.1/*"],
+            "js": ["mock_boot.js"],
+            "run_at": "document_start",
+            "world": "MAIN"
+        }
+    ]
+}
