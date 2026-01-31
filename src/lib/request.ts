@@ -174,8 +174,8 @@ export async function Request<Data = any, IsQueryData extends boolean = false>(r
 }
 
 interface IRequestDataProcessing<Params, ResponseData> {
-    beforeRequest?: (params: Params, extraConfig?: IRequestConfig) => Params | void;
-    afterResponse?: (response: IResponse<ResponseData>) => IResponse<any> | void;
+    beforeRequest?: (params: Params, extraConfig?: IRequestConfig) => Params;
+    afterResponse?: (response: IResponse<ResponseData>) => IResponse<any>;
 }
 
 export class BaseRequest<Params = any, ResponseData = any, IsQueryData extends boolean = false> {
