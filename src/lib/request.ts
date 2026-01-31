@@ -6,8 +6,8 @@ interface IRequestConfig extends AxiosRequestConfig {
     _retry?: boolean;
 }
 
-interface IAxiosError extends AxiosError {
-    config: IRequestConfig & InternalAxiosRequestConfig;
+interface IAxiosError<T = unknown, D = any> extends AxiosError<T, D> {
+    config: IRequestConfig & InternalAxiosRequestConfig<D>;
 }
 
 /* 
@@ -15,7 +15,7 @@ T 接口返回数据类型
 D 接口请求参数类型
 */
 interface IResponseParams<T = any, D = any> extends AxiosResponse<T, D> {
-    config: InternalAxiosRequestConfig & IRequestConfig;
+    config: InternalAxiosRequestConfig<D> & IRequestConfig;
 }
 
 const axiosInstance = axios.create({
@@ -146,12 +146,11 @@ axiosInstance.interceptors.response.use(
 export function logout() {
     axiosInstance
         .post('/auth/logout')
-        .then(() => {
-            removeAccessToken();
-        })
         .catch(err => {
             console.error('Logout failed:', err);
-            toast.error('登出失败，请稍后再试');
+        })
+        .finally(() => {
+            removeAccessToken();
         });
 }
 
@@ -179,7 +178,10 @@ interface IRequestDataProcessing<Params, ResponseData> {
 }
 
 export class BaseRequest<Params = any, ResponseData = any, IsQueryData extends boolean = false> {
-    constructor(private config: IRequestConfig & IRequestDataProcessing<Params, ResponseData>) {}
+    constructor(private config: IRequestConfig & IRequestDataProcessing<Params, ResponseData>) {
+        this.request = this.request.bind(this);
+        this.getQueryFn = this.getQueryFn.bind(this);
+    }
 
     public request<RD = ResponseData>(requestParams?: Params, extraConfig?: IRequestConfig) {
         let requestParamsCopy = requestParams && structuredClone(requestParams);
