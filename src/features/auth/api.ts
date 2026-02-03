@@ -1,5 +1,5 @@
 import { BaseRequest } from '../../lib/request';
-import { loginParams, registerParams } from '../../lib/validator';
+import { loginParams, registerParams } from './validator';
 
 const baseURL = '/auth';
 

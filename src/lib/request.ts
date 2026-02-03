@@ -14,11 +14,11 @@ interface IAxiosError extends AxiosError {
 T 接口返回数据类型
 D 接口请求参数类型
 */
-interface IResponseParams<T = any, D = any> extends AxiosResponse<T, D> {
+interface ResponseParams<T = any, D = any> extends AxiosResponse<T, D> {
     config: InternalAxiosRequestConfig & IRequestConfig;
 }
 
-const axiosInstance = axios.create({
+export const axiosInstance = axios.create({
     baseURL: '/api'
 });
 const refreshAccessTokenUrl = '/auth/refresh-accessToken';
@@ -60,7 +60,7 @@ axiosInstance.interceptors.request.use(async (config: InternalAxiosRequestConfig
 //响应处理
 axiosInstance.interceptors.response.use(
     // 响应成功回调
-    (response: IResponseParams<IResponse, any>) => {
+    (response: ResponseParams<IResponse, any>) => {
         const {
             data: { success, message }
         } = response;
