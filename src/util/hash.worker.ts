@@ -11,7 +11,7 @@ ctx.onmessage = async (e: MessageEvent<WorkerInputMessage>) => {
     const spark = new SparkMD5.ArrayBuffer();
     const reader = new FileReader();
 
-    let current = 0;
+    let currentIndex = 0;
 
     // 定义读取完成后的回调
     reader.onload = event => {
@@ -19,17 +19,16 @@ ctx.onmessage = async (e: MessageEvent<WorkerInputMessage>) => {
 
         spark.append(arrayBuffer); // 增量计算 MD5
 
-        current++;
+        currentIndex++;
 
-        // 发送计算进度
-        const message: WorkerOutputMessage = {
-            type: 'progress',
-            percentage: Number(((current / chunks.length) * 100).toFixed(2))
-        };
+        if (currentIndex < chunks.length) {
+            // 发送计算进度
+            const message: WorkerOutputMessage = {
+                type: 'progress',
+                percentage: Number(((currentIndex / chunks.length) * 100).toFixed(2))
+            };
 
-        ctx.postMessage(message);
-
-        if (current < chunks.length) {
+            ctx.postMessage(message);
             loadNext();
         } else {
             // 全部读取完毕
@@ -49,7 +48,7 @@ ctx.onmessage = async (e: MessageEvent<WorkerInputMessage>) => {
     const loadNext = () => {
         // 直接读取传入的 Blob 对象
         // Blob 在这里只是引用，不会导致内存暴涨，只有 readAsArrayBuffer 会将当前块读入内存
-        reader.readAsArrayBuffer(chunks[current]);
+        reader.readAsArrayBuffer(chunks[currentIndex]);
     };
 
     // 启动读取

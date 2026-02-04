@@ -1,12 +1,11 @@
-import { axiosInstance } from '../lib/request';
-import type { AxiosInstance } from 'axios';
-
 import HashWorker from './hash.worker?worker';
+import { mergeChunk, uploadChunk, verifyHash } from './api';
+import { attempt } from '@/util/common';
 
 interface UploaderOptions {
-    uploadUrl: string; // 上传接口
-    mergeUrl: string; // 合并接口
-    verifyUrl: string; // 校验接口
+    // uploadUrl: string; // 上传接口
+    // mergeUrl: string; // 合并接口
+    // verifyUrl: string; // 校验接口
     chunkSize?: number; // 分片大小，默认 5MB
     concurrency?: number; // 并发数，默认 3
     maxRetries?: number; // 失败重试次数，默认 3
@@ -28,7 +27,6 @@ interface UploadProgress {
 
 class ChunkUploader {
     private options: Required<UploaderOptions>;
-    private axiosInstance: AxiosInstance;
     private aborted: boolean = false;
     private worker: Worker | null = null;
 
@@ -39,7 +37,6 @@ class ChunkUploader {
             maxRetries: 3,
             ...options
         };
-        this.axiosInstance = axiosInstance;
     }
 
     /**
@@ -51,14 +48,10 @@ class ChunkUploader {
 
         // 1. 文件大小校验 (2GB)
         if (totalSize > 2 * 1024 * 1024 * 1024) {
-            throw new Error('File is too large (max 2GB)');
+            return { success: false, message: 'File is too large (max 2GB)' };
         }
 
-        try {
-            // ==============================================
-            // 步骤 A: 统一文件切片 (Single Source of Truth)
-            // ==============================================
-            // 这里只是创建了 Blob 的引用数组，非常快，不占用内存
+        const [error] = await attempt(async () => {
             const rawChunks: RawChunk[] = this._createFileChunks(file);
 
             // ==============================================
@@ -70,17 +63,19 @@ class ChunkUploader {
                 onProgress?.({ step: 'hashing', percentage: percent, loaded: 0, total: totalSize });
             });
 
-            if (this.aborted) return;
+            if (this.aborted) {
+                return { success: false, message: 'Upload aborted' };
+            }
 
             // ==============================================
             // 步骤 C: 秒传/断点续传验证
             // ==============================================
-            const { shouldUpload, uploadedChunkIndices } = await this._verifyFile(file.name, fileHash);
+            const { hasUploaded, uploadedChunkIndices } = await this._verifyFile(file.name, fileHash);
 
-            if (!shouldUpload) {
+            if (hasUploaded) {
                 onProgress?.({ step: 'done', percentage: 100, loaded: totalSize, total: totalSize });
 
-                return { message: 'Rapid upload successful' };
+                return { success: true, message: 'Rapid upload successful' };
             }
 
             // ==============================================
@@ -99,17 +94,23 @@ class ChunkUploader {
             // ==============================================
             // 步骤 E: 合并请求
             // ==============================================
-            if (this.aborted) return;
+            if (this.aborted) {
+                return { success: false, message: 'Upload aborted' };
+            }
+
             onProgress?.({ step: 'merging', percentage: 99, loaded: totalSize, total: totalSize });
 
             const result = await this._mergeRequest(file.name, fileHash);
 
             onProgress?.({ step: 'done', percentage: 100, loaded: totalSize, total: totalSize });
 
-            return result;
-        } catch (err) {
+            return { success: result.success, message: result.message };
+        });
+
+        if (error) {
             this.cleanup();
-            throw err;
+
+            return { success: false, message: error.message };
         }
     }
 
@@ -179,15 +180,15 @@ class ChunkUploader {
     /**
      * 3. 验证文件状态
      */
-    private async _verifyFile(filename: string, fileHash: string) {
-        const { data } = await this.axiosInstance.post(this.options.verifyUrl, {
-            filename,
+    private async _verifyFile(fileName: string, fileHash: string) {
+        const { data } = await verifyHash.request({
+            fileName,
             fileHash
         });
 
         return {
-            shouldUpload: data.shouldUpload, // boolean
-            uploadedChunkIndices: (data.uploadedList as number[]) || []
+            hasUploaded: data.hasUploaded, // boolean
+            uploadedChunkIndices: data.uploadedChunkIndices || []
         };
     }
 
@@ -232,9 +233,14 @@ class ChunkUploader {
         };
 
         // 递归执行器
-        const run = async (): Promise<void> => {
-            if (this.aborted) throw new Error('Aborted by user');
-            if (pool.length === 0) return;
+        const run = async () => {
+            if (this.aborted) {
+                throw new Error('Aborted by user');
+            }
+
+            if (pool.length === 0) {
+                return;
+            }
 
             const chunk = pool.shift()!;
 
@@ -242,7 +248,10 @@ class ChunkUploader {
             const task = this._uploadSingleChunkWithRetry(chunk, filename, fileHash, updateGlobalProgress)
                 .then(() => {
                     executing.delete(task);
-                    if (pool.length > 0) return run(); // 接着干下一个
+
+                    if (pool.length > 0) {
+                        return run();
+                    }
                 })
                 .catch(err => {
                     // 如果重试耗尽依然报错，则整体失败
@@ -253,8 +262,8 @@ class ChunkUploader {
             executing.add(task);
         };
 
-        // 启动初始并发队列
-        const starters = [];
+        // 启动并发窗口
+        const starters: Promise<void>[] = [];
 
         for (let i = 0; i < limit && i < chunksToUpload.length; i++) {
             starters.push(run());
@@ -262,51 +271,54 @@ class ChunkUploader {
 
         await Promise.all(starters);
     }
-
     /**
      * 5. 单个分片上传 (带重试)
      */
     private async _uploadSingleChunkWithRetry(
         chunk: RawChunk,
-        filename: string,
+        fileName: string,
         fileHash: string,
         onProgress: (idx: number, loaded: number) => void,
         retryCount = 0
     ): Promise<any> {
-        try {
-            const formData = new FormData();
-
-            formData.append('chunk', chunk.blob);
-            formData.append('filename', filename);
-            formData.append('fileHash', fileHash);
-            formData.append('index', chunk.index.toString());
-            // 可选：如果后端需要分片自身的 hash，可以在这里计算，但通常 fileHash + index 够用了
-
-            await this.axiosInstance.post(this.options.uploadUrl, formData, {
-                onUploadProgress: e => {
-                    if (e.total) onProgress(chunk.index, e.loaded);
+        const [error] = await attempt(() =>
+            uploadChunk.request(
+                {
+                    fileName,
+                    fileHash,
+                    chunkIndex: chunk.index,
+                    chunk: chunk.blob
+                },
+                {
+                    onUploadProgress(e) {
+                        if (e.total) {
+                            onProgress(chunk.index, e.loaded);
+                        }
+                    }
                 }
-            });
-        } catch (e) {
+            )
+        );
+
+        if (error) {
             if (retryCount < this.options.maxRetries) {
                 // 指数退避重试 (1s, 2s, 4s...)
                 const delay = Math.pow(2, retryCount) * 1000;
 
                 await new Promise(resolve => setTimeout(resolve, delay));
 
-                return this._uploadSingleChunkWithRetry(chunk, filename, fileHash, onProgress, retryCount + 1);
+                return this._uploadSingleChunkWithRetry(chunk, fileName, fileHash, onProgress, retryCount + 1);
             }
 
-            throw e;
+            throw error;
         }
     }
 
     /**
      * 6. 发送合并请求
      */
-    private async _mergeRequest(filename: string, fileHash: string) {
-        return this.axiosInstance.post(this.options.mergeUrl, {
-            filename,
+    private async _mergeRequest(fileName: string, fileHash: string) {
+        return mergeChunk.request({
+            fileName,
             fileHash,
             chunkSize: this.options.chunkSize
         });
