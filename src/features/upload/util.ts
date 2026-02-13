@@ -1,4 +1,4 @@
-import HashWorker from './hash.worker?worker';
+import HashWorker from '@/util/hash.worker?worker';
 import { mergeChunk, uploadChunk, verifyHash } from './api';
 import { attempt } from '@/util/common';
 
