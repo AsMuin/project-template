@@ -9,7 +9,13 @@ export default defineConfig(({ command, mode }) => {
 
     console.log('env', env);
     const common = {
-        plugins: [react(), tailwindcss(), tanstackRouter()],
+        plugins: [
+            react({
+                plugins: [['@swc/react-compiler', {}]]
+            }),
+            tailwindcss(),
+            tanstackRouter()
+        ],
         resolve: { alias: { '@': resolve(__dirname, './src'), '@env': resolve(__dirname, './envConfig.ts') } }
     };
 
