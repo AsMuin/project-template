@@ -4,34 +4,51 @@ function cn(...inputs: ClassNameValue[]) {
     return twMerge(twJoin(inputs));
 }
 
-// 定义一个唯一的 Symbol，外部无法伪造
-const ResultSymbol = Symbol('__AttemptResult__');
+class Result<E, T> implements Iterable<E | T | null> {
+    constructor(
+        public readonly error: E | null,
+        public readonly data: T | null
+    ) {}
 
-// 2. 定义基础类型
-// 我们给元组加上一个可选的 Symbol 属性标记，仅用于类型识别，不影响解构
-export type AttemptSuccess<T> = readonly [null, T];
+    get 0(): E | null {
+        return this.error;
+    }
+    get 1(): T | null {
+        return this.data;
+    }
 
-export type AttemptFailure<E> = readonly [E, null];
+    get length(): 2 {
+        return 2;
+    }
 
-export type AttemptResult<E, T> = AttemptSuccess<T> | AttemptFailure<E>;
+    *[Symbol.iterator](): Iterator<E | T | null> {
+        yield this.error;
+        yield this.data;
+    }
 
-// 3. 关键：智能拆箱类型 (Magic Type)
-// 如果 T 已经是 AttemptResult，则提取出内部的 E 和 D，并与新的 Error 合并
-// 否则，将其视为普通值，包裹为 [Error, T]
-type UnpackedResult<T> = T extends AttemptResult<infer E, infer D> ? AttemptResult<E | Error, D> : AttemptResult<Error, T>;
+    static isResult(value: any): value is Result<any, any> {
+        return value instanceof Result;
+    }
+}
 
-type AsyncUnpackedResult<T> = Promise<UnpackedResult<T>>;
-function attempt<T>(operation: Promise<T>): AsyncUnpackedResult<T>;
+interface ResultTuple<E, T> extends Iterable<E | T | null> {
+    readonly 0: E | null;
+    readonly 1: T | null;
+    readonly length: 2;
+}
+type ResolvedResult<T> = T extends ResultTuple<infer E, infer D> ? ResultTuple<E | Error, D> : ResultTuple<Error, T>;
 
-function attempt<T>(operation: () => Promise<T>): AsyncUnpackedResult<T>;
+type AsyncResolvedResult<T> = Promise<ResolvedResult<T>>;
 
-function attempt<T>(operation: () => T): UnpackedResult<T>;
+function attempt<T>(operation: Promise<T>): AsyncResolvedResult<T>;
 
-// 统一实现
-function attempt(operation: any): any {
+function attempt<T>(operation: () => Promise<T>): AsyncResolvedResult<T>;
+
+function attempt<T>(operation: () => T): ResolvedResult<T>;
+
+function attempt(operation: any) {
     const handleSuccess = (val: any) => {
-        // ✨ 严谨拆箱：只有带 Symbol 的数组才会被原样返回
-        if (isAttemptResult(val)) {
+        if (Result.isResult(val)) {
             return val;
         }
 
@@ -39,7 +56,7 @@ function attempt(operation: any): any {
     };
 
     const handleError = (e: any) => {
-        if (isAttemptResult(e)) {
+        if (Result.isResult(e)) {
             return e;
         }
 
@@ -54,7 +71,7 @@ function attempt(operation: any): any {
         const result = operation();
 
         if (result instanceof Promise || (result && typeof result.then === 'function')) {
-            return (result as Promise<any>).then(handleSuccess).catch(handleError);
+            return result.then(handleSuccess).catch(handleError);
         }
 
         return handleSuccess(result);
@@ -63,35 +80,12 @@ function attempt(operation: any): any {
     }
 }
 
-function ok<T>(value: T) {
-    const tuple: AttemptSuccess<T> = [null, value];
-
-    // 使用 Object.defineProperty 定义不可枚举属性，防止遍历数组时把这个标记遍历出来
-    Object.defineProperty(tuple, ResultSymbol, {
-        value: true,
-        writable: false,
-        enumerable: false,
-        configurable: false
-    });
-
-    return tuple;
+function ok<T>(value: T): ResultTuple<null, T> {
+    return new Result(null, value) as unknown as ResultTuple<null, T>;
 }
 
-function err<E>(error: E) {
-    const tuple: AttemptFailure<E> = [error, null];
-
-    Object.defineProperty(tuple, ResultSymbol, {
-        value: true,
-        writable: false,
-        enumerable: false,
-        configurable: false
-    });
-
-    return tuple;
-}
-
-function isAttemptResult<E, T>(value: any): value is AttemptResult<E, T> {
-    return value && typeof value === 'object' && value[ResultSymbol] === true;
+function err<E>(error: E): ResultTuple<E, null> {
+    return new Result(error, null) as unknown as ResultTuple<E, null>;
 }
 
 export { cn, attempt, err, ok };
