@@ -31,11 +31,7 @@ class Result<E, T> implements Iterable<E | T | null> {
     }
 }
 
-interface ResultTuple<E, T> extends Iterable<E | T | null> {
-    readonly 0: E | null;
-    readonly 1: T | null;
-    readonly length: 2;
-}
+type ResultTuple<E, T> = [E, T];
 type ResolvedResult<T> = T extends ResultTuple<infer E, infer D> ? ResultTuple<E | Error, D> : ResultTuple<Error, T>;
 
 type AsyncResolvedResult<T> = Promise<ResolvedResult<T>>;
