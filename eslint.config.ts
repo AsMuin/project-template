@@ -8,6 +8,9 @@ export default [
     pluginJs.configs.recommended,
     ...tseslint.configs.recommended,
     {
+        ignores: ['**/node_modules/**', '**/dist/**', '**/.git/**', '**/.vscode/**', '**/.yarn/**', '**/build/**', '**/public/**']
+    },
+    {
         files: ['**/*.{js,mjs,cjs,ts}'],
         languageOptions: { globals: globals.node },
         plugins: {
