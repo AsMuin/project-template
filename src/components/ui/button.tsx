@@ -1,5 +1,4 @@
-import * as React from 'react';
-import { Slot } from '@radix-ui/react-slot';
+import { Slot as SlotPrimitive } from 'radix-ui';
 import { cva, type VariantProps } from 'class-variance-authority';
 
 import { cn } from '@/util/common';
@@ -53,7 +52,7 @@ function Button({
     Omit<React.ComponentProps<'button'>, 'type'> & {
         asChild?: boolean;
     }) {
-    const Comp = asChild ? Slot : 'button';
+    const Comp = asChild ? SlotPrimitive.Slot : 'button';
 
     const { getButtonProps } = useButton(props);
 
