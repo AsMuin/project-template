@@ -4,7 +4,7 @@ declare global {
         message: string;
         data: T;
         total: IsQueryData extends true ? number : undefined;
-        pageIndex: IsQueryData extends true ? number : undefined;
+        page: IsQueryData extends true ? number : undefined;
         limit: IsQueryData extends true ? number : undefined;
     }
     interface Window {

@@ -42,6 +42,7 @@ export default defineConfig([
             '@typescript-eslint/no-explicit-any': 'off',
             'prettier/prettier': 'warn',
             'react-refresh/only-export-components': 'off',
+            curly: 'error',
             'padding-line-between-statements': [
                 'warn',
                 { blankLine: 'always', prev: '*', next: 'return' }, // return 前必须空行
