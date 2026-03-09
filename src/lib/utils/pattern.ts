@@ -23,12 +23,7 @@ function or<T>(...patterns: Pattern<T>[]): Or<T> {
 // 通配符占位
 const _ = Symbol('wildcard');
 
-type Pattern<T> =
-    | ((value: T) => boolean)
-    | T
-    | typeof _
-    | Not<Pattern<T>>
-    | Or<Pattern<T>>;
+type Pattern<T> = ((value: T) => boolean) | T | typeof _ | Not<Pattern<T>> | Or<Pattern<T>>;
 
 class Matcher<T> {
     constructor(private value: T) {}
@@ -55,10 +50,11 @@ class Matcher<T> {
         if (pattern === _) {
             return true;
         }
-        
+
         // 处理 Not 包装类型
         if (pattern instanceof Not) {
             const negatedValue = pattern.value;
+
             return !this.matchesPattern(value, negatedValue);
         }
 
@@ -110,6 +106,7 @@ function match<T>(value: T): Matcher<T> {
 
 function validatorNoEmpty<T>(data: T): boolean {
     const dataType = typeof data;
+
     if (data === null || data === undefined || data === '') {
         return false;
     }

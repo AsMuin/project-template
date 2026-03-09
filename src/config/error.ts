@@ -31,3 +31,15 @@ export class InternalServerError extends CustomError {
         super(500, message);
     }
 }
+
+export class ConflictError extends CustomError {
+    constructor(message: string = 'Conflict') {
+        super(409, message);
+    }
+}
+
+export class ForbiddenError extends CustomError {
+    constructor(message: string = 'Forbidden') {
+        super(403, message);
+    }
+}

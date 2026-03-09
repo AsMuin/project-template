@@ -19,6 +19,7 @@ export default [
         rules: {
             '@typescript-eslint/no-explicit-any': 'off',
             'prettier/prettier': 'warn',
+            curly: 'error',
             'padding-line-between-statements': [
                 'warn',
                 { blankLine: 'always', prev: '*', next: 'return' }, // return 前必须空行

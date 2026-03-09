@@ -6,8 +6,11 @@
     "type": "module",
     "packageManager": "yarn@4.7.0",
     "scripts": {
-        "build": "tsc",
-        "serve": "nodemon --exec tsx server.ts",
+        "serve": "tsx watch server.ts",
+        "type-check": "tsc --noEmit",
+        "build": "yarn type-check && tsup",
+        "start": "node dist/server.js",
+        "lint": "eslint .",
         "db:generate": "drizzle-kit generate",
         "db:migrate": "drizzle-kit migrate",
         "db:studio": "drizzle-kit studio"
@@ -49,8 +52,9 @@
         "eslint": "^9.17.0",
         "eslint-plugin-prettier": "^5.2.1",
         "globals": "^15.14.0",
+        "jiti": "^2.6.1",
         "prettier": "^3.4.2",
-        "tsx": "^4.19.3",
+        "tsup": "^8.5.1",
         "typescript": "^5.8.2",
         "typescript-eslint": "^8.19.0"
     }

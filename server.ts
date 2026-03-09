@@ -1,6 +1,6 @@
 import express from 'express';
 import cookieParser from 'cookie-parser';
-import authRouter from '@/routes/auth';
+import authRouter from '@/features/auth/route';
 import errorHandler from '@/middleware/errorHandler';
 import { networkInterfaces } from 'os';
 

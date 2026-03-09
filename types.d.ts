@@ -31,12 +31,12 @@ declare global {
         message: string;
         data?: T;
         total?: number;
-        pageIndex?: number;
+        page?: number;
         limit?: number;
     }
 
     interface QueryParams<P = unknown> extends P {
-        pageIndex: number;
+        page: number;
         limit: number;
         signal?: AbortSignal;
     }

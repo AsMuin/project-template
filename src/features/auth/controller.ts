@@ -4,7 +4,7 @@ import bcrypt from 'bcryptjs';
 import { generateAccessToken, generateRefreshToken, getJwtExpiry, verifyToken } from '@/lib/utils/auth';
 import responseBody from '@/config/response';
 import { UnauthorizedError } from '@/config/error';
-import { addUser, findUser, isTokenBlacklisted } from '@/services/auth';
+import { addUser, findUser, isTokenBlacklisted } from '@/features/auth/service';
 import RequestHandler from '@/config/requestHandler';
 
 //注册
