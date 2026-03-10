@@ -3,16 +3,18 @@ import pluginJs from '@eslint/js';
 import tseslint from 'typescript-eslint';
 import prettierPlugin from 'eslint-plugin-prettier';
 
-/** @type {import('eslint').Linter.Config[]} */
 export default [
     pluginJs.configs.recommended,
     ...tseslint.configs.recommended,
     {
-        ignores: ['**/node_modules/**', '**/dist/**', '**/.git/**', '**/.vscode/**', '**/.yarn/**', '**/build/**', '**/public/**']
-    },
-    {
-        files: ['**/*.{js,mjs,cjs,ts}'],
-        languageOptions: { globals: globals.node },
+        ignores: ['**/node_modules/**', '**/dist/**', '**/.git/**', '**/.vscode/**', '**/.yarn/**', '**/build/**', '**/public/**'],
+        languageOptions: {
+            globals: globals.node,
+            parserOptions: {
+                projectService: true,
+                tsconfigRootDir: import.meta.dirname
+            }
+        },
         plugins: {
             prettier: prettierPlugin
         },
