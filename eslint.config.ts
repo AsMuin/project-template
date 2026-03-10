@@ -11,7 +11,9 @@ export default [
         languageOptions: {
             globals: globals.node,
             parserOptions: {
-                projectService: true,
+                projectService: {
+                    allowDefaultProject: ['.prettierrc.js']
+                },
                 tsconfigRootDir: import.meta.dirname
             }
         },
