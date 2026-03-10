@@ -19,6 +19,9 @@ export default defineConfig([
     reactPlugin.configs.flat['jsx-runtime'],
     tsEslint.configs.recommended,
     {
+        ignores: ['**/node_modules/**', '**/dist/**', '**/.git/**', '**/.vscode/**', '**/.yarn/**', '**/build/**', '**/public/**']
+    },
+    {
         languageOptions: {
             parserOptions: {
                 projectService: { allowDefaultProject: ['.prettierrc.js'] },
@@ -26,7 +29,6 @@ export default defineConfig([
             },
             globals: globals.browser
         },
-        ignores: ['**/node_modules/**', '**/dist/**', '**/.git/**', '**/.vscode/**', '**/.yarn/**', '**/build/**', '**/public/**'],
         plugins: { prettier: prettierPlugin },
         rules: {
             '@typescript-eslint/no-explicit-any': 'off',
