@@ -21,12 +21,13 @@ export default defineConfig([
     {
         languageOptions: {
             parserOptions: {
-                projectService: true,
+                projectService: { allowDefaultProject: ['.prettierrc.js'] },
                 tsconfigRootDir: import.meta.dirname
             },
             globals: globals.browser
         },
         ignores: ['**/node_modules/**', '**/dist/**', '**/.git/**', '**/.vscode/**', '**/.yarn/**', '**/build/**', '**/public/**'],
+        // files: ['src/**/*.{ts,tsx,js,jsx}'],
         plugins: { prettier: prettierPlugin },
         rules: {
             '@typescript-eslint/no-explicit-any': 'off',
