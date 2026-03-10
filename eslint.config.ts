@@ -19,29 +19,21 @@ export default defineConfig([
     reactPlugin.configs.flat['jsx-runtime'],
     tsEslint.configs.recommended,
     {
-        ignores: ['**/node_modules/**', '**/dist/**', '**/.git/**', '**/.vscode/**', '**/.yarn/**', '**/build/**', '**/public/**']
-    },
-    {
-        files: ['src/**/*.{ts,tsx,js,jsx}'],
         languageOptions: {
             parserOptions: {
                 projectService: true,
-                tsconfigRootDir: __dirname
-            }
+                tsconfigRootDir: import.meta.dirname
+            },
+            globals: globals.browser
         },
-        rules: {
-            '@typescript-eslint/no-floating-promises': 'warn',
-            '@typescript-eslint/await-thenable': 'warn'
-        }
-    },
-    {
-        files: ['src/**/*.{ts,tsx,js,jsx}'],
-        languageOptions: { globals: globals.browser },
+        ignores: ['**/node_modules/**', '**/dist/**', '**/.git/**', '**/.vscode/**', '**/.yarn/**', '**/build/**', '**/public/**'],
         plugins: { prettier: prettierPlugin },
         rules: {
             '@typescript-eslint/no-explicit-any': 'off',
             'prettier/prettier': 'warn',
             'react-refresh/only-export-components': 'off',
+            '@typescript-eslint/no-floating-promises': 'warn',
+            '@typescript-eslint/await-thenable': 'warn',
             curly: 'error',
             'padding-line-between-statements': [
                 'warn',
