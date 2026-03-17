@@ -1,0 +1,1 @@
+{"root":["./eslint.config.ts","./index.ts","./utils.ts","./vite.config.ts","./debug.tsx","./components/button.tsx","./components/skeleton.tsx","./components/sonner.tsx","./components/toast.tsx","./svg/spotlight.tsx"],"version":"5.9.3"}

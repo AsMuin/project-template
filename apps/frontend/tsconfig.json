@@ -1,0 +1,14 @@
+{
+    "compilerOptions": {
+        "strict": true,
+        "baseUrl": ".",
+        "paths": {
+            "@/*": ["./src/*"],
+            "@env": ["./envConfig.ts"],
+            "@repo/ui": ["../../packages/ui/index.ts"],
+            "@repo/ui/*": ["../../packages/ui/*"]
+        }
+    },
+    "files": [],
+    "references": [{ "path": "./tsconfig.app.json" }, { "path": "./tsconfig.node.json" }]
+}
