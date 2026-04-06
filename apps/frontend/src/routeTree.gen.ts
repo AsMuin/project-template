@@ -8,91 +8,28 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { createFileRoute } from '@tanstack/react-router'
-
 import { Route as rootRouteImport } from './routes/__root'
 
-const SearchLazyRouteImport = createFileRoute('/search')()
-const KeywordsLazyRouteImport = createFileRoute('/keywords')()
-const IndexLazyRouteImport = createFileRoute('/')()
-
-const SearchLazyRoute = SearchLazyRouteImport.update({
-  id: '/search',
-  path: '/search',
-  getParentRoute: () => rootRouteImport,
-} as any).lazy(() => import('./routes/search.lazy').then((d) => d.Route))
-const KeywordsLazyRoute = KeywordsLazyRouteImport.update({
-  id: '/keywords',
-  path: '/keywords',
-  getParentRoute: () => rootRouteImport,
-} as any).lazy(() => import('./routes/keywords.lazy').then((d) => d.Route))
-const IndexLazyRoute = IndexLazyRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
-
-export interface FileRoutesByFullPath {
-  '/': typeof IndexLazyRoute
-  '/keywords': typeof KeywordsLazyRoute
-  '/search': typeof SearchLazyRoute
-}
-export interface FileRoutesByTo {
-  '/': typeof IndexLazyRoute
-  '/keywords': typeof KeywordsLazyRoute
-  '/search': typeof SearchLazyRoute
-}
+export interface FileRoutesByFullPath {}
+export interface FileRoutesByTo {}
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexLazyRoute
-  '/keywords': typeof KeywordsLazyRoute
-  '/search': typeof SearchLazyRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/keywords' | '/search'
+  fullPaths: never
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/keywords' | '/search'
-  id: '__root__' | '/' | '/keywords' | '/search'
+  to: never
+  id: '__root__'
   fileRoutesById: FileRoutesById
 }
-export interface RootRouteChildren {
-  IndexLazyRoute: typeof IndexLazyRoute
-  KeywordsLazyRoute: typeof KeywordsLazyRoute
-  SearchLazyRoute: typeof SearchLazyRoute
-}
+export interface RootRouteChildren {}
 
 declare module '@tanstack/react-router' {
-  interface FileRoutesByPath {
-    '/search': {
-      id: '/search'
-      path: '/search'
-      fullPath: '/search'
-      preLoaderRoute: typeof SearchLazyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/keywords': {
-      id: '/keywords'
-      path: '/keywords'
-      fullPath: '/keywords'
-      preLoaderRoute: typeof KeywordsLazyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexLazyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-  }
+  interface FileRoutesByPath {}
 }
 
-const rootRouteChildren: RootRouteChildren = {
-  IndexLazyRoute: IndexLazyRoute,
-  KeywordsLazyRoute: KeywordsLazyRoute,
-  SearchLazyRoute: SearchLazyRoute,
-}
+const rootRouteChildren: RootRouteChildren = {}
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()

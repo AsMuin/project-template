@@ -55,11 +55,11 @@
     },
     "private": true,
     "scripts": {
-        "build": "run-p lint && vite build",
-        "dev": "vite",
-        "lint": "yarn type-check && eslint .",
-        "preview": "vite preview",
-        "type-check": "tsc -b"
+        "build": "bun run-p lint && bun --bun vite build",
+        "dev": "bun --bun vite",
+        "lint": "bun type-check && bun eslint .",
+        "preview": "bun vite preview",
+        "type-check": "bun tsc -b"
     },
     "type": "module"
 }

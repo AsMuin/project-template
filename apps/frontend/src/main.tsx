@@ -5,7 +5,7 @@ import { RouterProvider, createRouter } from '@tanstack/react-router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import { routeTree } from './routeTree.gen';
-import '@repo/ui/styles.css';
+import '@repo/ui-sdk/styles.css';
 
 declare module '@tanstack/react-router' {
     interface Register {

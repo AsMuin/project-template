@@ -1,4 +1,4 @@
-import { cn } from '../utils';
+import { cn } from '@/lib/utils';
 
 const Spotlight = ({ className, fill = 'white' }: { className?: string; fill?: string }) => {
     return (

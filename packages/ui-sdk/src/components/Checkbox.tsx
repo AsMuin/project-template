@@ -1,4 +1,4 @@
-import { BaseCheckbox } from '@/components/ui/checkbox';
+import { BaseCheckbox } from '@/components/ui/Checkbox';
 import { Field, FieldContent, FieldDescription, FieldGroup, FieldLabel } from '@/components/ui/Field';
 import { cn } from '@/lib/utils';
 import { useId } from 'react';
