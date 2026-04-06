@@ -23,7 +23,7 @@ export default defineConfig(({ command, mode }) => {
 
     if (command === 'serve') {
         return {
-            ...common,
+            ...common
             // dev 独有配置
             // server: {
             //     proxy: { '/api': { target: 'http://192.168.124.67:3222', changeOrigin: true } },

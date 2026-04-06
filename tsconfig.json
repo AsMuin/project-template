@@ -3,10 +3,21 @@
         "strict": true,
         "baseUrl": ".",
         "paths": {
-            "@/*": ["./src/*"],
-            "@env": ["./envConfig.ts"]
+            "@/*": [
+                "./src/*"
+            ],
+            "@env": [
+                "./envConfig.ts"
+            ]
         }
     },
     "files": [],
-    "references": [{ "path": "./tsconfig.app.json" }, { "path": "./tsconfig.node.json" }]
+    "references": [
+        {
+            "path": "./tsconfig.app.json"
+        },
+        {
+            "path": "./tsconfig.node.json"
+        }
+    ]
 }
