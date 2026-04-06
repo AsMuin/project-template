@@ -16,7 +16,11 @@ export default defineConfig(({ command, mode }) => {
             }),
             tailwindcss()
         ],
-        resolve: { alias: { '@': resolve(__dirname, './src'), '@env': resolve(__dirname, './envConfig.ts') } }
+        resolve: {
+            alias: {
+                '@ui-sdk': resolve(__dirname, './src')
+            }
+        }
     };
 
     if (command === 'serve') {

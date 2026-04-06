@@ -1,6 +1,6 @@
-import { BaseCheckbox } from '@/components/ui/Checkbox';
-import { Field, FieldContent, FieldDescription, FieldGroup, FieldLabel } from '@/components/ui/Field';
-import { cn } from '@/lib/utils';
+import { BaseCheckbox } from './ui/Checkbox';
+import { Field, FieldContent, FieldDescription, FieldGroup, FieldLabel } from './ui/Field';
+import { cn } from '@ui-sdk/lib/utils';
 import { useId } from 'react';
 
 interface CheckboxProps extends React.ComponentProps<typeof BaseCheckbox> {

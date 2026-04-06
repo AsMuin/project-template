@@ -18,7 +18,13 @@ export default defineConfig(({ command, mode }) => {
             tailwindcss(),
             tanstackRouter()
         ],
-        resolve: { alias: { '@': resolve(__dirname, './src'), '@env': resolve(__dirname, './envConfig.ts') } }
+        resolve: {
+            alias: {
+                '@': resolve(__dirname, './src'),
+                '@ui-sdk': resolve(__dirname, '../../packages/ui-sdk/src'),
+                '@env': resolve(__dirname, './envConfig.ts')
+            }
+        }
     };
 
     if (command === 'serve') {

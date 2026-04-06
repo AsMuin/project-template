@@ -1,17 +1,17 @@
 // components
-import Button from '@/components/Button';
-import Skeleton from '@/components/ui/Skeleton';
-import Toaster from '@/components/Sonner';
-import Input from '@/components/Input';
-import Checkbox from '@/components/Checkbox';
+import Button from '@ui-sdk/components/Button';
+import Skeleton from '@ui-sdk/components/ui/Skeleton';
+import Toaster from '@ui-sdk/components/Sonner';
+import Input from '@ui-sdk/components/Input';
+import Checkbox from '@ui-sdk/components/Checkbox';
 
 //hook
 import { toast } from 'sonner';
 
 // svg
-import Spotlight from '@/svg/Spotlight';
+import Spotlight from '@ui-sdk/svg/Spotlight';
 
 // util
-import { cn, cva } from '@/lib/utils';
+import { cn, cva } from '@ui-sdk/lib/utils';
 
 export { Button, Skeleton, Toaster, Input, Checkbox, Spotlight, cn, cva, toast };

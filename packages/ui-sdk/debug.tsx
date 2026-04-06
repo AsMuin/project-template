@@ -2,11 +2,11 @@ import { scan } from 'react-scan';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Mail, Search, User, Lock, AlertCircle, Eye } from 'lucide-react';
+import Input from '@ui-sdk/components/Input';
+import Button from '@ui-sdk/components/Button';
+import { useDebugPage } from '@ui-sdk/debug-layout';
+import Checkbox from '@ui-sdk/components/Checkbox';
 import './index.css';
-import Input from '@/components/Input';
-import Button from '@/components/Button';
-import { useDebugPage } from '@/debug-layout';
-import Checkbox from '@/components/Checkbox';
 
 scan({ enabled: true, log: false });
 
