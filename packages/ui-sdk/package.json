@@ -51,8 +51,8 @@
     },
     "private": true,
     "scripts": {
-        "dev": "vite",
-        "lint": "yarn type-check && eslint .",
+        "dev": "bun --bun vite",
+        "lint": "type-check && eslint .",
         "type-check": "tsc -b"
     },
     "type": "module"

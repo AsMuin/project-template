@@ -50,7 +50,7 @@
         "db:generate": "drizzle-kit generate",
         "db:migrate": "drizzle-kit migrate",
         "db:studio": "drizzle-kit studio",
-        "lint": "bun type-check && bun eslint .",
+        "lint": "type-check && eslint .",
         "serve": "bun --watch server.ts",
         "start": "bun dist/server.js",
         "type-check": "tsc --noEmit"
