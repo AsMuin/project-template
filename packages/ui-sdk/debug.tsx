@@ -7,6 +7,8 @@ import Button from '@ui-sdk/components/Button';
 import { useDebugPage } from '@ui-sdk/debug-layout';
 import Checkbox from '@ui-sdk/components/Checkbox';
 import './index.css';
+import Toaster from '@ui-sdk/components/Toaster';
+import Tooltip from '@ui-sdk/components/Tooltips';
 
 scan({ enabled: true, log: false });
 
@@ -47,7 +49,9 @@ function DebugPage() {
                                 label="Password"
                                 startContent={<Lock className="text-muted-foreground" />}
                                 endContent={
-                                    <button className="hover:text-primary flex items-center justify-center transition-colors focus:outline-none">
+                                    <button
+                                        className="hover:text-primary flex items-center justify-center transition-colors focus:outline-none"
+                                        aria-label="Toggle password visibility">
                                         <Eye className="size-4" />
                                     </button>
                                 }
@@ -164,6 +168,77 @@ function DebugPage() {
                         ]
                     }
                 ]
+            },
+            {
+                title: 'Sonner',
+                groups: [
+                    {
+                        title: 'Basic',
+                        children: [
+                            <div key="basic" className="flex flex-wrap gap-4">
+                                <Button onClick={() => Toaster.toast('Hello world!')}>Toast</Button>
+                                <Button className="bg-green-500" onClick={() => Toaster.toast.success('Hello world!')}>
+                                    Success
+                                </Button>
+                                <Button className="bg-red-500" onClick={() => Toaster.toast.error('Hello world!')}>
+                                    Error
+                                </Button>
+                                <Button className="bg-blue-500" onClick={() => Toaster.toast.info('Hello world!')}>
+                                    Info
+                                </Button>
+                                <Button className="bg-yellow-500" onClick={() => Toaster.toast.warning('Hello world!')}>
+                                    Warning
+                                </Button>
+                            </div>
+                        ]
+                    }
+                ]
+            },
+            {
+                title: 'Tooltip',
+                groups: [
+                    {
+                        title: 'bottom',
+                        children: [
+                            <div key="bottom" className="flex flex-wrap gap-4">
+                                <Tooltip toolTipContent="Hello world!" side="bottom">
+                                    <Button>Tooltip</Button>
+                                </Tooltip>
+                            </div>
+                        ]
+                    },
+                    {
+                        title: 'top',
+                        children: [
+                            <div key="basic" className="flex flex-wrap gap-4">
+                                <Tooltip toolTipContent="Hello world!" side="top">
+                                    <Button>Tooltip</Button>
+                                </Tooltip>
+                            </div>
+                        ]
+                    },
+                    {
+                        title: 'right',
+                        children: [
+                            <div key="right" className="flex flex-wrap gap-4">
+                                <Tooltip toolTipContent="Hello world!" side="right">
+                                    <Button>Tooltip</Button>
+                                </Tooltip>
+                            </div>
+                        ]
+                    },
+
+                    {
+                        title: 'left',
+                        children: [
+                            <div key="left" className="flex flex-wrap gap-4">
+                                <Tooltip toolTipContent="Hello world!" side="left">
+                                    <Button>Tooltip</Button>
+                                </Tooltip>
+                            </div>
+                        ]
+                    }
+                ]
             }
         ]
     });
@@ -176,7 +251,10 @@ if (!rootElement.innerHTML) {
 
     root.render(
         <StrictMode>
-            <DebugPage />
+            <Tooltip.TooltipProvider>
+                <DebugPage />
+                <Toaster />
+            </Tooltip.TooltipProvider>
         </StrictMode>
     );
 }
