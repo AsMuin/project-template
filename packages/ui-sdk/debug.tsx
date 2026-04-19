@@ -34,7 +34,7 @@ function DebugPage() {
                     {
                         title: 'States',
                         children: [
-                            <Input key="1" label="Disabled" disabled placeholder="Can't type here" />,
+                            <Input key="1" label="Disabled" disabled placeholder="Can't type here" value="Disabled value" />,
                             <Input key="2" label="Error State" error="This field is required" defaultValue="Invalid value" />,
                             <Input key="3" label="Required Field" required placeholder="I'm required but looking normal" />
                         ]
@@ -311,6 +311,37 @@ function DebugPage() {
                                     { value: '1', label: 'Option 1' },
                                     { value: '2', label: 'Option 2' }
                                 ]}
+                            />
+                        ]
+                    },
+                    {
+                        title: 'With Description',
+                        children: [
+                            <Select
+                                key="with-description"
+                                label="Select Option"
+                                placeholder="select option"
+                                description="This is a description"
+                                options={[
+                                    { value: '1', label: 'Option 1' },
+                                    { value: '2', label: 'Option 2' }
+                                ]}
+                            />
+                        ]
+                    },
+                    {
+                        title: 'With Object Options',
+                        children: [
+                            <Select
+                                key="with-object-options"
+                                label="Select Option"
+                                placeholder="select option"
+                                options={[
+                                    { value: { id: 1, name: 'Option 1' }, label: 'Option 1' },
+                                    { value: { id: 2, name: 'Option 2' }, label: 'Option 2' }
+                                ]}
+                                defaultValue={{ id: 1, name: 'Option 1' }}
+                                onSelect={value => console.log(value)}
                             />
                         ]
                     }

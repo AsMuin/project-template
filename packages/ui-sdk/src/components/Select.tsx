@@ -1,66 +1,92 @@
-import { useId } from 'react';
+import { useId, useMemo } from 'react';
 import { Select as SelectPrimitive, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@ui-sdk/components/ui/Select';
 import { Field, FieldDescription, FieldError, FieldLabel } from './ui/Field';
 
-export interface SelectOption {
-    value: string;
+interface SelectOption<T> {
+    value: T;
     label: string | undefined;
 }
 
-interface SelectProps {
-    value?: string;
-    defaultValue?: string;
-    options: SelectOption[];
+type SelectPrimitiveProps = React.ComponentPropsWithRef<typeof SelectPrimitive>;
+
+interface SelectProps<T> extends Omit<SelectPrimitiveProps, 'onValueChange' | 'value' | 'defaultValue'> {
+    options: SelectOption<T>[];
+    value?: T;
+    defaultValue?: T;
     placeholder?: string;
-    onChange?: (value: string) => void;
-    disabled?: boolean;
+    onSelect?: (value: T, label: string) => void;
     size?: 'sm' | 'default';
-    className?: string;
     label?: string;
     description?: string;
     error?: string;
+    id?: string;
 }
 
-function Select({
+function Select<T>({
+    options,
     value,
     defaultValue,
-    options,
     placeholder,
-    onChange,
-    disabled,
     size = 'default',
-    className,
     label,
     description,
     error,
-    id
-}: SelectProps & { id?: string }) {
+    id,
+    onSelect,
+    ...props
+}: SelectProps<T>) {
     const generatedId = useId();
     const selectId = id || generatedId;
 
-    const handleValueChange = (newValue: string) => {
-        onChange?.(newValue);
+    // 建立 value 到 option 的映射，用于快速查找
+    const valueMap = useMemo(() => {
+        const map = new Map<string, SelectOption<T>>(options.map(option => [serializeValue(option.value), option]));
+
+        return map;
+    }, [options]);
+
+    const handleValueChange = (serializedValue: string) => {
+        const option = valueMap.get(serializedValue);
+
+        if (option && onSelect) {
+            onSelect(option.value, option.label ?? serializedValue);
+        }
     };
+
+    const selectedValue = value !== undefined ? serializeValue(value) : undefined;
+    const selectedDefaultValue = defaultValue !== undefined ? serializeValue(defaultValue) : undefined;
 
     return (
         <Field data-invalid={!!error}>
             {label && <FieldLabel htmlFor={selectId}>{label}</FieldLabel>}
-            <SelectPrimitive value={value} defaultValue={defaultValue} onValueChange={handleValueChange} disabled={disabled}>
-                <SelectTrigger id={selectId} size={size} className={className} aria-invalid={!!error}>
+            <SelectPrimitive {...props} value={selectedValue} defaultValue={selectedDefaultValue} onValueChange={handleValueChange}>
+                <SelectTrigger id={selectId} size={size} aria-invalid={!!error}>
                     <SelectValue placeholder={placeholder} />
                 </SelectTrigger>
                 <SelectContent position="popper">
-                    {options.map(option => (
-                        <SelectItem key={option.value} value={option.value}>
-                            {option.label ?? option.value}
-                        </SelectItem>
-                    ))}
+                    {options.map(option => {
+                        const serializedKey = serializeValue(option.value);
+
+                        return (
+                            <SelectItem key={serializedKey} value={serializedKey}>
+                                {option.label ?? serializedKey}
+                            </SelectItem>
+                        );
+                    })}
                 </SelectContent>
             </SelectPrimitive>
             {description && !error && <FieldDescription>{description}</FieldDescription>}
             {error && <FieldError>{error}</FieldError>}
         </Field>
     );
+}
+
+function serializeValue<T>(value: T): string {
+    if (typeof value === 'string') {
+        return value;
+    }
+
+    return JSON.stringify(value);
 }
 
 export default Select;
