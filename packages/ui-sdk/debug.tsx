@@ -9,6 +9,7 @@ import Checkbox from '@ui-sdk/components/Checkbox';
 import './index.css';
 import Toaster from '@ui-sdk/components/Toaster';
 import Tooltip from '@ui-sdk/components/Tooltips';
+import Select from '@ui-sdk/components/Select';
 
 scan({ enabled: true, log: false });
 
@@ -236,6 +237,81 @@ function DebugPage() {
                                     <Button>Tooltip</Button>
                                 </Tooltip>
                             </div>
+                        ]
+                    }
+                ]
+            },
+            {
+                title: 'Select',
+                groups: [
+                    {
+                        title: 'Basic',
+                        children: [
+                            <Select
+                                key="basic"
+                                placeholder="select option"
+                                options={[
+                                    { value: '1', label: 'Option 1' },
+                                    { value: '2', label: 'Option 2' }
+                                ]}
+                            />
+                        ]
+                    },
+                    {
+                        title: 'With Value',
+                        children: [
+                            <Select
+                                key="with-value"
+                                placeholder="select option"
+                                value="1"
+                                options={[
+                                    { value: '1', label: 'Option 1' },
+                                    { value: '2', label: 'Option 2' }
+                                ]}
+                            />
+                        ]
+                    },
+                    {
+                        title: 'Disabled',
+                        children: [
+                            <Select
+                                key="disabled"
+                                placeholder="select option"
+                                disabled
+                                options={[
+                                    { value: '1', label: 'Option 1' },
+                                    { value: '2', label: 'Option 2' }
+                                ]}
+                            />
+                        ]
+                    },
+                    {
+                        title: 'With Label',
+                        children: [
+                            <Select
+                                key="with-label"
+                                label="Select Option"
+                                placeholder="select option"
+                                options={[
+                                    { value: '1', label: 'Option 1' },
+                                    { value: '2', label: 'Option 2' }
+                                ]}
+                            />
+                        ]
+                    },
+                    {
+                        title: 'With Error',
+                        children: [
+                            <Select
+                                key="with-error"
+                                label="Select Option"
+                                placeholder="select option"
+                                error="This field is required"
+                                options={[
+                                    { value: '1', label: 'Option 1' },
+                                    { value: '2', label: 'Option 2' }
+                                ]}
+                            />
                         ]
                     }
                 ]

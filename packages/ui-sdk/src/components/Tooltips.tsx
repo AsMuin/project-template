@@ -1,4 +1,4 @@
-import { Tooltip as TooltipRoot, TooltipContent, TooltipTrigger, TooltipProvider } from './ui/tooltip';
+import { Tooltip as TooltipRoot, TooltipContent, TooltipTrigger, TooltipProvider } from './ui/Tooltip';
 
 interface TooltipsProps extends React.ComponentPropsWithRef<'div'> {
     toolTipContent: React.ReactNode;
