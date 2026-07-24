@@ -1,0 +1,15 @@
+basePath: /api
+host: localhost:8080
+info:
+  contact: {}
+  description: Go Web 后端工程模板接口文档（业务模块由使用者自行接入）
+  title: Go Web API Template
+  version: "1.0"
+paths: {}
+securityDefinitions:
+  SessionAuth:
+    description: 'Session cookie authentication. Example: session=your-session-id'
+    in: header
+    name: Cookie
+    type: apiKey
+swagger: "2.0"

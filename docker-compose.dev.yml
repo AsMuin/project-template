@@ -1,0 +1,22 @@
+# Dev overlay: expose DB/Redis on fixed host ports; do not start app by default.
+# Host Go process uses code defaults (DB_HOST/REDIS_HOST=localhost).
+#
+#   docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d
+#   go run ./cmd/server
+#
+# Optional full stack in containers:
+#   docker compose -f docker-compose.yml -f docker-compose.dev.yml --profile full up -d --build
+
+services:
+  postgres:
+    ports:
+      - "5432:5432"
+
+  redis:
+    ports:
+      - "6379:6379"
+
+  app:
+    profiles: ["full"]
+    ports:
+      - "8080:8080"

@@ -1,0 +1,20 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Go Web 后端工程模板接口文档（业务模块由使用者自行接入）",
+        "title": "Go Web API Template",
+        "contact": {},
+        "version": "1.0"
+    },
+    "host": "localhost:8080",
+    "basePath": "/api",
+    "paths": {},
+    "securityDefinitions": {
+        "SessionAuth": {
+            "description": "Session cookie authentication. Example: session=your-session-id",
+            "type": "apiKey",
+            "name": "Cookie",
+            "in": "header"
+        }
+    }
+}
