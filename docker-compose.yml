@@ -10,7 +10,11 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-projecttemp_db}"]
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-projecttemp_db}",
+        ]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -37,13 +41,13 @@ services:
       # 1. 覆盖基础属性 (对应 config.yml 根节点)
       APP_ENV: ${ENV:-production}
       APP_LOG_LEVEL: ${LOG_LEVEL:-info}
-      
+
       # 2. 覆盖 DB 属性 (利用 compose 的内网 DNS 覆盖 localhost)
       APP_DATABASE_HOST: postgres
       APP_DATABASE_USER: ${POSTGRES_USER:-postgres}
       APP_DATABASE_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
       APP_DATABASE_DB_NAME: ${POSTGRES_DB:-projecttemp_db}
-      
+
       # 3. 覆盖 Redis 属性
       APP_REDIS_HOST: redis
       APP_REDIS_PASSWORD: ${REDIS_PASSWORD:-}
