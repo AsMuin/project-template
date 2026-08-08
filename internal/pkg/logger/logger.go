@@ -63,45 +63,14 @@ func init() {
 	slog.SetDefault(global)
 }
 
-// logConfig 环境配置（对齐 redis loadConfig）。
-type logConfig struct {
-	Service string
-	Level   Level
-	Format  Format
-}
-
-func loadConfig() logConfig {
-	config.LoadEnv()
-
-	format := Format(strings.ToLower(config.GetEnv("LOG_FORMAT", "")))
-	if format == "" {
-		env := strings.ToLower(config.GetEnv("ENV", ""))
-		if env == "prod" || env == "production" {
-			format = FormatJSON
-		} else {
-			format = FormatText
-		}
-	}
-
-	return logConfig{
-		Service: config.GetEnv("SERVICE_NAME", "projecttemp"),
-		Level:   parseLevel(config.GetEnv("LOG_LEVEL", string(LevelInfo))),
-		Format:  parseFormat(string(format)),
-	}
-}
-
 // Init 从环境变量初始化全局 logger。
-func Init() {
-	cfg := loadConfig()
-	l := build(cfg.Service, cfg.Level, cfg.Format)
+func Init(config *config.AppConfig) {
+	l := build(config.Name, parseLevel(config.LogLevel), parseFormat(config.LogFormat))
 	mu.Lock()
 	global = l
 	mu.Unlock()
 	slog.SetDefault(l)
 }
-
-// InitFromEnv 等同 Init。
-func InitFromEnv() { Init() }
 
 func build(service string, level Level, format Format) *slog.Logger {
 	opts := &slog.HandlerOptions{Level: level.Slog()}

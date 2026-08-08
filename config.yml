@@ -1,0 +1,21 @@
+
+# 默认本地开发环境参数，具体参数由 env 注入覆盖（APP 前缀）
+name: "projecttemp"
+env: "local"       # local | production
+log_level: "info" # debug | info | warn | error
+log_format: "text" # text | json
+
+database:
+  host: "localhost" 
+  port: 5432
+  user: "postgres"
+  password: "postgres" 
+  db_name: "projecttemp_db"
+  max_idle_conns: 10
+  max_open_conns: 100
+
+redis:
+  host: "localhost" 
+  port: 6379
+  password: ""
+  db: 0

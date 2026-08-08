@@ -3,15 +3,14 @@ package redis
 import (
 	"context"
 	"fmt"
+	"projecttemp/internal/config"
 	"time"
 
 	"github.com/redis/go-redis/v9"
 )
 
-func NewClient() (*redis.Client, error) {
-	config := loadConfig()
-
-	addr := fmt.Sprintf("%s:%s",
+func NewClient(config *config.RedisConfig) (*redis.Client, error) {
+	addr := fmt.Sprintf("%s:%v",
 		config.Host,
 		config.Port,
 	)

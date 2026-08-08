@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"projecttemp/ent"
+	"projecttemp/internal/config"
 
 	_ "github.com/lib/pq"
 )
@@ -13,12 +14,12 @@ type DB struct {
 	Client *ent.Client
 }
 
-func New() (*DB, error) {
-	cfg, err := loadConfig()
-	if err != nil {
-		return nil, err
-	}
-	client, err := ent.Open("postgres", cfg.DSN())
+func New(config *config.DatabaseConfig) (*DB, error) {
+
+	dsn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=true",
+		config.Host, config.Port, config.User, config.Password, config.DBName)
+
+	client, err := ent.Open("postgres", dsn)
 	if err != nil {
 		return nil, fmt.Errorf("open database: %w", err)
 	}

@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"projecttemp/ent"
+	"projecttemp/internal/config"
 	"projecttemp/internal/infra/database"
 )
 
@@ -14,7 +15,8 @@ var testDB *database.DB
 
 func TestMain(m *testing.M) {
 	var err error
-	testDB, err = database.New()
+	cfg := config.LoadConfig()
+	testDB, err = database.New(&cfg.Database)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "connect db: %v\n", err)
 		os.Exit(1)

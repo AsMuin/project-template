@@ -1,14 +1,5 @@
+# docker-compose.yml
 # Base stack: postgres + redis + app.
-# Runtime secrets/hosts come from env / .env (see .env.example).
-# Dev host port mapping is fixed in docker-compose.dev.yml (not parameterized).
-#
-# Dev (deps only, Go on host):
-#   docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d
-# Full stack locally:
-#   docker compose -f docker-compose.yml -f docker-compose.dev.yml --profile full up -d --build
-# Base only (all services, no host ports for DB/Redis):
-#   docker compose up -d --build
-
 services:
   postgres:
     image: postgres:18.4-alpine
@@ -19,11 +10,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-projecttemp_db}",
-        ]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-projecttemp_db}"]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -31,10 +18,11 @@ services:
 
   redis:
     image: redis:8-alpine
+    command: /bin/sh -c 'redis-server --requirepass "${REDIS_PASSWORD:-}"'
     volumes:
       - redis_data:/data
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: ["CMD-SHELL", "redis-cli -a '${REDIS_PASSWORD:-}' ping | grep PONG"]
       interval: 5s
       timeout: 3s
       retries: 10
@@ -46,19 +34,19 @@ services:
       dockerfile: Dockerfile
     image: ${APP_IMAGE:-projecttemp:local}
     environment:
-      # In-compose network: service DNS names (not host localhost).
-      DB_HOST: postgres
-      POSTGRES_PORT: "5432"
-      POSTGRES_USER: ${POSTGRES_USER:-postgres}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
-      POSTGRES_DB: ${POSTGRES_DB:-projecttemp_db}
-      REDIS_HOST: redis
-      REDIS_PORT: "6379"
-      REDIS_PASSWORD: ${REDIS_PASSWORD:-}
-      ENV: ${ENV:-}
-      LOG_LEVEL: ${LOG_LEVEL:-info}
-      LOG_FORMAT: ${LOG_FORMAT:-}
-      SERVICE_NAME: ${SERVICE_NAME:-projecttemp}
+      # 1. 覆盖基础属性 (对应 config.yml 根节点)
+      APP_ENV: ${ENV:-production}
+      APP_LOG_LEVEL: ${LOG_LEVEL:-info}
+      
+      # 2. 覆盖 DB 属性 (利用 compose 的内网 DNS 覆盖 localhost)
+      APP_DATABASE_HOST: postgres
+      APP_DATABASE_USER: ${POSTGRES_USER:-postgres}
+      APP_DATABASE_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      APP_DATABASE_DB_NAME: ${POSTGRES_DB:-projecttemp_db}
+      
+      # 3. 覆盖 Redis 属性
+      APP_REDIS_HOST: redis
+      APP_REDIS_PASSWORD: ${REDIS_PASSWORD:-}
     ports:
       - "8080:8080"
     depends_on:

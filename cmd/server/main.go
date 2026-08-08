@@ -7,6 +7,7 @@ import (
 	"syscall"
 	"time"
 
+	"projecttemp/internal/config"
 	"projecttemp/internal/httpapi"
 	"projecttemp/internal/infra/database"
 	"projecttemp/internal/infra/redis"
@@ -32,14 +33,15 @@ import (
 // @description Session cookie authentication. Example: session=your-session-id
 
 func main() {
-	logger.Init()
+	cfg := config.LoadConfig()
+	logger.Init(&cfg.App)
 
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 
 	r := gin.Default()
 
-	db, err := database.New()
+	db, err := database.New(&cfg.Database)
 	if err != nil {
 		logger.Fatal("connect db failed", logger.FieldErr, err)
 	}
@@ -49,12 +51,12 @@ func main() {
 		logger.Fatal("migrate failed", logger.FieldErr, err)
 	}
 
-	store, err := redis.NewSessionStore()
+	store, err := redis.NewSessionStore(&cfg.Redis)
 	if err != nil {
 		logger.Fatal("load redis session store failed", logger.FieldErr, err)
 	}
 
-	redisClient, err := redis.NewClient()
+	redisClient, err := redis.NewClient(&cfg.Redis)
 	if err != nil {
 		logger.Fatal("connect redis failed", logger.FieldErr, err)
 	}

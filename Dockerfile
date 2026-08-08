@@ -10,7 +10,7 @@ COPY go.mod go.sum ./
 RUN --mount=type=cache,target=/go/pkg/mod \
     go mod download
 
-# 复制源码
+# 复制源码和配置文件
 COPY . .
 
 # - CGO_ENABLED=0 确保静态编译
@@ -19,7 +19,6 @@ COPY . .
 RUN --mount=type=cache,target=/root/.cache/go-build \
     --mount=type=cache,target=/go/pkg/mod \
     CGO_ENABLED=0 go build -ldflags="-s -w" -o main ./cmd/server
-
 
 # ==================== 运行阶段 (runtime) ====================
 # 锁定 alpine 具体版本
@@ -31,8 +30,11 @@ WORKDIR /app
 RUN adduser -D -g '' appuser && \
     chown -R appuser:appuser /app
 
-# 从 builder 复制编译好的二进制文件，并修改所有者
+# 从 builder 复制编译好的二进制文件 (修改所有者)
 COPY --from=builder --chown=appuser:appuser /app/main .
+
+# 复制 config.yml 到运行时环境，供 Viper 读取作为默认骨架
+COPY --from=builder --chown=appuser:appuser /app/config.yml .
 
 # 切换到非 root 用户运行
 USER appuser
