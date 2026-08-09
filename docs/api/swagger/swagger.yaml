@@ -1,6 +1,6 @@
 basePath: /api
 definitions:
-  projecttemp_internal_module_user.Gender:
+  internal_module_user.Gender:
     enum:
     - unknown
     - male
@@ -10,7 +10,7 @@ definitions:
     - GenderUnknown
     - GenderMale
     - GenderFemale
-  projecttemp_internal_module_user.LoginInput:
+  user.LoginParams:
     properties:
       account:
         maxLength: 20
@@ -24,9 +24,10 @@ definitions:
     - account
     - password
     type: object
-  projecttemp_internal_module_user.RegisterInput:
+  user.RegisterParams:
     properties:
       account:
+        description: 字母开头，后仅字母数字下划线；长度 3–20
         maxLength: 20
         minLength: 3
         type: string
@@ -42,7 +43,7 @@ definitions:
         type: string
       gender:
         allOf:
-        - $ref: '#/definitions/projecttemp_internal_module_user.Gender'
+        - $ref: '#/definitions/internal_module_user.Gender'
         enum:
         - unknown
         - male
@@ -60,7 +61,7 @@ definitions:
     - nickname
     - password
     type: object
-  projecttemp_internal_module_user.UpdateInput:
+  user.UpdateParams:
     properties:
       age:
         maximum: 150
@@ -74,7 +75,7 @@ definitions:
         type: string
       gender:
         allOf:
-        - $ref: '#/definitions/projecttemp_internal_module_user.Gender'
+        - $ref: '#/definitions/internal_module_user.Gender'
         enum:
         - unknown
         - male
@@ -105,7 +106,7 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/projecttemp_internal_module_user.LoginInput'
+          $ref: '#/definitions/user.LoginParams'
       produces:
       - application/json
       responses:
@@ -152,7 +153,7 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/projecttemp_internal_module_user.RegisterInput'
+          $ref: '#/definitions/user.RegisterParams'
       produces:
       - application/json
       responses:
@@ -207,7 +208,7 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/projecttemp_internal_module_user.UpdateInput'
+          $ref: '#/definitions/user.UpdateParams'
       produces:
       - application/json
       responses:

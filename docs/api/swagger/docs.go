@@ -34,7 +34,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/projecttemp_internal_module_user.LoginInput"
+                            "$ref": "#/definitions/user.LoginParams"
                         }
                     }
                 ],
@@ -107,7 +107,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/projecttemp_internal_module_user.RegisterInput"
+                            "$ref": "#/definitions/user.RegisterParams"
                         }
                     }
                 ],
@@ -194,7 +194,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/projecttemp_internal_module_user.UpdateInput"
+                            "$ref": "#/definitions/user.UpdateParams"
                         }
                     }
                 ],
@@ -232,7 +232,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "projecttemp_internal_module_user.Gender": {
+        "internal_module_user.Gender": {
             "type": "string",
             "enum": [
                 "unknown",
@@ -245,7 +245,7 @@ const docTemplate = `{
                 "GenderFemale"
             ]
         },
-        "projecttemp_internal_module_user.LoginInput": {
+        "user.LoginParams": {
             "type": "object",
             "required": [
                 "account",
@@ -264,7 +264,7 @@ const docTemplate = `{
                 }
             }
         },
-        "projecttemp_internal_module_user.RegisterInput": {
+        "user.RegisterParams": {
             "type": "object",
             "required": [
                 "account",
@@ -273,6 +273,7 @@ const docTemplate = `{
             ],
             "properties": {
                 "account": {
+                    "description": "字母开头，后仅字母数字下划线；长度 3–20",
                     "type": "string",
                     "maxLength": 20,
                     "minLength": 3
@@ -298,7 +299,7 @@ const docTemplate = `{
                     ],
                     "allOf": [
                         {
-                            "$ref": "#/definitions/projecttemp_internal_module_user.Gender"
+                            "$ref": "#/definitions/internal_module_user.Gender"
                         }
                     ]
                 },
@@ -314,7 +315,7 @@ const docTemplate = `{
                 }
             }
         },
-        "projecttemp_internal_module_user.UpdateInput": {
+        "user.UpdateParams": {
             "type": "object",
             "properties": {
                 "age": {
@@ -338,7 +339,7 @@ const docTemplate = `{
                     ],
                     "allOf": [
                         {
-                            "$ref": "#/definitions/projecttemp_internal_module_user.Gender"
+                            "$ref": "#/definitions/internal_module_user.Gender"
                         }
                     ]
                 },

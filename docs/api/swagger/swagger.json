@@ -28,7 +28,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/projecttemp_internal_module_user.LoginInput"
+                            "$ref": "#/definitions/user.LoginParams"
                         }
                     }
                 ],
@@ -101,7 +101,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/projecttemp_internal_module_user.RegisterInput"
+                            "$ref": "#/definitions/user.RegisterParams"
                         }
                     }
                 ],
@@ -188,7 +188,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/projecttemp_internal_module_user.UpdateInput"
+                            "$ref": "#/definitions/user.UpdateParams"
                         }
                     }
                 ],
@@ -226,7 +226,7 @@
         }
     },
     "definitions": {
-        "projecttemp_internal_module_user.Gender": {
+        "internal_module_user.Gender": {
             "type": "string",
             "enum": [
                 "unknown",
@@ -239,7 +239,7 @@
                 "GenderFemale"
             ]
         },
-        "projecttemp_internal_module_user.LoginInput": {
+        "user.LoginParams": {
             "type": "object",
             "required": [
                 "account",
@@ -258,7 +258,7 @@
                 }
             }
         },
-        "projecttemp_internal_module_user.RegisterInput": {
+        "user.RegisterParams": {
             "type": "object",
             "required": [
                 "account",
@@ -267,6 +267,7 @@
             ],
             "properties": {
                 "account": {
+                    "description": "字母开头，后仅字母数字下划线；长度 3–20",
                     "type": "string",
                     "maxLength": 20,
                     "minLength": 3
@@ -292,7 +293,7 @@
                     ],
                     "allOf": [
                         {
-                            "$ref": "#/definitions/projecttemp_internal_module_user.Gender"
+                            "$ref": "#/definitions/internal_module_user.Gender"
                         }
                     ]
                 },
@@ -308,7 +309,7 @@
                 }
             }
         },
-        "projecttemp_internal_module_user.UpdateInput": {
+        "user.UpdateParams": {
             "type": "object",
             "properties": {
                 "age": {
@@ -332,7 +333,7 @@
                     ],
                     "allOf": [
                         {
-                            "$ref": "#/definitions/projecttemp_internal_module_user.Gender"
+                            "$ref": "#/definitions/internal_module_user.Gender"
                         }
                     ]
                 },

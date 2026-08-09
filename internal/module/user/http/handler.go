@@ -26,7 +26,7 @@ func NewHandler(svc *user.Service) *Handler {
 // @Tags         auth
 // @Accept       json
 // @Produce      json
-// @Param        body body user.RegisterInput true "注册信息"
+// @Param        body body user.RegisterParams true "注册信息"
 // @Success      200 {object} map[string]interface{}
 // @Failure      400 {object} map[string]interface{}
 // @Router       /auth/register [post]
@@ -47,7 +47,7 @@ func (h *Handler) Register(c *echo.Context) error {
 // @Tags         auth
 // @Accept       json
 // @Produce      json
-// @Param        body body user.LoginInput true "登录信息"
+// @Param        body body user.LoginParams true "登录信息"
 // @Success      200 {object} map[string]interface{}
 // @Failure      400 {object} map[string]interface{}
 // @Router       /auth/login [post]
@@ -107,7 +107,7 @@ func (h *Handler) GetByID(c *echo.Context) error {
 // @Accept       json
 // @Produce      json
 // @Param        id path int true "用户 ID"
-// @Param        body body user.UpdateInput true "更新字段"
+// @Param        body body user.UpdateParams true "更新字段"
 // @Success      200 {object} map[string]interface{}
 // @Failure      400 {object} map[string]interface{}
 // @Failure      401 {object} map[string]interface{}
