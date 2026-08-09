@@ -6,7 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"projecttemp/ent/placeholder"
+	"projecttemp/ent/user"
 	"reflect"
 	"sync"
 
@@ -73,7 +73,7 @@ var (
 func checkColumn(t, c string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
-			placeholder.Table: placeholder.ValidColumn,
+			user.Table: user.ValidColumn,
 		})
 	})
 	return columnCheck(t, c)

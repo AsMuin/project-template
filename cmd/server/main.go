@@ -11,10 +11,13 @@ import (
 
 	"projecttemp/internal/config"
 	"projecttemp/internal/httpapi"
+	"projecttemp/internal/httpapi/binding"
 	httpmw "projecttemp/internal/httpapi/middleware"
 	"projecttemp/internal/infra/database"
 	"projecttemp/internal/infra/redis"
 	"projecttemp/internal/infra/scheduler"
+	"projecttemp/internal/module/user"
+	userrepo "projecttemp/internal/module/user/repo"
 	"projecttemp/internal/pkg/logger"
 
 	"github.com/labstack/echo-contrib/v5/session"
@@ -43,7 +46,7 @@ func main() {
 	defer stop()
 
 	e := echo.New()
-	e.Validator = httpapi.NewValidator()
+	e.Validator = binding.NewValidator()
 	e.HTTPErrorHandler = httpapi.HTTPErrorHandler
 
 	e.Use(echomw.Recover())
@@ -71,11 +74,11 @@ func main() {
 	}
 	defer redisClient.Close()
 
-	// 业务装配示例（接入 module 后取消注释并注入）：
+	// 业务装配：user 模块（可按需再注入 cache/lock）
 	// locker := lock.New(redisClient)
 	// cacheClient := cache.New(redisClient)
-	// xxxSvc := xxx.NewService(xxxrepo.New(db.Client), cacheClient, locker)
-	_ = redisClient // 保持连接就绪；接入 cache/lock 时去掉此行
+	_ = redisClient
+	userSvc := user.NewService(userrepo.New(db.Client))
 
 	// 定时任务骨架：注册业务 job 后 Start
 	sched := scheduler.New()
@@ -100,8 +103,7 @@ func main() {
 
 	e.GET("/swagger/*", echo.WrapHandler(httpSwagger.WrapHandler))
 
-	// 接入业务后：httpapi.RegisterRouter(e, xxxSvc, ...)
-	httpapi.RegisterRouter(e)
+	httpapi.RegisterRouter(e, userSvc)
 
 	logger.Info("http server starting",
 		logger.FieldPurpose, logger.PurposeInfra,

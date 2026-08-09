@@ -8,10 +8,10 @@ go generate ./ent
 
 服务启动时 `database.Migrate` 会按当前 schema 建表（以项目现状为准）。
 
-## 模板说明
+## 当前实体
 
-仓库默认只有 `placeholder.go`（占位实体），**不是业务表**。新增第一个真实实体时请：
+| Schema | 说明 |
+|--------|------|
+| `User` | 基础用户（账号/密码哈希/资料/软删除） |
 
-1. 删除 `placeholder.go`
-2. 按领域新增 `xxx.go`（`ent.Schema`）
-3. `go generate ./ent`
+新增实体：在本目录添加 `xxx.go` → `go generate ./ent`。

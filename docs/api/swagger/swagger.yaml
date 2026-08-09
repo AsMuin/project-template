@@ -1,11 +1,241 @@
 basePath: /api
+definitions:
+  projecttemp_internal_module_user.Gender:
+    enum:
+    - unknown
+    - male
+    - female
+    type: string
+    x-enum-varnames:
+    - GenderUnknown
+    - GenderMale
+    - GenderFemale
+  projecttemp_internal_module_user.LoginInput:
+    properties:
+      account:
+        maxLength: 20
+        minLength: 3
+        type: string
+      password:
+        maxLength: 20
+        minLength: 6
+        type: string
+    required:
+    - account
+    - password
+    type: object
+  projecttemp_internal_module_user.RegisterInput:
+    properties:
+      account:
+        maxLength: 20
+        minLength: 3
+        type: string
+      age:
+        maximum: 150
+        minimum: 0
+        type: integer
+      avatar:
+        maxLength: 512
+        type: string
+      email:
+        maxLength: 128
+        type: string
+      gender:
+        allOf:
+        - $ref: '#/definitions/projecttemp_internal_module_user.Gender'
+        enum:
+        - unknown
+        - male
+        - female
+      nickname:
+        maxLength: 20
+        minLength: 1
+        type: string
+      password:
+        maxLength: 20
+        minLength: 6
+        type: string
+    required:
+    - account
+    - nickname
+    - password
+    type: object
+  projecttemp_internal_module_user.UpdateInput:
+    properties:
+      age:
+        maximum: 150
+        minimum: 0
+        type: integer
+      avatar:
+        maxLength: 512
+        type: string
+      email:
+        maxLength: 128
+        type: string
+      gender:
+        allOf:
+        - $ref: '#/definitions/projecttemp_internal_module_user.Gender'
+        enum:
+        - unknown
+        - male
+        - female
+      nickname:
+        maxLength: 20
+        minLength: 1
+        type: string
+      password:
+        maxLength: 20
+        minLength: 6
+        type: string
+    type: object
 host: localhost:8080
 info:
   contact: {}
   description: Go Web 后端工程模板接口文档（业务模块由使用者自行接入）
   title: Go Web API Template
   version: "1.0"
-paths: {}
+paths:
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 登录信息
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/projecttemp_internal_module_user.LoginInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+      summary: 登录
+      tags:
+      - auth
+  /auth/logout:
+    post:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - SessionAuth: []
+      summary: 登出
+      tags:
+      - auth
+  /auth/register:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 注册信息
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/projecttemp_internal_module_user.RegisterInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+      summary: 注册
+      tags:
+      - auth
+  /users/{id}:
+    get:
+      parameters:
+      - description: 用户 ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+      summary: 按 ID 查询用户
+      tags:
+      - users
+    patch:
+      consumes:
+      - application/json
+      parameters:
+      - description: 用户 ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 更新字段
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/projecttemp_internal_module_user.UpdateInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+        "403":
+          description: Forbidden
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - SessionAuth: []
+      summary: 部分更新用户（仅本人）
+      tags:
+      - users
 securityDefinitions:
   SessionAuth:
     description: 'Session cookie authentication. Example: session=your-session-id'

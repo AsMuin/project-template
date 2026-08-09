@@ -4,7 +4,7 @@
 
 | 层 | 职责 |
 |----|------|
-| **Handler** | `httpapi.BindAndValidate`（query）；调 Service；`return c.JSON(200, response.OK(...))` |
+| **Handler** | `binding.BindAndValidate`（query）；调 Service；`return c.JSON(200, response.OK(...))` |
 | **Service** | 权限/默认条件；`repo.ListPage`；`page.NewPageResponse` / `MapPage` |
 | **Repo** | 同一 WHERE：`Count` + `Offset`/`Limit`；返回 `(items, total, error)` |
 
@@ -34,7 +34,7 @@ func (s *Service) ListPage(ctx context.Context, q QueryParams) (*page.PageRespon
 // handler
 func (h *Handler) List(c *echo.Context) error {
     var q QueryParams
-    if err := httpapi.BindAndValidate(c, &q); err != nil {
+    if err := binding.BindAndValidate(c, &q); err != nil {
         return err
     }
     out, err := h.svc.ListPage(c.Request().Context(), q)

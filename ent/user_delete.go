@@ -4,34 +4,34 @@ package ent
 
 import (
 	"context"
-	"projecttemp/ent/placeholder"
 	"projecttemp/ent/predicate"
+	"projecttemp/ent/user"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 )
 
-// PlaceholderDelete is the builder for deleting a Placeholder entity.
-type PlaceholderDelete struct {
+// UserDelete is the builder for deleting a User entity.
+type UserDelete struct {
 	config
 	hooks    []Hook
-	mutation *PlaceholderMutation
+	mutation *UserMutation
 }
 
-// Where appends a list predicates to the PlaceholderDelete builder.
-func (_d *PlaceholderDelete) Where(ps ...predicate.Placeholder) *PlaceholderDelete {
+// Where appends a list predicates to the UserDelete builder.
+func (_d *UserDelete) Where(ps ...predicate.User) *UserDelete {
 	_d.mutation.Where(ps...)
 	return _d
 }
 
 // Exec executes the deletion query and returns how many vertices were deleted.
-func (_d *PlaceholderDelete) Exec(ctx context.Context) (int, error) {
+func (_d *UserDelete) Exec(ctx context.Context) (int, error) {
 	return withHooks(ctx, _d.sqlExec, _d.mutation, _d.hooks)
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (_d *PlaceholderDelete) ExecX(ctx context.Context) int {
+func (_d *UserDelete) ExecX(ctx context.Context) int {
 	n, err := _d.Exec(ctx)
 	if err != nil {
 		panic(err)
@@ -39,8 +39,8 @@ func (_d *PlaceholderDelete) ExecX(ctx context.Context) int {
 	return n
 }
 
-func (_d *PlaceholderDelete) sqlExec(ctx context.Context) (int, error) {
-	_spec := sqlgraph.NewDeleteSpec(placeholder.Table, sqlgraph.NewFieldSpec(placeholder.FieldID, field.TypeInt64))
+func (_d *UserDelete) sqlExec(ctx context.Context) (int, error) {
+	_spec := sqlgraph.NewDeleteSpec(user.Table, sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt64))
 	if ps := _d.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -56,32 +56,32 @@ func (_d *PlaceholderDelete) sqlExec(ctx context.Context) (int, error) {
 	return affected, err
 }
 
-// PlaceholderDeleteOne is the builder for deleting a single Placeholder entity.
-type PlaceholderDeleteOne struct {
-	_d *PlaceholderDelete
+// UserDeleteOne is the builder for deleting a single User entity.
+type UserDeleteOne struct {
+	_d *UserDelete
 }
 
-// Where appends a list predicates to the PlaceholderDelete builder.
-func (_d *PlaceholderDeleteOne) Where(ps ...predicate.Placeholder) *PlaceholderDeleteOne {
+// Where appends a list predicates to the UserDelete builder.
+func (_d *UserDeleteOne) Where(ps ...predicate.User) *UserDeleteOne {
 	_d._d.mutation.Where(ps...)
 	return _d
 }
 
 // Exec executes the deletion query.
-func (_d *PlaceholderDeleteOne) Exec(ctx context.Context) error {
+func (_d *UserDeleteOne) Exec(ctx context.Context) error {
 	n, err := _d._d.Exec(ctx)
 	switch {
 	case err != nil:
 		return err
 	case n == 0:
-		return &NotFoundError{placeholder.Label}
+		return &NotFoundError{user.Label}
 	default:
 		return nil
 	}
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (_d *PlaceholderDeleteOne) ExecX(ctx context.Context) {
+func (_d *UserDeleteOne) ExecX(ctx context.Context) {
 	if err := _d.Exec(ctx); err != nil {
 		panic(err)
 	}

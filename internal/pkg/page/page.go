@@ -1,6 +1,6 @@
 // 分层约定：
 //
-//	Handler  BindAndValidate 内嵌 PageRequest 的 Query，调用 Service，c.JSON + response.OK
+//	Handler  binding.BindAndValidate 内嵌 PageRequest 的 Query，调用 Service，c.JSON + response.OK
 //	Service  业务条件/权限 → repo.ListPage → NewPageResponse（或 Map 转 VO）
 //	Repo     同一套 WHERE 做 Count + Offset/Limit，返回 (items, total, error)
 //

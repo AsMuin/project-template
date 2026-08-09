@@ -8,19 +8,36 @@ import (
 )
 
 var (
-	// PlaceholdersColumns holds the columns for the "placeholders" table.
-	PlaceholdersColumns = []*schema.Column{
+	// UsersColumns holds the columns for the "users" table.
+	UsersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt64, Increment: true},
+		{Name: "account", Type: field.TypeString, Unique: true, Size: 20},
+		{Name: "nickname", Type: field.TypeString, Size: 20},
+		{Name: "password_hash", Type: field.TypeString},
+		{Name: "email", Type: field.TypeString, Nullable: true, Size: 128},
+		{Name: "avatar", Type: field.TypeString, Nullable: true, Size: 512},
+		{Name: "age", Type: field.TypeInt, Nullable: true},
+		{Name: "gender", Type: field.TypeEnum, Enums: []string{"unknown", "male", "female"}, Default: "unknown"},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
 	}
-	// PlaceholdersTable holds the schema information for the "placeholders" table.
-	PlaceholdersTable = &schema.Table{
-		Name:       "placeholders",
-		Columns:    PlaceholdersColumns,
-		PrimaryKey: []*schema.Column{PlaceholdersColumns[0]},
+	// UsersTable holds the schema information for the "users" table.
+	UsersTable = &schema.Table{
+		Name:       "users",
+		Columns:    UsersColumns,
+		PrimaryKey: []*schema.Column{UsersColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "user_deleted_at",
+				Unique:  false,
+				Columns: []*schema.Column{UsersColumns[10]},
+			},
+		},
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
-		PlaceholdersTable,
+		UsersTable,
 	}
 )
 
