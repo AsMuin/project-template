@@ -3,13 +3,13 @@ package httpapi
 import (
 	"net/http"
 
-	"github.com/gin-gonic/gin"
+	"github.com/labstack/echo/v5"
 )
 
 // registerHealth mounts process liveness probes (no auth, outside /api).
-func registerHealth(r *gin.Engine) {
-	r.GET("/health", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
+func registerHealth(e *echo.Echo) {
+	e.GET("/health", func(c *echo.Context) error {
+		return c.JSON(http.StatusOK, map[string]string{
 			"status": "ok",
 		})
 	})

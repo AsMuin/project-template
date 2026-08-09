@@ -4,7 +4,7 @@
 
 | 层 | 职责 |
 |----|------|
-| **Handler** | `ShouldBindQuery`；调 Service；`RespondOK` |
+| **Handler** | `httpapi.BindAndValidate`（query）；调 Service；`return c.JSON(200, response.OK(...))` |
 | **Service** | 权限/默认条件；`repo.ListPage`；`page.NewPageResponse` / `MapPage` |
 | **Repo** | 同一 WHERE：`Count` + `Offset`/`Limit`；返回 `(items, total, error)` |
 
@@ -16,7 +16,7 @@ Repo **不要**返回 `*page.PageResponse`。
 // model
 type QueryParams struct {
     page.PageRequest
-    Name string `form:"name"`
+    Name string `query:"name"`
 }
 
 // repository
@@ -31,8 +31,18 @@ func (s *Service) ListPage(ctx context.Context, q QueryParams) (*page.PageRespon
     return page.NewPageResponse(rows, total, q.PageRequest), nil
 }
 
-// 需要 VO：
-// return page.MapPage(rows, total, q.PageRequest, toVO), nil
+// handler
+func (h *Handler) List(c *echo.Context) error {
+    var q QueryParams
+    if err := httpapi.BindAndValidate(c, &q); err != nil {
+        return err
+    }
+    out, err := h.svc.ListPage(c.Request().Context(), q)
+    if err != nil {
+        return err
+    }
+    return c.JSON(http.StatusOK, response.OK(out))
+}
 ```
 
 ## 响应 data 形状

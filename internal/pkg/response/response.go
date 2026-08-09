@@ -16,12 +16,13 @@ func OK(data any) *Response {
 	}
 }
 
-// 用于处理未知的错误，如果识别为业务错误，则使用业务错误码，否则统一用系统错误码隐蔽内部细节
+// Fail 将 error 转为统一失败响应体。业务错误暴露业务码与文案，其它错误统一为系统错误。
 func Fail(err error) *Response {
-	if IsBizError(err) {
+	var bizErr *BizError
+	if errors.As(err, &bizErr) {
 		return &Response{
-			Code:    err.(*BizError).BizCode(),
-			Message: err.Error(),
+			Code:    bizErr.BizCode(),
+			Message: bizErr.Error(),
 		}
 	}
 	return &Response{
@@ -30,7 +31,7 @@ func Fail(err error) *Response {
 	}
 }
 
-// 用于指定已知的业务错误码以及相关的错误信息
+// FailWithCode 用于指定已知业务错误码以及相关错误信息。
 func FailWithCode(code Code, detail string) *Response {
 	msg := code.Message
 	if detail != "" {
@@ -42,7 +43,7 @@ func FailWithCode(code Code, detail string) *Response {
 	}
 }
 
-// 用于从错误中获取HTTP状态码,同样也是尝试识别业务错误并使用其对应的 HTTP状态码，其他情况一律用系统错误 HTTP状态码
+// HTTPCodeFromErr 从错误中获取 HTTP 状态码；业务错误用其 HTTP 码，其它一律系统错误。
 func HTTPCodeFromErr(err error) int {
 	var bizErr *BizError
 	if errors.As(err, &bizErr) {

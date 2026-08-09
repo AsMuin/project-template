@@ -2,20 +2,30 @@ package redis
 
 import (
 	"fmt"
+	"net/http"
+
 	"projecttemp/internal/config"
 
-	"github.com/gin-contrib/sessions"
-	"github.com/gin-contrib/sessions/redis"
+	"github.com/boj/redistore"
+	"github.com/gorilla/sessions"
 )
 
-const defaultSecret = "change-me-session-secret"
+// NewSessionStore 创建基于 Redis 的 gorilla/sessions.Store，供 Echo session 中间件使用。
+func NewSessionStore(redisCfg *config.RedisConfig, sessCfg config.SessionConfig) (sessions.Store, error) {
+	sessCfg = sessCfg.Normalized()
+	addr := fmt.Sprintf("%s:%d", redisCfg.Host, redisCfg.Port)
 
-func NewSessionStore(config *config.RedisConfig) (sessions.Store, error) {
-	addr := fmt.Sprintf("%s:%v", config.Host, config.Port)
-
-	store, err := redis.NewStore(10, "tcp", addr, "", config.Password, []byte(defaultSecret))
+	store, err := redistore.NewRediStore(10, "tcp", addr, "", redisCfg.Password, []byte(sessCfg.Secret))
 	if err != nil {
-		return nil, fmt.Errorf("connect redis: %w", err)
+		return nil, fmt.Errorf("connect redis session store: %w", err)
+	}
+
+	store.Options = &sessions.Options{
+		Path:     "/",
+		MaxAge:   sessCfg.MaxAge,
+		HttpOnly: true,
+		Secure:   sessCfg.Secure,
+		SameSite: http.SameSiteLaxMode,
 	}
 
 	return store, nil

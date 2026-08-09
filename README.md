@@ -1,6 +1,6 @@
 # Go Web 后端工程模板
 
-基于 **Gin + Ent + Postgres + Redis** 的标准 Go Web 服务骨架。  
+基于 **Echo + Ent + Postgres + Redis** 的标准 Go Web 服务骨架。  
 本仓库**不含具体业务模块**，只保留可复用的工程分层、基础设施与协作约定，便于在此基础上接入自有领域。
 
 ---
@@ -150,7 +150,7 @@ go run ./cmd/server
 # 生成物目录：docs/api/swagger（import: projecttemp/docs/api/swagger）
 ```
 
-访问日志目前来自 **Gin 默认 Logger**（`gin.Default`）；业务 / 任务 / 审计使用 `internal/pkg/logger` 结构化输出（stderr）。详见 [logger README](internal/pkg/logger/README.md)。
+访问日志来自 **`httpapi/middleware.AccessLog`**（Echo RequestLogger → `pkg/logger`，event=`http.access`）；业务 / 任务 / 审计同样走 `internal/pkg/logger`（stderr）。HTTP 错误经 **`httpapi.HTTPErrorHandler`** 统一写 JSON。详见 [logger README](internal/pkg/logger/README.md)。
 
 ### 5.4 常用命令
 
@@ -213,7 +213,8 @@ swag init -g cmd/server/main.go -o docs/api/swagger --parseDependency --parseInt
 2. **生成代码**（`ent/*` 非 schema、`docs/api/swagger`）不要手改业务逻辑；改源再生成。  
 3. **PR 粒度**：一个业务能力尽量带齐 service + handler + repo（及必要测试），便于评审。  
 4. **命名**：新 module 用小写业务名；HTTP 子包可用 `userhttp` 这类包名，避免与 `net/http` 冲突。  
-5. **日志**：新写路径用 `logger.Module` + `purpose` + 稳定 `event`；可预期 `BizError` 不打 Error；系统错误交给 `RespondError` 边界记一次（见 [logger README](internal/pkg/logger/README.md)）。
+5. **日志**：新写路径用 `logger.Module` + `purpose` + 稳定 `event`；可预期 `BizError` 不打 Error；系统错误由 `httpapi.HTTPErrorHandler` 边界记一次（见 [logger README](internal/pkg/logger/README.md)）。
+6. **HTTP**：Handler 成功 `return c.JSON(http.StatusOK, response.OK(data))`；失败 `return err`（`BizError` / bind / validate），由全局错误处理写成统一响应体。
 
 ---
 

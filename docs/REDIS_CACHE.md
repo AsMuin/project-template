@@ -10,7 +10,7 @@
 | 角色             | 用途                       | 主要代码                     | 说明                         |
 | ---------------- | -------------------------- | ---------------------------- | ---------------------------- |
 | **业务缓存**     | 读穿写缓存、防击穿         | `infra/cache` + `port.Cache` | 业务按需注入使用             |
-| **Session 存储** | 登录态                     | `infra/redis/session.go`     | Gin sessions + Redis store   |
+| **Session 存储** | 登录态                     | `infra/redis/session.go`     | Echo + gorilla/sessions + Redis store |
 | **分布式锁**     | 跨实例互斥                 | `infra/lock` + `port.Locker` | SetNX / Lua 释放             |
 
 ```text
@@ -26,7 +26,7 @@
               └────────┬───┘   └──────┬──────┘  └─────┬──────┘
                        │              │                │
               ┌────────┴───┐   ┌──────┴──────┐  ┌─────┴──────┐
-              │ port.Cache │   │ Gin Session │  │ port.Locker│
+              │ port.Cache │   │ Echo Session│  │ port.Locker│
               │ + L1 TinyLFU│   │ cookie 会话 │  │ SetNX/Lua  │
               └────────────┘   └─────────────┘  └────────────┘
 ```
@@ -55,8 +55,11 @@
 
 | 项        | 当前实现                                                            |
 | --------- | ------------------------------------------------------------------- |
-| 创建      | `redis.NewSessionStore` → `sessions/redis.NewStore(...)`            |
-| Cookie 名 | `session`（见 `cmd/server`）                                        |
+| 创建      | `redis.NewSessionStore(redisCfg, sessionCfg)` → `redistore.NewRediStore`（gorilla Store） |
+| Secret    | `session.secret` / `APP_SESSION_SECRET`                               |
+| MaxAge    | `session.max_age`（秒）/ `APP_SESSION_MAX_AGE`                        |
+| Secure    | `session.secure` / `APP_SESSION_SECURE`                               |
+| Cookie 名 | `session`（`middleware.SessionName`，经 echo-contrib session 中间件） |
 
 ---
 

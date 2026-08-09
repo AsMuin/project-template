@@ -18,3 +18,8 @@ redis:
   port: 6379
   password: ""
   db: 0
+
+session:
+  secret: "change-me-session-secret"
+  max_age: 604800 # 7d, seconds
+  secure: false # HTTPS 生产环境设 true（或 APP_SESSION_SECURE=true）

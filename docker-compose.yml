@@ -51,6 +51,10 @@ services:
       # 3. 覆盖 Redis 属性
       APP_REDIS_HOST: redis
       APP_REDIS_PASSWORD: ${REDIS_PASSWORD:-}
+
+      # 4. Session（生产务必覆盖 secret）
+      APP_SESSION_SECRET: ${SESSION_SECRET:-change-me-session-secret}
+      APP_SESSION_SECURE: ${SESSION_SECURE:-false}
     ports:
       - "8080:8080"
     depends_on:

@@ -58,7 +58,7 @@ var jobLog = logger.Module("order").With(logger.FieldPurpose, logger.PurposeJob)
 
 ## 插入原则（与实现一致）
 
-1. **横切**：HTTP 当前使用 Gin 默认 access log（`gin.Default`）；**非 `BizError`** 在 `response.RespondError` 记一次 `http.system_error`。
+1. **横切**：HTTP access 使用 `httpapi/middleware.AccessLog`（`event=http.access`）；**非 `BizError` 的 5xx** 在 `httpapi.HTTPErrorHandler` 记一次 `http.system_error`。
 2. **Service**：关键写操作成功 / 审计点打 `biz` 或 `audit`；可预期业务拒绝一般只返回 `BizError`，不 Error。
 3. **Job**：生命周期与失败打 `job`（严重失败可把 purpose 提到 `alert`）。
 4. **Cache**：miss 用 `Debug`；失效失败用 `Warn` + `purpose=cache`。
@@ -71,6 +71,7 @@ var jobLog = logger.Module("order").With(logger.FieldPurpose, logger.PurposeJob)
 | event | module | purpose | 说明 |
 |-------|--------|---------|------|
 | `http.listen` | — | infra | 服务监听 |
+| `http.access` | http | http | 每个请求的 access 日志 |
 | `http.system_error` | http | http | 非业务错误写出响应时 |
 | `cron.registered` / `cron.started` / `cron.stop_error` | scheduler | job | 调度器 |
 
@@ -82,5 +83,6 @@ var jobLog = logger.Module("order").With(logger.FieldPurpose, logger.PurposeJob)
 |------|------|
 | `logger.go` | Init、Level/Format/Purpose、Module/With、Debug～Fatal |
 | `cron.go` | Cron Logger 适配 |
-| `internal/pkg/response/gin.go` | 系统错误边界日志 |
+| `internal/httpapi/middleware/access_log.go` | access 日志 |
+| `internal/httpapi/http_error.go` | 系统错误边界日志（HTTPErrorHandler） |
 | `cmd/server/main.go` | Init + 启动/Fatal |

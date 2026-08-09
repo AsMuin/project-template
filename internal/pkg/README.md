@@ -5,7 +5,7 @@
 | 包 | 说明 |
 |----|------|
 | `page` | 标准列表分页（Request/Response；Repo 返回 items+total，Service 组装） |
-| `response` | 统一 API 响应体、业务错误码、Gin 写出辅助；**非 BizError** 在 `RespondError` 记系统错误日志 |
+| `response` | 统一 API 响应体、业务错误码（`BizError`/`OK`/`Fail`）；HTTP 写出与错误映射在 `httpapi` |
 | `logger` | 薄封装 `log/slog`：`Init` / `Module` + `purpose` / `event` 结构化字段 |
 | `types`（可选） | 跨模块基础类型；有需要时再新增本目录下的包 |
 

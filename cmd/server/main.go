@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	"errors"
+	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
@@ -9,15 +11,16 @@ import (
 
 	"projecttemp/internal/config"
 	"projecttemp/internal/httpapi"
+	httpmw "projecttemp/internal/httpapi/middleware"
 	"projecttemp/internal/infra/database"
 	"projecttemp/internal/infra/redis"
 	"projecttemp/internal/infra/scheduler"
 	"projecttemp/internal/pkg/logger"
 
-	"github.com/gin-contrib/sessions"
-	"github.com/gin-gonic/gin"
-	swaggerFiles "github.com/swaggo/files"
-	ginSwagger "github.com/swaggo/gin-swagger"
+	"github.com/labstack/echo-contrib/v5/session"
+	"github.com/labstack/echo/v5"
+	echomw "github.com/labstack/echo/v5/middleware"
+	httpSwagger "github.com/swaggo/http-swagger/v2"
 
 	_ "projecttemp/docs/api/swagger"
 )
@@ -39,7 +42,13 @@ func main() {
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 
-	r := gin.Default()
+	e := echo.New()
+	e.Validator = httpapi.NewValidator()
+	e.HTTPErrorHandler = httpapi.HTTPErrorHandler
+
+	e.Use(echomw.Recover())
+	e.Use(echomw.RequestID())
+	e.Use(httpmw.AccessLog())
 
 	db, err := database.New(&cfg.Database)
 	if err != nil {
@@ -51,7 +60,7 @@ func main() {
 		logger.Fatal("migrate failed", logger.FieldErr, err)
 	}
 
-	store, err := redis.NewSessionStore(&cfg.Redis)
+	store, err := redis.NewSessionStore(&cfg.Redis, cfg.Session)
 	if err != nil {
 		logger.Fatal("load redis session store failed", logger.FieldErr, err)
 	}
@@ -87,19 +96,24 @@ func main() {
 		}
 	}()
 
-	r.Use(sessions.Sessions("session", store))
+	e.Use(session.Middleware(store))
 
-	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	e.GET("/swagger/*", echo.WrapHandler(httpSwagger.WrapHandler))
 
-	// 接入业务后：httpapi.RegisterRouter(r, xxxSvc, ...)
-	httpapi.RegisterRouter(r)
+	// 接入业务后：httpapi.RegisterRouter(e, xxxSvc, ...)
+	httpapi.RegisterRouter(e)
 
 	logger.Info("http server starting",
 		logger.FieldPurpose, logger.PurposeInfra,
 		logger.FieldEvent, "http.listen",
 		"addr", ":8080",
 	)
-	if err := r.Run(":8080"); err != nil {
+
+	sc := echo.StartConfig{
+		Address:    ":8080",
+		HideBanner: true,
+	}
+	if err := sc.Start(ctx, e); err != nil && !errors.Is(err, http.ErrServerClosed) {
 		logger.Fatal("http server stopped", logger.FieldErr, err)
 	}
 }

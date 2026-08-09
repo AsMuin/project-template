@@ -1,6 +1,6 @@
 // 分层约定：
 //
-//	Handler  绑定内嵌 PageRequest 的 Query，调用 Service，RespondOK
+//	Handler  BindAndValidate 内嵌 PageRequest 的 Query，调用 Service，c.JSON + response.OK
 //	Service  业务条件/权限 → repo.ListPage → NewPageResponse（或 Map 转 VO）
 //	Repo     同一套 WHERE 做 Count + Offset/Limit，返回 (items, total, error)
 //
@@ -17,11 +17,11 @@ const (
 //
 //	type Query struct {
 //	    page.PageRequest
-//	    Name string `form:"name"`
+//	    Name string `query:"name"`
 //	}
 type PageRequest struct {
-	PageSize int `json:"pageSize" form:"pageSize"`
-	PageNum  int `json:"pageNum" form:"pageNum"`
+	PageSize int `json:"pageSize" query:"pageSize" form:"pageSize"`
+	PageNum  int `json:"pageNum" query:"pageNum" form:"pageNum"`
 }
 
 // normalize 规范化页码与页大小（默认 pageNum=1、pageSize=10，最大 pageSize=100）。
@@ -83,8 +83,15 @@ func MapPage[A, B any](records []A, total int64, req PageRequest, fn func(A) B) 
 
 // Pages 总页数（total=0 时为 0）。
 func (p *PageResponse[T]) Pages() int64 {
-	if p == nil || p.PageSize <= 0 || p.Total <= 0 {
+	if p.PageSize <= 0 {
 		return 0
 	}
-	return (p.Total + int64(p.PageSize) - 1) / int64(p.PageSize)
+	if p.Total == 0 {
+		return 0
+	}
+	pages := p.Total / int64(p.PageSize)
+	if p.Total%int64(p.PageSize) != 0 {
+		pages++
+	}
+	return pages
 }
