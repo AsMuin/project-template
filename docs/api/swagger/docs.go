@@ -34,7 +34,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/user.LoginParams"
+                            "$ref": "#/definitions/auth.LoginRequest"
                         }
                     }
                 ],
@@ -107,7 +107,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/user.RegisterParams"
+                            "$ref": "#/definitions/auth.RegisterRequest"
                         }
                     }
                 ],
@@ -194,7 +194,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/user.UpdateParams"
+                            "$ref": "#/definitions/user.UpdateRequest"
                         }
                     }
                 ],
@@ -245,7 +245,7 @@ const docTemplate = `{
                 "GenderFemale"
             ]
         },
-        "user.LoginParams": {
+        "auth.LoginRequest": {
             "type": "object",
             "required": [
                 "account",
@@ -264,7 +264,7 @@ const docTemplate = `{
                 }
             }
         },
-        "user.RegisterParams": {
+        "auth.RegisterRequest": {
             "type": "object",
             "required": [
                 "account",
@@ -315,7 +315,7 @@ const docTemplate = `{
                 }
             }
         },
-        "user.UpdateParams": {
+        "user.UpdateRequest": {
             "type": "object",
             "properties": {
                 "age": {

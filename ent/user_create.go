@@ -94,6 +94,20 @@ func (_c *UserCreate) SetNillableGender(v *user.Gender) *UserCreate {
 	return _c
 }
 
+// SetVip sets the "vip" field.
+func (_c *UserCreate) SetVip(v bool) *UserCreate {
+	_c.mutation.SetVip(v)
+	return _c
+}
+
+// SetNillableVip sets the "vip" field if the given value is not nil.
+func (_c *UserCreate) SetNillableVip(v *bool) *UserCreate {
+	if v != nil {
+		_c.SetVip(*v)
+	}
+	return _c
+}
+
 // SetCreatedAt sets the "created_at" field.
 func (_c *UserCreate) SetCreatedAt(v time.Time) *UserCreate {
 	_c.mutation.SetCreatedAt(v)
@@ -181,6 +195,10 @@ func (_c *UserCreate) defaults() {
 		v := user.DefaultGender
 		_c.mutation.SetGender(v)
 	}
+	if _, ok := _c.mutation.Vip(); !ok {
+		v := user.DefaultVip
+		_c.mutation.SetVip(v)
+	}
 	if _, ok := _c.mutation.CreatedAt(); !ok {
 		v := user.DefaultCreatedAt()
 		_c.mutation.SetCreatedAt(v)
@@ -239,6 +257,9 @@ func (_c *UserCreate) check() error {
 		if err := user.GenderValidator(v); err != nil {
 			return &ValidationError{Name: "gender", err: fmt.Errorf(`ent: validator failed for field "User.gender": %w`, err)}
 		}
+	}
+	if _, ok := _c.mutation.Vip(); !ok {
+		return &ValidationError{Name: "vip", err: errors.New(`ent: missing required field "User.vip"`)}
 	}
 	if _, ok := _c.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "User.created_at"`)}
@@ -310,6 +331,10 @@ func (_c *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.Gender(); ok {
 		_spec.SetField(user.FieldGender, field.TypeEnum, value)
 		_node.Gender = value
+	}
+	if value, ok := _c.mutation.Vip(); ok {
+		_spec.SetField(user.FieldVip, field.TypeBool, value)
+		_node.Vip = value
 	}
 	if value, ok := _c.mutation.CreatedAt(); ok {
 		_spec.SetField(user.FieldCreatedAt, field.TypeTime, value)

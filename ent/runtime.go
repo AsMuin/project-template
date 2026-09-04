@@ -3,6 +3,7 @@
 package ent
 
 import (
+	"projecttemp/ent/payment"
 	"projecttemp/ent/schema"
 	"projecttemp/ent/user"
 	"time"
@@ -12,6 +13,36 @@ import (
 // (default values, validators, hooks and policies) and stitches it
 // to their package variables.
 func init() {
+	paymentFields := schema.Payment{}.Fields()
+	_ = paymentFields
+	// paymentDescUserID is the schema descriptor for user_id field.
+	paymentDescUserID := paymentFields[1].Descriptor()
+	// payment.UserIDValidator is a validator for the "user_id" field. It is called by the builders before save.
+	payment.UserIDValidator = paymentDescUserID.Validators[0].(func(int64) error)
+	// paymentDescAmountCent is the schema descriptor for amount_cent field.
+	paymentDescAmountCent := paymentFields[4].Descriptor()
+	// payment.AmountCentValidator is a validator for the "amount_cent" field. It is called by the builders before save.
+	payment.AmountCentValidator = paymentDescAmountCent.Validators[0].(func(int64) error)
+	// paymentDescSubject is the schema descriptor for subject field.
+	paymentDescSubject := paymentFields[5].Descriptor()
+	// payment.DefaultSubject holds the default value on creation for the subject field.
+	payment.DefaultSubject = paymentDescSubject.Default.(string)
+	// payment.SubjectValidator is a validator for the "subject" field. It is called by the builders before save.
+	payment.SubjectValidator = paymentDescSubject.Validators[0].(func(string) error)
+	// paymentDescCreatedAt is the schema descriptor for created_at field.
+	paymentDescCreatedAt := paymentFields[7].Descriptor()
+	// payment.DefaultCreatedAt holds the default value on creation for the created_at field.
+	payment.DefaultCreatedAt = paymentDescCreatedAt.Default.(func() time.Time)
+	// paymentDescUpdatedAt is the schema descriptor for updated_at field.
+	paymentDescUpdatedAt := paymentFields[8].Descriptor()
+	// payment.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	payment.DefaultUpdatedAt = paymentDescUpdatedAt.Default.(func() time.Time)
+	// payment.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	payment.UpdateDefaultUpdatedAt = paymentDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// paymentDescID is the schema descriptor for id field.
+	paymentDescID := paymentFields[0].Descriptor()
+	// payment.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	payment.IDValidator = paymentDescID.Validators[0].(func(int64) error)
 	userFields := schema.User{}.Fields()
 	_ = userFields
 	// userDescAccount is the schema descriptor for account field.
@@ -80,12 +111,16 @@ func init() {
 			return nil
 		}
 	}()
+	// userDescVip is the schema descriptor for vip field.
+	userDescVip := userFields[8].Descriptor()
+	// user.DefaultVip holds the default value on creation for the vip field.
+	user.DefaultVip = userDescVip.Default.(bool)
 	// userDescCreatedAt is the schema descriptor for created_at field.
-	userDescCreatedAt := userFields[8].Descriptor()
+	userDescCreatedAt := userFields[9].Descriptor()
 	// user.DefaultCreatedAt holds the default value on creation for the created_at field.
 	user.DefaultCreatedAt = userDescCreatedAt.Default.(func() time.Time)
 	// userDescUpdatedAt is the schema descriptor for updated_at field.
-	userDescUpdatedAt := userFields[9].Descriptor()
+	userDescUpdatedAt := userFields[10].Descriptor()
 	// user.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	user.DefaultUpdatedAt = userDescUpdatedAt.Default.(func() time.Time)
 	// user.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.

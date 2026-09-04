@@ -52,6 +52,9 @@ func (User) Fields() []ent.Field {
 			Values("unknown", "male", "female").
 			Default("unknown").
 			Comment("性别"),
+		field.Bool("vip").
+			Default(false).
+			Comment("是否会员；跨域支付升会员 POC 用"),
 		field.Time("created_at").
 			Default(time.Now).
 			Immutable().

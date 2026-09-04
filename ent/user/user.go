@@ -28,6 +28,8 @@ const (
 	FieldAge = "age"
 	// FieldGender holds the string denoting the gender field in the database.
 	FieldGender = "gender"
+	// FieldVip holds the string denoting the vip field in the database.
+	FieldVip = "vip"
 	// FieldCreatedAt holds the string denoting the created_at field in the database.
 	FieldCreatedAt = "created_at"
 	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
@@ -48,6 +50,7 @@ var Columns = []string{
 	FieldAvatar,
 	FieldAge,
 	FieldGender,
+	FieldVip,
 	FieldCreatedAt,
 	FieldUpdatedAt,
 	FieldDeletedAt,
@@ -76,6 +79,8 @@ var (
 	AvatarValidator func(string) error
 	// AgeValidator is a validator for the "age" field. It is called by the builders before save.
 	AgeValidator func(int) error
+	// DefaultVip holds the default value on creation for the "vip" field.
+	DefaultVip bool
 	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
 	DefaultCreatedAt func() time.Time
 	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.
@@ -154,6 +159,11 @@ func ByAge(opts ...sql.OrderTermOption) OrderOption {
 // ByGender orders the results by the gender field.
 func ByGender(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldGender, opts...).ToFunc()
+}
+
+// ByVip orders the results by the vip field.
+func ByVip(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldVip, opts...).ToFunc()
 }
 
 // ByCreatedAt orders the results by the created_at field.

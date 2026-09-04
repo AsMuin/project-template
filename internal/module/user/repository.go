@@ -14,6 +14,8 @@ type Repository interface {
 	FindByID(ctx context.Context, id int64) (*User, error)
 	FindByAccount(ctx context.Context, account string) (*UserWithSecret, error)
 	Update(ctx context.Context, id int64, in UpdateRepoParams) (*User, error)
+	// SetVIP 设置会员标记；供跨域支付升会员等用例复用（可走外层事务 ctx）。
+	SetVIP(ctx context.Context, id int64, vip bool) (*User, error)
 	ExistsAccount(ctx context.Context, account string) (bool, error)
 }
 
@@ -36,6 +38,7 @@ type UpdateRepoParams struct {
 	Avatar       *string
 	Age          *int
 	Gender       *Gender
+	VIP          *bool
 }
 
 // UserWithSecret 含密码哈希，仅限 Service 校验登录使用，禁止直接作为 API 响应。

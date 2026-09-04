@@ -9,7 +9,7 @@
 | `logger` | 薄封装 `log/slog`：`Init` / `Module` + `purpose` / `event` 结构化字段 |
 | `types`（可选） | 跨模块基础类型；有需要时再新增本目录下的包 |
 
-业务模块代码在 `internal/module/`；基础设施在 `internal/infra/`；端口在 `internal/port/`。
+单域业务在 `internal/module/`；跨域用例在 `internal/app/`；基础设施在 `internal/infra/`；端口在 `internal/port/`（含 `TxManager`）。
 
 ## logger（简）
 

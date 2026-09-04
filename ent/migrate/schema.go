@@ -8,6 +8,41 @@ import (
 )
 
 var (
+	// PaymentsColumns holds the columns for the "payments" table.
+	PaymentsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Increment: true},
+		{Name: "user_id", Type: field.TypeInt64},
+		{Name: "method", Type: field.TypeEnum, Enums: []string{"wechat", "alipay", "card", "mock"}},
+		{Name: "status", Type: field.TypeEnum, Enums: []string{"pending", "paid", "failed", "cancelled"}, Default: "pending"},
+		{Name: "amount_cent", Type: field.TypeInt64},
+		{Name: "subject", Type: field.TypeString, Size: 128, Default: "VIP membership"},
+		{Name: "paid_at", Type: field.TypeTime, Nullable: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+	}
+	// PaymentsTable holds the schema information for the "payments" table.
+	PaymentsTable = &schema.Table{
+		Name:       "payments",
+		Columns:    PaymentsColumns,
+		PrimaryKey: []*schema.Column{PaymentsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "payment_user_id",
+				Unique:  false,
+				Columns: []*schema.Column{PaymentsColumns[1]},
+			},
+			{
+				Name:    "payment_status",
+				Unique:  false,
+				Columns: []*schema.Column{PaymentsColumns[3]},
+			},
+			{
+				Name:    "payment_user_id_status",
+				Unique:  false,
+				Columns: []*schema.Column{PaymentsColumns[1], PaymentsColumns[3]},
+			},
+		},
+	}
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt64, Increment: true},
@@ -18,6 +53,7 @@ var (
 		{Name: "avatar", Type: field.TypeString, Nullable: true, Size: 512},
 		{Name: "age", Type: field.TypeInt, Nullable: true},
 		{Name: "gender", Type: field.TypeEnum, Enums: []string{"unknown", "male", "female"}, Default: "unknown"},
+		{Name: "vip", Type: field.TypeBool, Default: false},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "deleted_at", Type: field.TypeTime, Nullable: true},
@@ -31,12 +67,13 @@ var (
 			{
 				Name:    "user_deleted_at",
 				Unique:  false,
-				Columns: []*schema.Column{UsersColumns[10]},
+				Columns: []*schema.Column{UsersColumns[11]},
 			},
 		},
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
+		PaymentsTable,
 		UsersTable,
 	}
 )

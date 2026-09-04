@@ -84,6 +84,11 @@ func Age(v int) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldAge, v))
 }
 
+// Vip applies equality check predicate on the "vip" field. It's identical to VipEQ.
+func Vip(v bool) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldVip, v))
+}
+
 // CreatedAt applies equality check predicate on the "created_at" field. It's identical to CreatedAtEQ.
 func CreatedAt(v time.Time) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldCreatedAt, v))
@@ -512,6 +517,16 @@ func GenderIn(vs ...Gender) predicate.User {
 // GenderNotIn applies the NotIn predicate on the "gender" field.
 func GenderNotIn(vs ...Gender) predicate.User {
 	return predicate.User(sql.FieldNotIn(FieldGender, vs...))
+}
+
+// VipEQ applies the EQ predicate on the "vip" field.
+func VipEQ(v bool) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldVip, v))
+}
+
+// VipNEQ applies the NEQ predicate on the "vip" field.
+func VipNEQ(v bool) predicate.User {
+	return predicate.User(sql.FieldNEQ(FieldVip, v))
 }
 
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.

@@ -28,7 +28,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/user.LoginParams"
+                            "$ref": "#/definitions/auth.LoginRequest"
                         }
                     }
                 ],
@@ -101,7 +101,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/user.RegisterParams"
+                            "$ref": "#/definitions/auth.RegisterRequest"
                         }
                     }
                 ],
@@ -188,7 +188,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/user.UpdateParams"
+                            "$ref": "#/definitions/user.UpdateRequest"
                         }
                     }
                 ],
@@ -239,7 +239,7 @@
                 "GenderFemale"
             ]
         },
-        "user.LoginParams": {
+        "auth.LoginRequest": {
             "type": "object",
             "required": [
                 "account",
@@ -258,7 +258,7 @@
                 }
             }
         },
-        "user.RegisterParams": {
+        "auth.RegisterRequest": {
             "type": "object",
             "required": [
                 "account",
@@ -309,7 +309,7 @@
                 }
             }
         },
-        "user.UpdateParams": {
+        "user.UpdateRequest": {
             "type": "object",
             "properties": {
                 "age": {

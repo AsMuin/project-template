@@ -6,9 +6,12 @@ import (
 
 	"projecttemp/ent"
 	entgen "projecttemp/ent/user"
+	"projecttemp/internal/infra/database"
 	"projecttemp/internal/module/user"
 )
 
+// UserRepo 用户持久化适配器。
+// 通过 database.ClientFrom 参与外层事务；禁止在本包内自行 Begin/Commit。
 type UserRepo struct {
 	client *ent.Client
 }
@@ -17,8 +20,12 @@ func New(client *ent.Client) *UserRepo {
 	return &UserRepo{client: client}
 }
 
+func (r *UserRepo) ent(ctx context.Context) *ent.Client {
+	return database.ClientFrom(ctx, r.client)
+}
+
 func (r *UserRepo) Create(ctx context.Context, in user.CreateRepoParams) (*user.User, error) {
-	b := r.client.User.Create().
+	b := r.ent(ctx).User.Create().
 		SetAccount(in.Account).
 		SetNickname(in.Nickname).
 		SetPasswordHash(in.PasswordHash).
@@ -45,7 +52,7 @@ func (r *UserRepo) Create(ctx context.Context, in user.CreateRepoParams) (*user.
 }
 
 func (r *UserRepo) FindByID(ctx context.Context, id int64) (*user.User, error) {
-	row, err := r.client.User.Query().
+	row, err := r.ent(ctx).User.Query().
 		Where(
 			entgen.IDEQ(id),
 			entgen.DeletedAtIsNil(),
@@ -61,7 +68,7 @@ func (r *UserRepo) FindByID(ctx context.Context, id int64) (*user.User, error) {
 }
 
 func (r *UserRepo) FindByAccount(ctx context.Context, account string) (*user.UserWithSecret, error) {
-	row, err := r.client.User.Query().
+	row, err := r.ent(ctx).User.Query().
 		Where(
 			entgen.AccountEQ(account),
 			entgen.DeletedAtIsNil(),
@@ -78,7 +85,7 @@ func (r *UserRepo) FindByAccount(ctx context.Context, account string) (*user.Use
 }
 
 func (r *UserRepo) Update(ctx context.Context, id int64, in user.UpdateRepoParams) (*user.User, error) {
-	b := r.client.User.UpdateOneID(id).
+	b := r.ent(ctx).User.UpdateOneID(id).
 		Where(entgen.DeletedAtIsNil())
 
 	if in.Nickname != nil {
@@ -99,6 +106,9 @@ func (r *UserRepo) Update(ctx context.Context, id int64, in user.UpdateRepoParam
 	if in.Gender != nil {
 		b.SetGender(toEntGender(*in.Gender))
 	}
+	if in.VIP != nil {
+		b.SetVip(*in.VIP)
+	}
 
 	row, err := b.Save(ctx)
 	if err != nil {
@@ -110,8 +120,12 @@ func (r *UserRepo) Update(ctx context.Context, id int64, in user.UpdateRepoParam
 	return toDomain(row), nil
 }
 
+func (r *UserRepo) SetVIP(ctx context.Context, id int64, vip bool) (*user.User, error) {
+	return r.Update(ctx, id, user.UpdateRepoParams{VIP: &vip})
+}
+
 func (r *UserRepo) ExistsAccount(ctx context.Context, account string) (bool, error) {
-	return r.client.User.Query().
+	return r.ent(ctx).User.Query().
 		Where(
 			entgen.AccountEQ(account),
 			entgen.DeletedAtIsNil(),
@@ -122,7 +136,7 @@ func (r *UserRepo) ExistsAccount(ctx context.Context, account string) (bool, err
 // SoftDelete 预留：当前接口未暴露，便于后续扩展。
 func (r *UserRepo) SoftDelete(ctx context.Context, id int64) error {
 	now := time.Now()
-	n, err := r.client.User.Update().
+	n, err := r.ent(ctx).User.Update().
 		Where(entgen.IDEQ(id), entgen.DeletedAtIsNil()).
 		SetDeletedAt(now).
 		Save(ctx)
@@ -144,6 +158,7 @@ func toDomain(row *ent.User) *user.User {
 		Avatar:    row.Avatar,
 		Age:       row.Age,
 		Gender:    user.Gender(row.Gender),
+		VIP:       row.Vip,
 		CreatedAt: row.CreatedAt,
 		UpdatedAt: row.UpdatedAt,
 	}

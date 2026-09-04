@@ -9,14 +9,22 @@ import (
 	"syscall"
 	"time"
 
+	"projecttemp/internal/app/auth"
+	"projecttemp/internal/app/membership"
+	apppay "projecttemp/internal/app/payment"
+	appuser "projecttemp/internal/app/user"
 	"projecttemp/internal/config"
 	"projecttemp/internal/httpapi"
+	authapi "projecttemp/internal/httpapi/api/auth"
+	membershipapi "projecttemp/internal/httpapi/api/membership"
+	paymentapi "projecttemp/internal/httpapi/api/payment"
+	userapi "projecttemp/internal/httpapi/api/user"
 	"projecttemp/internal/httpapi/binding"
 	httpmw "projecttemp/internal/httpapi/middleware"
 	"projecttemp/internal/infra/database"
 	"projecttemp/internal/infra/redis"
 	"projecttemp/internal/infra/scheduler"
-	"projecttemp/internal/module/user"
+	paymentrepo "projecttemp/internal/module/payment/repo"
 	userrepo "projecttemp/internal/module/user/repo"
 	"projecttemp/internal/pkg/logger"
 
@@ -74,11 +82,18 @@ func main() {
 	}
 	defer redisClient.Close()
 
-	// 业务装配：user 模块（可按需再注入 cache/lock）
+	// 装配：module=领域+repo；app=全部用例+*Request；httpapi/api 只依赖 app。
 	// locker := lock.New(redisClient)
 	// cacheClient := cache.New(redisClient)
 	_ = redisClient
-	userSvc := user.NewService(userrepo.New(db.Client))
+	txm := database.NewTxManager(db.Client)
+	userRepo := userrepo.New(db.Client)
+	payRepo := paymentrepo.New(db.Client)
+
+	authSvc := auth.NewService(userRepo)
+	userSvc := appuser.NewService(userRepo)
+	paymentSvc := apppay.NewService(payRepo)
+	membershipSvc := membership.NewService(txm, payRepo, userRepo)
 
 	// 定时任务骨架：注册业务 job 后 Start
 	sched := scheduler.New()
@@ -103,7 +118,12 @@ func main() {
 
 	e.GET("/swagger/*", echo.WrapHandler(httpSwagger.WrapHandler))
 
-	httpapi.RegisterRouter(e, userSvc)
+	httpapi.RegisterRouter(e,
+		authapi.NewRegistrar(authSvc),
+		userapi.NewRegistrar(userSvc),
+		paymentapi.NewRegistrar(paymentSvc),
+		membershipapi.NewRegistrar(membershipSvc),
+	)
 
 	logger.Info("http server starting",
 		logger.FieldPurpose, logger.PurposeInfra,

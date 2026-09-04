@@ -32,6 +32,8 @@ type User struct {
 	Age *int `json:"age,omitempty"`
 	// 性别
 	Gender user.Gender `json:"gender,omitempty"`
+	// 是否会员；跨域支付升会员 POC 用
+	Vip bool `json:"vip,omitempty"`
 	// 创建时间
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// 更新时间
@@ -46,6 +48,8 @@ func (*User) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
+		case user.FieldVip:
+			values[i] = new(sql.NullBool)
 		case user.FieldID, user.FieldAge:
 			values[i] = new(sql.NullInt64)
 		case user.FieldAccount, user.FieldNickname, user.FieldPasswordHash, user.FieldEmail, user.FieldAvatar, user.FieldGender:
@@ -117,6 +121,12 @@ func (_m *User) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field gender", values[i])
 			} else if value.Valid {
 				_m.Gender = user.Gender(value.String)
+			}
+		case user.FieldVip:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field vip", values[i])
+			} else if value.Valid {
+				_m.Vip = value.Bool
 			}
 		case user.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -198,6 +208,9 @@ func (_m *User) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("gender=")
 	builder.WriteString(fmt.Sprintf("%v", _m.Gender))
+	builder.WriteString(", ")
+	builder.WriteString("vip=")
+	builder.WriteString(fmt.Sprintf("%v", _m.Vip))
 	builder.WriteString(", ")
 	builder.WriteString("created_at=")
 	builder.WriteString(_m.CreatedAt.Format(time.ANSIC))

@@ -12,6 +12,14 @@ go generate ./ent
 
 | Schema | 说明 |
 |--------|------|
-| `User` | 基础用户（账号/密码哈希/资料/软删除） |
+| `User` | 基础用户（账号/密码哈希/资料/`vip`/软删除） |
+| `Payment` | 支付单（user_id/方式/状态/金额/时间） |
 
 新增实体：在本目录添加 `xxx.go` → `go generate ./ent`。
+
+## 与跨 module 事务
+
+全项目共用一份 schema / 一个库 / 一个 `*ent.Client`，本地事务才能跨 module 的多个 repo 生效。  
+不要为每个 module 单独拆 ent Client 或物理库（除非已决定放弃本地事务、改用最终一致）。  
+编排方式见 [docs/TRANSACTIONS.md](../../docs/TRANSACTIONS.md)。
+
