@@ -20,6 +20,7 @@ import (
 	paymentapi "projecttemp/internal/httpapi/api/payment"
 	userapi "projecttemp/internal/httpapi/api/user"
 	"projecttemp/internal/httpapi/binding"
+	"projecttemp/internal/httpapi/docsui"
 	httpmw "projecttemp/internal/httpapi/middleware"
 	"projecttemp/internal/infra/database"
 	"projecttemp/internal/infra/redis"
@@ -31,7 +32,6 @@ import (
 	"github.com/labstack/echo-contrib/v5/session"
 	"github.com/labstack/echo/v5"
 	echomw "github.com/labstack/echo/v5/middleware"
-	httpSwagger "github.com/swaggo/http-swagger/v2"
 
 	_ "projecttemp/docs/api/swagger"
 )
@@ -116,7 +116,7 @@ func main() {
 
 	e.Use(session.Middleware(store))
 
-	e.GET("/swagger/*", echo.WrapHandler(httpSwagger.WrapHandler))
+	docsui.Register(e)
 
 	httpapi.RegisterRouter(e,
 		authapi.NewRegistrar(authSvc),

@@ -14,6 +14,7 @@ type Config struct {
 	Database DatabaseConfig `mapstructure:"database"`
 	Redis    RedisConfig    `mapstructure:"redis"`
 	Session  SessionConfig  `mapstructure:"session"`
+	R2       R2Config       `mapstructure:"r2"`
 }
 
 type AppConfig struct {
@@ -65,6 +66,19 @@ func (c SessionConfig) Normalized() SessionConfig {
 		out.MaxAge = defaultSessionMaxAge
 	}
 	return out
+}
+
+// R2Config Cloudflare R2 应用配置（写入 infra/objectstore.Options）。
+// 密钥走 env：APP_R2_ACCESS_KEY_ID / APP_R2_SECRET_ACCESS_KEY
+// 端口见 port.ObjectStore；实现见 internal/infra/objectstore，可复用于配图、头像等。
+type R2Config struct {
+	AccountID       string `mapstructure:"account_id"`
+	AccessKeyID     string `mapstructure:"access_key_id"`
+	SecretAccessKey string `mapstructure:"secret_access_key"`
+	Bucket          string `mapstructure:"bucket"`
+	Endpoint        string `mapstructure:"endpoint"`        // 可选
+	PublicBaseURL   string `mapstructure:"public_base_url"` // 公开访问前缀
+	KeyPrefix       string `mapstructure:"key_prefix"`      // 全局 key 前缀
 }
 
 var (
